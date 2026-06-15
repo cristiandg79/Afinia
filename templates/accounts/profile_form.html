@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block title %}{% if is_onboarding %}Crear perfil{% else %}Editar perfil{% endif %} - Afinia{% endblock %}
+{% block content %}
+<section class="onboarding-shell" data-onboarding data-initial-step="{{ initial_step|default:1 }}">
+    <aside class="onboarding-side">
+        <p class="eyebrow">{% if is_onboarding %}Tu perfil{% else %}Editar perfil{% endif %}</p>
+        <h1>{% if is_onboarding %}Vamos paso a paso.{% else %}Actualiza tu perfil.{% endif %}</h1>
+        <p>Responde solo lo que quieras compartir. La información personal o de accesibilidad puede quedarse privada.</p>
+        <div class="progress-card" aria-hidden="true">
+            <span data-step-current>1</span>
+            <div class="progress-track"><div data-progress-bar></div></div>
+            <span>8</span>
+        </div>
+    </aside>
+
+    <form method="post" class="wizard-card" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="wizard-step is-active" data-step="1">
+            <p class="step-kicker">Paso 1 de 8</p>
+            <h2>Ubicación</h2>
+            <p class="muted">Tu nick público es el usuario con el que creaste la cuenta. La ubicación ayuda a sugerirte personas y planes cercanos.</p>
+            <div class="field-grid">
+                <label>{{ form.city.label }} {{ form.city }}</label>
+            </div>
+            {{ form.city.errors }}
+        </div>
+
+        <div class="wizard-step" data-step="2">
+            <p class="step-kicker">Paso 2 de 8</p>
+            <h2>¿Qué te gustaría encontrar?</h2>
+            <p class="muted">Puedes elegir varias opciones. Esto nos ayuda a sugerir personas, grupos y planes.</p>
+            <div class="choice-grid">
+                {% for choice in form.goals %}
+                    <label class="choice-card">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {{ form.goals.errors }}
+        </div>
+
+        <div class="wizard-step" data-step="3">
+            <p class="step-kicker">Paso 3 de 8</p>
+            <h2>¿Qué cosas te interesan?</h2>
+            <p class="muted">No tiene que ser perfecto. Elige lo que pueda abrir una conversación.</p>
+            <div class="choice-grid compact">
+                {% for choice in form.interests %}
+                    <label class="choice-card">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {{ form.interests.errors }}
+        </div>
+
+        <div class="wizard-step" data-step="4">
+            <p class="step-kicker">Paso 4 de 8</p>
+            <h2>¿Cómo prefieres relacionarte?</h2>
+            <p class="muted">Estas respuestas ayudan a evitar malentendidos y proponer planes más cómodos.</p>
+            <div class="choice-grid">
+                {% for choice in form.social_preferences %}
+                    <label class="choice-card">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {{ form.social_preferences.errors }}
+        </div>
+
+        <div class="wizard-step" data-step="5">
+            <p class="step-kicker">Paso 5 de 8</p>
+            <h2>Situación personal</h2>
+            <p class="muted">Opcional. Puedes marcar discapacidad, neurodivergencia, salud mental o enfermedades crónicas si quieres que forme parte de tu perfil.</p>
+            <div class="choice-grid compact">
+                {% for choice in form.health_context %}
+                    <label class="choice-card">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {{ form.health_context.errors }}
+        </div>
+
+        <div class="wizard-step" data-step="6">
+            <p class="step-kicker">Paso 6 de 8</p>
+            <h2>Cuenta algo breve sobre ti</h2>
+            <p class="muted">Un perfil sencillo suele funcionar mejor que uno perfecto.</p>
+            <div class="stacked-field">
+                <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+                {{ form.bio }}
+                {% include 'includes/emoji_picker.html' with target='bio' class_name='profile-emoji-picker' %}
+            </div>
+            {{ form.bio.errors }}
+            <div class="toggle-row">
+                <label>{{ form.open_to_nearby }} <span>{{ form.open_to_nearby.label }}</span></label>
+                <label>{{ form.open_to_online }} <span>{{ form.open_to_online.label }}</span></label>
+            </div>
+        </div>
+
+        <div class="wizard-step" data-step="7">
+            <p class="step-kicker">Paso 7 de 8</p>
+            <h2>Datos personales</h2>
+            <p class="muted">Opcional. Esta información ayuda a mostrar perfiles más completos en Afinidades.</p>
+            <div class="field-grid two profile-basics-grid">
+                <label>{{ form.sex.label }} {{ form.sex }}</label>
+                <label>{{ form.orientation.label }} {{ form.orientation }}</label>
+                <label>
+                    {{ form.birth_date.label }} {{ form.birth_date }}
+                    <span class="field-hint" data-birth-summary>
+                        {% if form.instance.age %}
+                            {{ form.instance.age }} años{% if form.instance.horoscope_sign %} - {{ form.instance.horoscope_sign }}{% endif %}
+                        {% else %}
+                            Al indicarla veremos edad y horóscopo automáticamente.
+                        {% endif %}
+                    </span>
+                </label>
+                <label>{{ form.height_cm.label }} {{ form.height_cm }}</label>
+                <label>{{ form.weight_kg.label }} {{ form.weight_kg }}</label>
+                <label>{{ form.smoker.label }} {{ form.smoker }}</label>
+            </div>
+            {{ form.sex.errors }} {{ form.orientation.errors }} {{ form.birth_date.errors }}
+            {{ form.height_cm.errors }} {{ form.weight_kg.errors }} {{ form.smoker.errors }}
+        </div>
+
+        <div class="wizard-step" data-step="8">
+            <p class="step-kicker">Paso 8 de 8</p>
+            <h2>Fotos de perfil</h2>
+            <p class="muted">Opcional. Puedes añadir una foto principal y hasta cuatro fotos más para que tu perfil se sienta más cercano.</p>
+            <div class="profile-photo-upload-grid">
+                <div class="profile-photo-field featured">
+                    <span>{{ form.photo.label }}</span>
+                    {% if form.instance.photo %}
+                        <img src="{{ form.instance.photo.url }}" alt="Foto principal actual">
+                        <label class="delete-photo-option">{{ form.delete_photo }} <span>{{ form.delete_photo.label }}</span></label>
+                    {% endif %}
+                    <img class="photo-preview" data-photo-preview alt="Vista previa de la foto principal" hidden>
+                    {{ form.photo }}
+                    <label class="file-upload-trigger" for="{{ form.photo.id_for_label }}">Seleccionar imagen</label>
+                </div>
+                <div class="profile-photo-field"><span>{{ form.extra_photo_1.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_1 }}<label class="file-upload-trigger" for="{{ form.extra_photo_1.id_for_label }}">Seleccionar imagen</label></div>
+                <div class="profile-photo-field"><span>{{ form.extra_photo_2.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_2 }}<label class="file-upload-trigger" for="{{ form.extra_photo_2.id_for_label }}">Seleccionar imagen</label></div>
+                <div class="profile-photo-field"><span>{{ form.extra_photo_3.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_3 }}<label class="file-upload-trigger" for="{{ form.extra_photo_3.id_for_label }}">Seleccionar imagen</label></div>
+                <div class="profile-photo-field"><span>{{ form.extra_photo_4.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_4 }}<label class="file-upload-trigger" for="{{ form.extra_photo_4.id_for_label }}">Seleccionar imagen</label></div>
+            </div>
+            {{ form.photo.errors }}
+            {{ form.extra_photo_1.errors }} {{ form.extra_photo_2.errors }} {{ form.extra_photo_3.errors }} {{ form.extra_photo_4.errors }}
+            {% if form.instance.extra_photos.all %}
+                <div class="current-gallery">
+                    <p class="muted">Fotos adicionales actuales</p>
+                    <div>
+                        {% for photo in form.instance.extra_photos.all %}
+                            <label class="gallery-delete-item">
+                                <img src="{{ photo.image.url }}" alt="Foto adicional de {{ user.username }}">
+                                <span><input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}"> Eliminar</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="wizard-actions">
+            <button class="button secondary" type="button" data-prev>Anterior</button>
+            <button class="button" type="button" data-next>Siguiente</button>
+            <button class="button" type="submit" data-submit>Guardar perfil</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

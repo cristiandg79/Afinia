@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}{{ group.name }} - Afinia{% endblock %}
+{% block content %}
+<article class="profile">
+    <p class="eyebrow">{{ group.city|default:'Online' }}{% if group.topic %} · {{ group.topic }}{% endif %}</p>
+    <h1>{{ group.name }}</h1>
+    <p>{{ group.description }}</p>
+    {% if membership %}
+        <p class="notice">Tu estado en este grupo: {{ membership.get_status_display }}</p>
+        {% if group_chat %}
+            <a class="button" href="{% url 'conversation_detail' group_chat.pk %}">Abrir chat del grupo</a>
+        {% endif %}
+        {% if group.created_by != user %}
+            <form method="post" action="{% url 'group_leave' group.pk %}" class="inline-action-form">
+                {% csrf_token %}
+                <button class="button secondary danger" type="submit">Salir del grupo</button>
+            </form>
+        {% endif %}
+    {% else %}
+        <a class="button" href="{% url 'group_join' group.pk %}">Solicitar unirme</a>
+    {% endif %}
+</article>
+
+{% if is_moderator %}
+<section class="moderation-panel">
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Moderación</p>
+            <h2>Solicitudes para unirse</h2>
+        </div>
+    </div>
+    <div class="request-list">
+        {% for request in pending_memberships %}
+            <article class="request-card">
+                <span class="chat-avatar">
+                    {% if request.user.profile.photo %}
+                        <img src="{{ request.user.profile.photo.url }}" alt="">
+                    {% else %}
+                        <span>{{ request.user.username|first|upper }}</span>
+                    {% endif %}
+                </span>
+                <div>
+                    <h3>{{ request.user.username }}</h3>
+                    <p>{{ request.user.profile.city|default:'Online' }}</p>
+                </div>
+                <div class="request-actions">
+                    <a class="button small" href="{% url 'group_membership_response' request.pk 'approved' %}">Aceptar</a>
+                    <a class="button small secondary" href="{% url 'group_membership_response' request.pk 'declined' %}">Rechazar</a>
+                </div>
+            </article>
+        {% empty %}
+            <p class="muted">No hay solicitudes pendientes.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="moderation-panel">
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Grupo</p>
+            <h2>Personas apuntadas</h2>
+        </div>
+    </div>
+    <div class="request-list">
+        {% for member in members %}
+            <article class="request-card">
+                <span class="chat-avatar">
+                    {% if member.user.profile.photo %}
+                        <img src="{{ member.user.profile.photo.url }}" alt="">
+                    {% else %}
+                        <span>{{ member.user.username|first|upper }}</span>
+                    {% endif %}
+                </span>
+                <div>
+                    <h3>{{ member.user.username }}</h3>
+                    <p>{{ member.user.profile.city|default:'Online' }} · {{ member.get_status_display }}</p>
+                </div>
+                {% if member.user != user and member.user != group.created_by %}
+                    <div class="request-actions">
+                        <form method="post" action="{% url 'group_remove_member' group.pk member.user.pk %}">
+                            {% csrf_token %}
+                            <button class="button small secondary danger" type="submit">Eliminar</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </article>
+        {% empty %}
+            <p class="muted">Aún no hay personas apuntadas.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

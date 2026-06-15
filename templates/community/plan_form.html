@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Crear plan - Afinia{% endblock %}
+{% block content %}
+<section class="form-page wide">
+    <h1>Crear plan</h1>
+    <p class="muted">Incluye información de accesibilidad y el tipo de ambiente para que la gente pueda decidir con tranquilidad.</p>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="button" type="submit">Crear plan</button>
+    </form>
+</section>
+{% endblock %}

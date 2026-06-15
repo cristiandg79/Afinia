@@ -1,0 +1,24 @@
+<a class="conversation-row {% if item.unread_count %}is-unread{% endif %}" href="{% url 'conversation_detail' item.conversation.pk %}" data-conversation-row="{{ item.conversation.pk }}">
+    <span class="chat-avatar">
+        {% if item.avatar_url %}
+            <img src="{{ item.avatar_url }}" alt="">
+        {% else %}
+            <span>{{ item.initials }}</span>
+        {% endif %}
+    </span>
+    <span class="conversation-main">
+        <span class="conversation-topline">
+            <strong data-conversation-title>{{ item.title }}</strong>
+            <span class="conversation-meta">
+                <time data-conversation-time>{{ item.time_label }}</time>
+                {% if item.unread_count %}
+                    <span class="unread-pill" data-conversation-unread>{{ item.unread_count }}</span>
+                {% else %}
+                    <span class="unread-pill is-hidden" data-conversation-unread>0</span>
+                {% endif %}
+            </span>
+        </span>
+        <span class="conversation-subtitle" data-conversation-subtitle>{{ item.subtitle }}</span>
+        <span class="conversation-preview" data-conversation-preview>{{ item.last_message|truncatechars:92 }}</span>
+    </span>
+</a>

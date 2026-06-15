@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Grupos - Afinia{% endblock %}
+{% block content %}
+<section>
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Comunidad</p>
+            <h1>Grupos</h1>
+        </div>
+        <a class="button small" href="{% url 'group_create' %}">Crear grupo</a>
+    </div>
+    <div class="grid community-grid">
+        {% for group in groups %}
+            <article class="card community-card">
+                <div class="community-card__body">
+                    <h2>{{ group.name }}</h2>
+                    <p>{{ group.city|default:'Online' }}{% if group.topic %} · {{ group.topic }}{% endif %}</p>
+                    <p>{{ group.description|truncatechars:150 }}</p>
+                </div>
+                <div class="community-card__actions">
+                    <a class="button small secondary" href="{{ group.get_absolute_url }}">Ver grupo</a>
+                </div>
+            </article>
+        {% empty %}
+            <p class="muted">Aún no hay grupos. Puedes crear el primero.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block title %}Modificar perfil - Afinia{% endblock %}
+{% block content %}
+<section class="profile-edit-page">
+    <div class="page-heading">
+        <p class="eyebrow">Modificar perfil</p>
+        <h1>Tus datos, en una sola pantalla.</h1>
+        <p>Actualiza lo que quieras cambiar. Puedes dejar campos sin responder y guardar solo lo que te apetezca compartir.</p>
+    </div>
+
+    <form method="post" class="profile-edit-form" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <section class="edit-section">
+            <div>
+                <p class="step-kicker">Básico</p>
+                <h2>Ubicación y presentación</h2>
+                <p class="muted">Tu nick público es el usuario de tu cuenta. La ciudad ayuda a encontrar personas y planes cercanos.</p>
+            </div>
+            <div class="field-grid two">
+                <label class="edit-city-field">{{ form.city.label }} {{ form.city }} {{ form.city.errors }}</label>
+                <div class="stacked-field edit-bio-field">
+                    <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+                    {{ form.bio }}
+                    {% include 'includes/emoji_picker.html' with target='bio' class_name='profile-emoji-picker' %}
+                    {{ form.bio.errors }}
+                </div>
+            </div>
+            <div class="toggle-row">
+                <label>{{ form.open_to_nearby }} <span>{{ form.open_to_nearby.label }}</span></label>
+                <label>{{ form.open_to_online }} <span>{{ form.open_to_online.label }}</span></label>
+            </div>
+        </section>
+
+        <section class="edit-section">
+            <div>
+                <p class="step-kicker">Afinidad</p>
+                <h2>Qué buscas e intereses</h2>
+                <p class="muted">Estas respuestas ayudan a sugerir personas, grupos y conversaciones con más sentido.</p>
+            </div>
+            <h3>Qué buscas</h3>
+            <div class="choice-grid compact">
+                {% for choice in form.goals %}
+                    <label class="choice-card">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {{ form.goals.errors }}
+
+            <h3>Intereses</h3>
+            <div class="choice-grid compact">
+                {% for choice in form.interests %}
+                    <label class="choice-card">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {{ form.interests.errors }}
+        </section>
+
+        <section class="edit-section">
+            <div>
+                <p class="step-kicker">Comodidad</p>
+                <h2>Preferencias y situación personal</h2>
+                <p class="muted">Puedes usar esta parte para explicar mejor cómo te sientes cómodo/a relacionándote.</p>
+            </div>
+            <h3>Cómo prefieres relacionarte</h3>
+            <div class="choice-grid">
+                {% for choice in form.social_preferences %}
+                    <label class="choice-card">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {{ form.social_preferences.errors }}
+
+            <h3>Discapacidad, neurodivergencia o salud mental</h3>
+            <div class="choice-grid compact">
+                {% for choice in form.health_context %}
+                    <label class="choice-card">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {{ form.health_context.errors }}
+        </section>
+
+        <section class="edit-section" data-birth-widget>
+            <div>
+                <p class="step-kicker">Perfil</p>
+                <h2>Datos personales</h2>
+                <p class="muted">Opcional. Estos datos ayudan a que tu perfil se vea completo en Afinidades.</p>
+            </div>
+            <div class="field-grid three profile-basics-grid">
+                <label>{{ form.sex.label }} {{ form.sex }} {{ form.sex.errors }}</label>
+                <label>{{ form.orientation.label }} {{ form.orientation }} {{ form.orientation.errors }}</label>
+                <label>
+                    {{ form.birth_date.label }} {{ form.birth_date }} {{ form.birth_date.errors }}
+                    <span class="field-hint" data-birth-summary>
+                        {% if form.instance.age %}
+                            {{ form.instance.age }} años{% if form.instance.horoscope_sign %} - {{ form.instance.horoscope_sign }}{% endif %}
+                        {% else %}
+                            Al indicarla veremos edad y horóscopo automáticamente.
+                        {% endif %}
+                    </span>
+                </label>
+                <label>{{ form.height_cm.label }} {{ form.height_cm }} {{ form.height_cm.errors }}</label>
+                <label>{{ form.weight_kg.label }} {{ form.weight_kg }} {{ form.weight_kg.errors }}</label>
+                <label>{{ form.smoker.label }} {{ form.smoker }} {{ form.smoker.errors }}</label>
+            </div>
+        </section>
+
+        <section class="edit-section">
+            <div>
+                <p class="step-kicker">Fotos</p>
+                <h2>Imágenes de perfil</h2>
+                <p class="muted">Puedes cambiar la foto principal, añadir nuevas fotos o eliminar las que ya no quieras mostrar.</p>
+            </div>
+            <div class="profile-photo-upload-grid edit-photo-grid">
+                <div class="profile-photo-field featured">
+                    <span>{{ form.photo.label }}</span>
+                    {% if form.instance.photo %}
+                        <img src="{{ form.instance.photo.url }}" alt="Foto principal actual">
+                        <label class="delete-photo-option">{{ form.delete_photo }} <span>{{ form.delete_photo.label }}</span></label>
+                    {% endif %}
+                    <img class="photo-preview" data-photo-preview alt="Vista previa de la foto principal" hidden>
+                    {{ form.photo }}
+                    <label class="file-upload-trigger" for="{{ form.photo.id_for_label }}">Seleccionar imagen</label>
+                    {{ form.photo.errors }}
+                </div>
+                <div class="profile-photo-field"><span>{{ form.extra_photo_1.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_1 }}<label class="file-upload-trigger" for="{{ form.extra_photo_1.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_1.errors }}</div>
+                <div class="profile-photo-field"><span>{{ form.extra_photo_2.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_2 }}<label class="file-upload-trigger" for="{{ form.extra_photo_2.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_2.errors }}</div>
+                <div class="profile-photo-field"><span>{{ form.extra_photo_3.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_3 }}<label class="file-upload-trigger" for="{{ form.extra_photo_3.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_3.errors }}</div>
+                <div class="profile-photo-field"><span>{{ form.extra_photo_4.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_4 }}<label class="file-upload-trigger" for="{{ form.extra_photo_4.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_4.errors }}</div>
+            </div>
+            {% if form.instance.extra_photos.all %}
+                <div class="current-gallery">
+                    <p class="muted">Fotos adicionales actuales</p>
+                    <div>
+                        {% for photo in form.instance.extra_photos.all %}
+                            <label class="gallery-delete-item">
+                                <img src="{{ photo.image.url }}" alt="Foto adicional de {{ user.username }}">
+                                <span><input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}"> Eliminar</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+
+        <div class="edit-actions">
+            <a class="button secondary" href="{{ user.profile.get_absolute_url }}">Cancelar</a>
+            <button class="button" type="submit">Guardar cambios</button>
+        </div>
+    </form>
+
+    <div class="profile-delete-link">
+        <a href="{% url 'profile_delete' %}">Eliminar perfil</a>
+    </div>
+</section>
+{% endblock %}

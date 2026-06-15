@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Chat - Afinia{% endblock %}
+{% block content %}
+<section class="chat-lobby">
+    <div class="messages-heading">
+        <div>
+            <p class="eyebrow">Salas abiertas</p>
+            <h1>Chat</h1>
+        </div>
+    </div>
+
+    <form class="chat-room-search" method="get">
+        <label for="chat-search">Buscar chat</label>
+        <div>
+            <input id="chat-search" name="q" type="search" value="{{ query }}" placeholder="Chat general, ansiedad, depresi&oacute;n, psicosis...">
+            <button class="button" type="submit">Buscar</button>
+        </div>
+    </form>
+
+    {% if rooms %}
+        <div class="grid chat-room-grid">
+            {% for room in rooms %}
+                <article class="card chat-room-card">
+                    <div class="chat-room-card__body">
+                        <div class="chat-room-card__head">
+                            <span class="chat-avatar">
+                                <span>{{ room.title|first|upper }}</span>
+                            </span>
+                            <div>
+                                <p class="eyebrow">{{ room.kind }}</p>
+                                <h2>{{ room.title }}</h2>
+                            </div>
+                        </div>
+                        <p>{{ room.description }}</p>
+                    </div>
+                    <div class="chat-room-card__actions">
+                        <a class="button" href="{% url 'chat_room_enter' room.slug %}">Entrar al chat</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>No hay salas con ese nombre</h2>
+            <p>Prueba con otra situaci&oacute;n o entra en el chat general.</p>
+            <a class="button secondary" href="{% url 'chat_lobby' %}">Ver todas las salas</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}{{ plan.title }} - Afinia{% endblock %}
+{% block content %}
+<article class="profile">
+    <p class="eyebrow">{{ plan.starts_at|date:'d/m/Y H:i' }} · {{ plan.city|default:'Online' }}</p>
+    <h1>{{ plan.title }}</h1>
+    <p>{{ plan.description }}</p>
+    {% if plan.place %}
+        <p><strong>Lugar:</strong> {{ plan.place }}</p>
+    {% endif %}
+    <p><strong>Plazas:</strong> {{ plan.capacity }} · <strong>Ambiente:</strong> {{ plan.get_mood_display }}</p>
+    {% if plan.accessibility_info %}
+        <p><strong>Accesibilidad:</strong> {{ plan.accessibility_info }}</p>
+    {% endif %}
+    {% if is_moderator %}
+        <p class="notice">Eres moderador de este plan.</p>
+        {% if plan_chat %}
+            <a class="button" href="{% url 'conversation_detail' plan_chat.pk %}">Abrir chat del plan</a>
+        {% endif %}
+    {% elif attendance %}
+        <p class="notice">Tu estado en este plan: {{ attendance.get_status_display }}</p>
+        {% if plan_chat %}
+            <a class="button" href="{% url 'conversation_detail' plan_chat.pk %}">Abrir chat del plan</a>
+        {% endif %}
+        {% if plan.created_by != user %}
+            <form method="post" action="{% url 'plan_leave' plan.pk %}" class="inline-action-form">
+                {% csrf_token %}
+                <button class="button secondary danger" type="submit">Salir del plan</button>
+            </form>
+        {% endif %}
+    {% else %}
+        <a class="button" href="{% url 'plan_join' plan.pk %}">Solicitar plaza</a>
+    {% endif %}
+</article>
+
+{% if is_moderator %}
+<section class="moderation-panel">
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Moderación</p>
+            <h2>Solicitudes de plaza</h2>
+        </div>
+    </div>
+    <div class="request-list">
+        {% for request in pending_attendances %}
+            <article class="request-card">
+                <span class="chat-avatar">
+                    {% if request.user.profile.photo %}
+                        <img src="{{ request.user.profile.photo.url }}" alt="">
+                    {% else %}
+                        <span>{{ request.user.username|first|upper }}</span>
+                    {% endif %}
+                </span>
+                <div>
+                    <h3>{{ request.user.username }}</h3>
+                    <p>{{ request.user.profile.city|default:'Online' }}</p>
+                </div>
+                <div class="request-actions">
+                    <a class="button small" href="{% url 'plan_attendance_response' request.pk 'approved' %}">Aceptar</a>
+                    <a class="button small secondary" href="{% url 'plan_attendance_response' request.pk 'declined' %}">Rechazar</a>
+                </div>
+            </article>
+        {% empty %}
+            <p class="muted">No hay solicitudes pendientes.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="moderation-panel">
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Plan</p>
+            <h2>Personas apuntadas</h2>
+        </div>
+    </div>
+    <div class="request-list">
+        {% for attendee in attendees %}
+            <article class="request-card">
+                <span class="chat-avatar">
+                    {% if attendee.user.profile.photo %}
+                        <img src="{{ attendee.user.profile.photo.url }}" alt="">
+                    {% else %}
+                        <span>{{ attendee.user.username|first|upper }}</span>
+                    {% endif %}
+                </span>
+                <div>
+                    <h3>{{ attendee.user.username }}</h3>
+                    <p>{{ attendee.user.profile.city|default:'Online' }}</p>
+                </div>
+                {% if attendee.user != user and attendee.user != plan.created_by %}
+                    <div class="request-actions">
+                        <form method="post" action="{% url 'plan_remove_attendee' plan.pk attendee.user.pk %}">
+                            {% csrf_token %}
+                            <button class="button small secondary danger" type="submit">Eliminar</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </article>
+        {% empty %}
+            <p class="muted">Aún no hay personas apuntadas.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

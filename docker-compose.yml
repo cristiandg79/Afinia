@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: afinia_postgres
+    environment:
+      POSTGRES_DB: afinia
+      POSTGRES_USER: afinia
+      POSTGRES_PASSWORD: afinia_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    container_name: afinia_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:

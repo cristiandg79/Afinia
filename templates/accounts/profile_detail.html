@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}{{ profile.user.username }} - Afinia{% endblock %}
+{% block content %}
+<article class="profile profile-readable">
+    <div class="profile-head">
+        <div class="profile-title-block">
+            <span class="profile-photo-large">
+                {% if profile.photo %}
+                    <img src="{{ profile.photo.url }}" alt="Foto de {{ profile.user.username }}">
+                {% else %}
+                    <span>{{ profile.user.username|first|upper }}</span>
+                {% endif %}
+            </span>
+            <div>
+            <p class="eyebrow">
+                {{ profile.city|default:'Online' }}
+            </p>
+            <h1>{{ profile.user.username }}</h1>
+            <p class="profile-main-meta">
+                {% if profile.age %}{{ profile.age }} años{% else %}Edad no indicada{% endif %}
+                {% if profile.sex %} - {{ profile.get_sex_display }}{% endif %}
+            </p>
+            <p>{{ profile.bio|default:'Esta persona aún está completando su perfil.' }}</p>
+            </div>
+        </div>
+        {% if profile.user == user %}
+            <div class="profile-actions">
+                <a class="button" href="{% url 'profile_edit' %}">Modificar perfil</a>
+                <a class="danger-link" href="{% url 'profile_delete' %}">Eliminar perfil</a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if profile.photo or profile.extra_photos.all %}
+        <section class="profile-gallery" aria-label="Fotos de {{ profile.user.username }}">
+            <h2>Fotos</h2>
+            <div class="gallery-grid">
+                {% if profile.photo %}
+                    <img class="gallery-main" src="{{ profile.photo.url }}" alt="Foto principal de {{ profile.user.username }}">
+                {% endif %}
+                {% for photo in profile.extra_photos.all %}
+                    <img src="{{ photo.image.url }}" alt="Foto de {{ profile.user.username }}">
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <dl class="details">
+        <dt>Busca</dt>
+        <dd>
+            {% for goal in profile.goal_labels %}
+                <span class="tag">{{ goal }}</span>
+            {% empty %}
+                No indicado
+            {% endfor %}
+        </dd>
+        <dt>Intereses</dt>
+        <dd>
+            {% for interest in profile.interest_labels %}
+                <span class="tag">{{ interest }}</span>
+            {% empty %}
+                No indicado
+            {% endfor %}
+        </dd>
+        <dt>Preferencias</dt>
+        <dd>
+            {% for preference in profile.social_preference_labels %}
+                <span class="tag">{{ preference }}</span>
+            {% empty %}
+                No indicado
+            {% endfor %}
+        </dd>
+        {% if profile.health_context %}
+            {% if profile.accessibility_visibility == 'public' or profile.user == user %}
+                <dt>Situación</dt>
+                <dd>
+                    {% for item in profile.health_context_labels %}
+                        <span class="tag">{{ item }}</span>
+                    {% endfor %}
+                </dd>
+            {% endif %}
+        {% endif %}
+        <dt>Modalidad</dt>
+        <dd>
+            {% if profile.open_to_nearby %}<span class="tag">Cerca de mí</span>{% endif %}
+            {% if profile.open_to_online %}<span class="tag">Online</span>{% endif %}
+        </dd>
+        <dt>Datos personales</dt>
+        <dd>
+            {% if profile.age %}<span class="tag">{{ profile.age }} años</span>{% endif %}
+            {% if profile.horoscope_sign %}<span class="tag">{{ profile.horoscope_sign }}</span>{% endif %}
+            {% if profile.sex %}<span class="tag">{{ profile.get_sex_display }}</span>{% endif %}
+            {% if profile.orientation %}<span class="tag">{{ profile.get_orientation_display }}</span>{% endif %}
+            {% if profile.height_cm %}<span class="tag">{{ profile.height_cm }} cm</span>{% endif %}
+            {% if profile.weight_kg %}<span class="tag">{{ profile.weight_kg }} kg</span>{% endif %}
+            {% if profile.smoker %}<span class="tag">Fumador/a: {{ profile.get_smoker_display }}</span>{% endif %}
+            {% if not profile.age and not profile.sex and not profile.orientation and not profile.height_cm and not profile.weight_kg and not profile.smoker %}
+                No indicado
+            {% endif %}
+        </dd>
+    </dl>
+
+    {% if profile.accessibility_notes %}
+        {% if profile.accessibility_visibility == 'public' or profile.user == user %}
+            <section class="notice">
+                <h2>Para relacionarse mejor</h2>
+                <p>{{ profile.accessibility_notes }}</p>
+                {% if profile.user == user %}
+                    <p class="muted">Visibilidad: {{ profile.get_accessibility_visibility_display }}</p>
+                {% endif %}
+            </section>
+        {% endif %}
+    {% endif %}
+
+    {% if profile.user != user %}
+        {% if connection %}
+            <p class="muted">Estado de conexión: {{ connection.get_status_display }}</p>
+        {% else %}
+            <a class="button" href="{% url 'request_connection' profile.user.pk %}">Solicitar conectar</a>
+        {% endif %}
+    {% endif %}
+</article>
+{% endblock %}

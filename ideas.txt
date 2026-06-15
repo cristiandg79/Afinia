@@ -1,0 +1,25 @@
+Webs similares para inspiración:
+La competencia más directa en España es Dinder Club, orientada a personas con discapacidad intelectual y centrada en citas y planes. Fuera de España existen plataformas como Special Bridge, Dateability, Hiki, Disabled Passions o BridgesMate. Aun así, no veo saturación clara en España, especialmente si el producto se abre a discapacidad física, orgánica, sensorial, neurodivergencia, trastornos de salud mental y enfermedades crónicas, siempre con privacidad y autodefinición.
+ conexión sin tener que explicarse
+
+Slogan
+“Una comunidad inclusiva para conocer gente que entiende tu forma de vivir, relacionarte y cuidar tu energía.”
+
+Y que cada persona pueda elegir qué busca:
+solo amistad,
+citas tranquilas,
+relación seria,
+hablar online,
+planes presenciales,
+grupos de apoyo social,
+actividades accesibles,
+conocer gente con experiencias similares.
+
+Posibles nombres
+Afinia
+Afines
+
+Datos de la pagina:
+http://127.0.0.1:8000/
+usuario: demo
+contraseña: demo12345

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Planes - Afinia{% endblock %}
+{% block content %}
+<section>
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Salidas y actividades</p>
+            <h1>Planes</h1>
+        </div>
+        <a class="button small" href="{% url 'plan_create' %}">Crear plan</a>
+    </div>
+    <div class="grid community-grid">
+        {% for plan in plans %}
+            <article class="card community-card">
+                <div class="community-card__body">
+                    <h2>{{ plan.title }}</h2>
+                    <p>{{ plan.starts_at|date:'d/m/Y H:i' }} · {{ plan.city|default:'Online' }}</p>
+                    <p>{{ plan.description|truncatechars:150 }}</p>
+                    {% if plan.accessibility_info %}
+                        <p class="muted">Accesibilidad: {{ plan.accessibility_info|truncatechars:90 }}</p>
+                    {% endif %}
+                </div>
+                <div class="community-card__actions">
+                    <a class="button small secondary" href="{% url 'plan_detail' plan.pk %}">Ver plan</a>
+                </div>
+            </article>
+        {% empty %}
+            <p class="muted">Aún no hay planes publicados.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

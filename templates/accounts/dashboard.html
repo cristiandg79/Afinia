@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% block title %}Panel - Afinia{% endblock %}
+{% block content %}
+<section class="dashboard-head">
+    <div>
+        <p class="eyebrow">Hola, {{ user.username }}</p>
+        <h1>Tu espacio de conexiones</h1>
+        {% if not profile.onboarding_completed %}
+            <p>Completa tu perfil para que las sugerencias sean más útiles.</p>
+            <a class="button" href="{% url 'profile_edit' %}">Completar perfil</a>
+        {% else %}
+            <p>Estas buscando: {{ profile.goals|join:', ' }}</p>
+        {% endif %}
+    </div>
+</section>
+
+{% if pending_connections %}
+<section>
+    <h2>Solicitudes pendientes</h2>
+    <div class="grid">
+        {% for connection in pending_connections %}
+            <article class="card">
+                <div class="card-profile-head">
+                    <span class="chat-avatar">
+                        {% if connection.requester.profile.photo %}
+                            <img src="{{ connection.requester.profile.photo.url }}" alt="Foto de {{ connection.requester.username }}">
+                        {% else %}
+                            <span>{{ connection.requester.username|first|upper }}</span>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h3>{{ connection.requester.username }}</h3>
+                        <p>{{ connection.requester.profile.city|default:'Online' }}</p>
+                    </div>
+                </div>
+                <p>{{ connection.message|default:'Quiere conectar contigo.' }}</p>
+                <div class="actions">
+                    <a class="button small" href="{% url 'respond_connection' connection.pk 'accepted' %}">Aceptar</a>
+                    <a class="button small secondary" href="{% url 'respond_connection' connection.pk 'declined' %}">Rechazar</a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if pending_group_memberships or pending_plan_attendances or my_group_requests or my_plan_requests or panel_notifications %}
+<section class="request-panel" aria-label="Avisos de grupos y planes">
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Avisos</p>
+            <h2>Grupos y planes</h2>
+        </div>
+    </div>
+
+    {% if panel_notifications %}
+        <h3>Novedades</h3>
+        <div class="request-list">
+            {% for notification in panel_notifications %}
+                <article class="request-card">
+                    <span class="chat-avatar"><span>!</span></span>
+                    <div>
+                        <h3>{{ notification.title }}</h3>
+                        <p>{{ notification.body }}</p>
+                    </div>
+                    {% if notification.url %}
+                        <div class="request-actions">
+                            <a class="button small secondary" href="{{ notification.url }}">Ver</a>
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if pending_group_memberships %}
+        <h3>Solicitudes de grupos que moderas</h3>
+        <div class="request-list">
+            {% for request in pending_group_memberships %}
+                <article class="request-card">
+                    <span class="chat-avatar">
+                        {% if request.user.profile.photo %}
+                            <img src="{{ request.user.profile.photo.url }}" alt="">
+                        {% else %}
+                            <span>{{ request.user.username|first|upper }}</span>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h3>{{ request.user.username }}</h3>
+                        <p>Quiere unirse a {{ request.group.name }}</p>
+                    </div>
+                    <div class="request-actions">
+                        <a class="button small secondary" href="{% url 'group_detail' request.group.pk %}">Ver grupo</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if pending_plan_attendances %}
+        <h3>Solicitudes de planes que moderas</h3>
+        <div class="request-list">
+            {% for request in pending_plan_attendances %}
+                <article class="request-card">
+                    <span class="chat-avatar">
+                        {% if request.user.profile.photo %}
+                            <img src="{{ request.user.profile.photo.url }}" alt="">
+                        {% else %}
+                            <span>{{ request.user.username|first|upper }}</span>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h3>{{ request.user.username }}</h3>
+                        <p>Quiere plaza en {{ request.plan.title }}</p>
+                    </div>
+                    <div class="request-actions">
+                        <a class="button small secondary" href="{% url 'plan_detail' request.plan.pk %}">Ver plan</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if my_group_requests or my_plan_requests %}
+        <h3>Solicitudes que has enviado</h3>
+        <div class="request-list">
+            {% for request in my_group_requests %}
+                <article class="request-card">
+                    <span class="chat-avatar"><span>G</span></span>
+                    <div>
+                        <h3>{{ request.group.name }}</h3>
+                        <p>Tu solicitud para unirte al grupo está pendiente.</p>
+                    </div>
+                    <div class="request-actions">
+                        <a class="button small secondary" href="{% url 'group_detail' request.group.pk %}">Ver grupo</a>
+                    </div>
+                </article>
+            {% endfor %}
+            {% for request in my_plan_requests %}
+                <article class="request-card">
+                    <span class="chat-avatar"><span>P</span></span>
+                    <div>
+                        <h3>{{ request.plan.title }}</h3>
+                        <p>Tu solicitud de plaza está pendiente.</p>
+                    </div>
+                    <div class="request-actions">
+                        <a class="button small secondary" href="{% url 'plan_detail' request.plan.pk %}">Ver plan</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if my_group_memberships or my_plan_attendances %}
+<section>
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Tu actividad</p>
+            <h2>Mis grupos y planes</h2>
+        </div>
+    </div>
+
+    {% if my_group_memberships %}
+        <h3>Grupos</h3>
+        <div class="grid community-grid dashboard-community-grid">
+            {% for membership in my_group_memberships %}
+                <article class="card community-card">
+                    <div class="community-card__body">
+                        <p class="eyebrow">{{ membership.get_status_display }}</p>
+                        <h2>{{ membership.group.name }}</h2>
+                        <p>{{ membership.group.city|default:'Online' }}{% if membership.group.topic %} · {{ membership.group.topic }}{% endif %}</p>
+                        <p>{{ membership.group.description|truncatechars:120 }}</p>
+                    </div>
+                    <div class="community-card__actions">
+                        <a class="button small secondary" href="{% url 'group_detail' membership.group.pk %}">Ver grupo</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if my_plan_attendances %}
+        <h3>Planes</h3>
+        <div class="grid community-grid dashboard-community-grid">
+            {% for attendance in my_plan_attendances %}
+                <article class="card community-card">
+                    <div class="community-card__body">
+                        <p class="eyebrow">{{ attendance.get_status_display }}</p>
+                        <h2>{{ attendance.plan.title }}</h2>
+                        <p>{{ attendance.plan.starts_at|date:'d/m/Y H:i' }} · {{ attendance.plan.city|default:'Online' }}</p>
+                        <p>{{ attendance.plan.description|truncatechars:120 }}</p>
+                    </div>
+                    <div class="community-card__actions">
+                        <a class="button small secondary" href="{% url 'plan_detail' attendance.plan.pk %}">Ver plan</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+{% endif %}
+
+<section>
+    <div class="section-title">
+        <h2>Personas sugeridas</h2>
+        <a href="{% url 'discover' %}">Ver más</a>
+    </div>
+    <div class="grid">
+        {% for suggested in suggested_profiles %}
+            <article class="card people-card">
+                <div class="card-profile-head">
+                    <span class="chat-avatar">
+                        {% if suggested.photo %}
+                            <img src="{{ suggested.photo.url }}" alt="Foto de {{ suggested.user.username }}">
+                        {% else %}
+                            <span>{{ suggested.user.username|first|upper }}</span>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h3>{{ suggested.user.username }}</h3>
+                        <p>{{ suggested.city|default:'Online' }}</p>
+                    </div>
+                </div>
+                <p>{{ suggested.bio|truncatechars:120|default:'Perfil en construcción.' }}</p>
+                <a class="button small secondary" href="{{ suggested.get_absolute_url }}">Ver perfil</a>
+            </article>
+        {% empty %}
+            <p class="muted">Aún no hay más perfiles.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

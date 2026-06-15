@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Afinidades - Afinia{% endblock %}
+{% block content %}
+<section class="dating-page">
+    <div class="dating-hero">
+        <div>
+            <p class="eyebrow">Afinidades</p>
+            <h1>Una persona cada vez, con calma.</h1>
+            <p>Filtra por zona, edad y si quieres ver hombres o mujeres. Pulsa Pasar o Me interesa para ver el siguiente perfil.</p>
+        </div>
+    </div>
+
+    <form class="dating-filter-panel" method="get">
+        <input type="hidden" name="searched" value="1">
+        <label><span>Ciudad</span>
+            <input name="city" value="{{ filters.city }}" placeholder="Ej. Madrid">
+        </label>
+        <label><span>Edad min.</span>
+            <input type="number" name="min_age" min="18" max="99" value="{{ filters.min_age }}" placeholder="18">
+        </label>
+        <label><span>Edad max.</span>
+            <input type="number" name="max_age" min="18" max="99" value="{{ filters.max_age }}" placeholder="60">
+        </label>
+        <label><span>Busco</span>
+            <select name="sex">
+                {% for value, label in sex_choices %}
+                    <option value="{{ value }}" {% if filters.sex == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="dating-filter-actions">
+            <button class="button" type="submit">Filtrar</button>
+            <a class="button secondary" href="{% url 'dating_search' %}?clear=1">Limpiar</a>
+        </div>
+    </form>
+
+    {% if not should_show_profiles %}
+        <div class="empty-state soft-panel dating-start-state">
+            <h2>Elige tus preferencias para empezar</h2>
+            <p class="muted">Los filtros son opcionales. Puedes pulsar Filtrar sin rellenar nada para ver perfiles generales, o ajustar ciudad, edad y tipo de perfil.</p>
+        </div>
+    {% elif profile %}
+        {% if showing_seen_profiles %}
+            <div class="notice dating-repeat-notice">
+                <p>Ya habías visto los perfiles nuevos con estos filtros. Te mostramos coincidencias anteriores para que puedas revisarlas.</p>
+            </div>
+        {% endif %}
+        <article class="dating-card dating-card-single">
+            <a class="dating-photo dating-photo-single" href="{{ profile.get_absolute_url }}">
+                {% if profile.photo %}
+                    <img src="{{ profile.photo.url }}" alt="Foto de {{ profile.user.username }}">
+                {% else %}
+                    <span>{{ profile.user.username|first|upper }}</span>
+                {% endif %}
+            </a>
+            <div class="dating-body">
+                <div class="dating-title">
+                    <div>
+                        <h2>{{ profile.user.username }}</h2>
+                        <p class="dating-main-meta">
+                            {% if profile.age %}{{ profile.age }} años{% else %}Edad no indicada{% endif %}
+                            - {{ profile.city|default:'Online' }}
+                        </p>
+                    </div>
+                    <span class="profile-mini-link">{{ remaining_count }} perfiles</span>
+                </div>
+                <p>{{ profile.bio|truncatechars:220|default:'Perfil en construcción.' }}</p>
+                <div class="dating-tags">
+                    {% if profile.sex %}<span class="tag">{{ profile.get_sex_display }}</span>{% endif %}
+                    {% if profile.orientation %}<span class="tag">{{ profile.get_orientation_display }}</span>{% endif %}
+                    {% if profile.horoscope_sign %}<span class="tag">{{ profile.horoscope_sign }}</span>{% endif %}
+                    {% if profile.height_cm %}<span class="tag">{{ profile.height_cm }} cm</span>{% endif %}
+                    {% for interest in profile.interest_labels|slice:":4" %}
+                        <span class="tag">{{ interest }}</span>
+                    {% empty %}
+                        <span class="tag">Conocer gente</span>
+                    {% endfor %}
+                </div>
+                {% if profile.extra_photos.all %}
+                    <div class="dating-thumbs">
+                        {% for photo in profile.extra_photos.all|slice:":4" %}
+                            <img src="{{ photo.image.url }}" alt="Foto de {{ profile.user.username }}">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="dating-actions">
+                    <a class="button secondary" href="{% url 'dating_action' profile.user.pk 'pass' %}{% if querystring %}?{{ querystring }}{% endif %}">Pasar</a>
+                    <a class="button" href="{% url 'dating_action' profile.user.pk 'like' %}{% if querystring %}?{{ querystring }}{% endif %}">Me interesa</a>
+                    <a class="button secondary full" href="{{ profile.get_absolute_url }}">Ver perfil</a>
+                </div>
+            </div>
+        </article>
+    {% else %}
+        <div class="empty-state soft-panel">
+            <h2>No hay perfiles con esos filtros</h2>
+            <p class="muted">Prueba a ampliar la edad, quitar ciudad o cambiar el tipo de perfil buscado.</p>
+            <a class="button secondary" href="{% url 'dating_search' %}">Limpiar filtros</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

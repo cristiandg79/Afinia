@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Contactos - Afinia{% endblock %}
+{% block content %}
+<section>
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Conexiones aceptadas</p>
+            <h1>Contactos</h1>
+        </div>
+        <a class="button small secondary" href="{% url 'discover' %}">Buscar personas</a>
+    </div>
+
+    <div class="grid">
+        {% for item in contact_items %}
+            <article class="card people-card">
+                <div class="card-profile-head">
+                    <span class="chat-avatar">
+                        {% if item.profile.photo %}
+                            <img src="{{ item.profile.photo.url }}" alt="Foto de {{ item.user.username }}">
+                        {% else %}
+                            <span>{{ item.user.username|first|upper }}</span>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h2>{{ item.user.username }}</h2>
+                        <p>
+                            {% if item.profile.age %}{{ item.profile.age }} años - {% endif %}{{ item.profile.city|default:'Online' }}
+                        </p>
+                    </div>
+                </div>
+                <p>{{ item.profile.bio|truncatechars:150|default:'Perfil en construcción.' }}</p>
+                <div class="people-card-tags">
+                    {% for goal_label in item.profile.goal_labels|slice:":2" %}
+                        <span class="tag">{{ goal_label }}</span>
+                    {% endfor %}
+                    {% if item.profile.horoscope_sign %}<span class="tag">{{ item.profile.horoscope_sign }}</span>{% endif %}
+                </div>
+                <div class="people-card-actions">
+                    <a class="button small secondary" href="{{ item.profile.get_absolute_url }}">Ver perfil</a>
+                    <a class="button small" href="{% url 'inbox' %}">Mensajes</a>
+                    <form method="post" action="{% url 'block_contact' item.user.pk %}">
+                        {% csrf_token %}
+                        <button class="button small secondary danger" type="submit">Bloquear</button>
+                    </form>
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-state">
+                <h2>Aún no tienes contactos</h2>
+                <p>Cuando una solicitud de contacto sea aceptada, esa persona aparecerá aquí.</p>
+                <a class="button secondary" href="{% url 'discover' %}">Descubrir personas</a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% if blocked_items %}
+<section>
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Privacidad</p>
+            <h2>Usuarios bloqueados</h2>
+        </div>
+    </div>
+    <div class="grid">
+        {% for item in blocked_items %}
+            <article class="card people-card">
+                <div class="card-profile-head">
+                    <span class="chat-avatar">
+                        {% if item.profile.photo %}
+                            <img src="{{ item.profile.photo.url }}" alt="Foto de {{ item.user.username }}">
+                        {% else %}
+                            <span>{{ item.user.username|first|upper }}</span>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h2>{{ item.user.username }}</h2>
+                        <p>{{ item.profile.city|default:'Online' }}</p>
+                    </div>
+                </div>
+                <p>Este usuario no puede enviarte mensajes privados ni conectar contigo mientras siga bloqueado.</p>
+                <div class="people-card-actions">
+                    <a class="button small secondary" href="{{ item.profile.get_absolute_url }}">Ver perfil</a>
+                    <form method="post" action="{% url 'unblock_contact' item.user.pk %}">
+                        {% csrf_token %}
+                        <button class="button small" type="submit">Desbloquear</button>
+                    </form>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

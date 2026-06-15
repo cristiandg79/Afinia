@@ -1,0 +1,172 @@
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.utils import timezone
+
+from .models import Profile
+
+
+GOAL_CHOICES = [
+    ('friendship', 'Amistad'),
+    ('dating', 'Citas'),
+    ('groups', 'Grupos y planes'),
+    ('talk', 'Hablar online'),
+]
+
+INTEREST_CHOICES = [
+    ('cafe', 'Café y charla'),
+    ('cinema', 'Cine y series'),
+    ('gaming', 'Videojuegos'),
+    ('reading', 'Lectura'),
+    ('music', 'Música'),
+    ('walks', 'Paseos tranquilos'),
+    ('art', 'Arte'),
+    ('sports', 'Actividad física adaptada'),
+    ('pets', 'Animales'),
+    ('support', 'Apoyo entre iguales'),
+]
+
+SOCIAL_CHOICES = [
+    ('chat_first', 'Prefiero hablar por chat antes de quedar'),
+    ('small_groups', 'Me siento mejor en grupos pequeños'),
+    ('quiet_places', 'Prefiero lugares tranquilos'),
+    ('clear_plans', 'Me ayuda saber el plan con antelacion'),
+    ('slow_pace', 'Me gusta ir poco a poco'),
+]
+
+HEALTH_CONTEXT_CHOICES = [
+    ('physical_disability', 'Discapacidad física o movilidad reducida'),
+    ('visual_disability', 'Discapacidad visual'),
+    ('hearing_disability', 'Discapacidad auditiva'),
+    ('intellectual_disability', 'Discapacidad intelectual'),
+    ('autism', 'Autismo / espectro autista'),
+    ('adhd', 'TDAH'),
+    ('anxiety', 'Ansiedad'),
+    ('depression', 'Depresion'),
+    ('bipolar', 'Trastorno bipolar'),
+    ('ocd', 'TOC'),
+    ('ptsd', 'Trauma / TEPT'),
+    ('psychosis', 'Psicosis o esquizofrenia'),
+    ('eating_disorder', 'Trastorno de la conducta alimentaria'),
+    ('chronic_illness', 'Enfermedad crónica'),
+    ('rare_disease', 'Enfermedad rara'),
+    ('brain_injury', 'Daño cerebral adquirido'),
+    ('pain_fatigue', 'Dolor cronico o fatiga'),
+    ('other', 'Otra situación'),
+    ('prefer_not_detail', 'Prefiero no detallarlo'),
+]
+
+
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'}))
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = 'Usuario'
+        self.fields['username'].help_text = 'Este será tu nick público. No puede estar repetido.'
+        self.fields['username'].widget.attrs.update({'placeholder': 'ej. alex_madrid'})
+        self.fields['password1'].label = 'Contraseña'
+        self.fields['password2'].label = 'Repite la contraseña'
+
+
+class ProfileForm(forms.ModelForm):
+    delete_photo = forms.BooleanField(label='Eliminar foto principal actual', required=False)
+    extra_photo_1 = forms.ImageField(label='Foto adicional 1', required=False)
+    extra_photo_2 = forms.ImageField(label='Foto adicional 2', required=False)
+    extra_photo_3 = forms.ImageField(label='Foto adicional 3', required=False)
+    extra_photo_4 = forms.ImageField(label='Foto adicional 4', required=False)
+    goals = forms.MultipleChoiceField(
+        label='Qué buscas',
+        choices=GOAL_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    interests = forms.MultipleChoiceField(
+        label='Intereses',
+        choices=INTEREST_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    social_preferences = forms.MultipleChoiceField(
+        label='Preferencias para relacionarte',
+        choices=SOCIAL_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    health_context = forms.MultipleChoiceField(
+        label='Situación personal',
+        choices=HEALTH_CONTEXT_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+    class Meta:
+        model = Profile
+        fields = [
+            'photo',
+            'city',
+            'bio',
+            'goals',
+            'interests',
+            'social_preferences',
+            'health_context',
+            'sex',
+            'orientation',
+            'birth_date',
+            'height_cm',
+            'weight_kg',
+            'smoker',
+            'open_to_nearby',
+            'open_to_online',
+        ]
+        widgets = {
+            'photo': forms.ClearableFileInput(),
+            'city': forms.TextInput(attrs={'placeholder': 'Ej. Madrid'}),
+            'bio': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Cuenta algo sencillo: que te gusta, que buscas o que plan te apetece.',
+            }),
+            'birth_date': forms.DateInput(
+                attrs={'type': 'date', 'data-birth-date': 'true'},
+                format='%Y-%m-%d',
+            ),
+            'height_cm': forms.NumberInput(attrs={'min': 100, 'max': 230, 'placeholder': 'Ej. 170'}),
+            'weight_kg': forms.NumberInput(attrs={'min': 30, 'max': 250, 'placeholder': 'Ej. 70'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['photo'].label = 'Foto principal'
+        self.fields['city'].label = 'Ciudad'
+        self.fields['bio'].label = 'Presentación breve'
+        self.fields['health_context'].label = 'Discapacidad, neurodivergencia o salud mental'
+        self.fields['sex'].label = 'Sexo'
+        self.fields['orientation'].label = 'Orientación sexual'
+        self.fields['birth_date'].label = 'Fecha de nacimiento'
+        self.fields['height_cm'].label = 'Altura (cm)'
+        self.fields['weight_kg'].label = 'Peso (kg)'
+        self.fields['smoker'].label = 'Fumador/a'
+        self.fields['open_to_nearby'].label = 'Quiero ver personas y planes cerca'
+        self.fields['open_to_online'].label = 'También quiero conocer gente online'
+
+        optional_selects = ['sex', 'orientation', 'smoker']
+        for field_name in optional_selects:
+            self.fields[field_name].required = False
+            choices = [(value, label) for value, label in self.fields[field_name].choices if value]
+            self.fields[field_name].choices = [('', 'Prefiero no responder ahora')] + choices
+
+    def clean_birth_date(self):
+        birth_date = self.cleaned_data.get('birth_date')
+        if not birth_date:
+            return birth_date
+        today = timezone.localdate()
+        if birth_date > today:
+            raise forms.ValidationError('La fecha de nacimiento no puede ser futura.')
+        age = today.year - birth_date.year - int((today.month, today.day) < (birth_date.month, birth_date.day))
+        if age < 18:
+            raise forms.ValidationError('Debes tener al menos 18 años para crear un perfil.')
+        return birth_date

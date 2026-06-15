@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Mensajes - Afinia{% endblock %}
+{% block content %}
+<section class="messages-page" data-inbox>
+    <div class="messages-heading">
+        <div>
+            <p class="eyebrow">Conversaciones</p>
+            <h1>Mensajes</h1>
+        </div>
+    </div>
+
+    {% if conversation_items %}
+        <form method="post" action="{% url 'delete_conversations' %}" class="conversation-bulk-form">
+            {% csrf_token %}
+            <div class="conversation-bulk-actions">
+                <span>Selecciona conversaciones para eliminarlas.</span>
+                <button class="button small danger" type="submit">Eliminar seleccionadas</button>
+            </div>
+            <div class="conversation-list" aria-label="Lista de conversaciones">
+                {% for item in conversation_items %}
+                    <div class="conversation-select-row">
+                        <label class="conversation-check">
+                            <input type="checkbox" name="conversation_ids" value="{{ item.conversation.pk }}">
+                            <span class="sr-only">Seleccionar {{ item.title }}</span>
+                        </label>
+                        {% include 'messaging/_conversation_row.html' %}
+                    </div>
+                {% endfor %}
+            </div>
+        </form>
+    {% else %}
+        <div class="conversation-list" aria-label="Lista de conversaciones">
+            <div class="empty-state">
+                <h2>Aún no tienes conversaciones</h2>
+                <p>Cuando aceptes una conexión o entres en un grupo con chat, aparecerá aquí.</p>
+                <a class="button secondary" href="{% url 'discover' %}">Descubrir personas</a>
+            </div>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

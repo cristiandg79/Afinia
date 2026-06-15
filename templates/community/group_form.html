@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Crear grupo - Afinia{% endblock %}
+{% block content %}
+<section class="form-page wide">
+    <h1>Crear grupo</h1>
+    <p class="muted">Un grupo puede ser por ciudad, intereses o una situación compartida.</p>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="button" type="submit">Crear grupo</button>
+    </form>
+</section>
+{% endblock %}

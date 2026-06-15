@@ -1,0 +1,76 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Afinia{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20260615-4">
+    <script src="{% static 'js/app.js' %}?v=20260615-4" defer></script>
+</head>
+<body {% if user.is_authenticated %}data-notifications{% endif %}>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <header class="site-header">
+        <nav class="nav" aria-label="Principal">
+            <a class="brand" href="{% url 'home' %}">Afinia</a>
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                    <a class="nav-link-with-badge" href="{% url 'dashboard' %}">
+                        Panel
+                        <span class="notification-badge {% if not notification_counts.panel %}is-hidden{% endif %}" data-badge="panel">{{ notification_counts.panel }}</span>
+                    </a>
+                    <a class="nav-link-with-badge" href="{% url 'discover' %}">
+                        Personas
+                        <span class="notification-badge {% if not notification_counts.connections %}is-hidden{% endif %}" data-badge="connections">{{ notification_counts.connections }}</span>
+                    </a>
+                    <a href="{% url 'contacts' %}">Contactos</a>
+                    <a href="{% url 'dating_search' %}">Afinidades</a>
+                    <a href="{% url 'group_list' %}">Grupos</a>
+                    <a href="{% url 'plan_list' %}">Planes</a>
+                    <a class="nav-link-with-badge" href="{% url 'inbox' %}">
+                        Mensajes
+                        <span class="notification-badge {% if not notification_counts.messages %}is-hidden{% endif %}" data-badge="messages">{{ notification_counts.messages }}</span>
+                    </a>
+                    <a href="{% url 'chat_lobby' %}">Chat</a>
+                    <details class="user-menu">
+                        <summary>
+                            {% if user.profile.photo %}
+                            <span class="user-avatar user-avatar--photo">
+                                    <img src="{{ user.profile.photo.url }}" alt="">
+                            </span>
+                            {% else %}
+                            <span class="user-avatar">
+                                    {{ user.username|first|upper }}
+                            </span>
+                            {% endif %}
+                            <span>{{ user.username }}</span>
+                        </summary>
+                        <div class="user-menu__panel">
+                            <a href="{% url 'my_profile' %}">Ver mi perfil</a>
+                            <a href="{% url 'profile_edit' %}">Modificar perfil</a>
+                            <a class="danger-link" href="{% url 'profile_delete' %}">Eliminar perfil</a>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button class="link-button" type="submit">Desconectar</button>
+                            </form>
+                        </div>
+                    </details>
+                {% else %}
+                    <a href="{% url 'login' %}">Entrar</a>
+                    <a class="button small" href="{% url 'signup' %}">Crear cuenta</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+    <main id="contenido" class="page">
+        {% if messages %}
+            <div class="messages" role="status">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

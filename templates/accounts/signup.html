@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Crear cuenta - Afinia{% endblock %}
+{% block content %}
+<section class="signup-shell">
+    <div class="signup-intro">
+        <p class="eyebrow">Empieza en dos minutos</p>
+        <h1>Crea tu cuenta y después damos forma a tu perfil.</h1>
+        <p>Primero necesitamos tus datos de acceso. En el siguiente paso podrás contar qué buscas, qué planes te apetecen y cómo prefieres relacionarte.</p>
+        <div class="signup-points" aria-label="Ventajas">
+            <span>Perfil editable</span>
+            <span>Datos sensibles opcionales</span>
+            <span>Chat solo con conexión aceptada</span>
+        </div>
+    </div>
+    <form method="post" class="auth-card" novalidate>
+        {% csrf_token %}
+        <div class="auth-card__head">
+            <h2>Datos de acceso</h2>
+            <p class="muted">El usuario será tu nick público. No podrá estar repetido.</p>
+        </div>
+        {{ form|crispy }}
+        <button class="button full" type="submit">Crear cuenta y continuar</button>
+        <p class="fine-print">Al continuar aceptas crear una cuenta de prueba en Afinia. Más adelante añadiremos términos, privacidad y verificación formal.</p>
+    </form>
+</section>
+{% endblock %}

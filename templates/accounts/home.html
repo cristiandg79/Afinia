@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Afinia - Comunidad inclusiva{% endblock %}
+{% block content %}
+<section class="landing-hero">
+    <img src="{% static 'img/landing-community.jpg' %}" alt="Grupo diverso de personas compartiendo un momento social">
+    <div class="landing-hero__overlay"></div>
+    <div class="landing-hero__content">
+        <p class="eyebrow">Comunidad inclusiva en España</p>
+        <h1>Amistad, citas y grupos para conectar a tu ritmo.</h1>
+        <p>Afinia ayuda a personas con discapacidad, neurodivergencia, salud mental o enfermedades crónicas a conocer gente afín en un entorno claro, seguro y accesible.</p>
+        <div class="actions">
+            <a class="button" href="{% url 'signup' %}">Crear cuenta gratis</a>
+            <a class="button light" href="{% url 'login' %}">Ya tengo cuenta</a>
+        </div>
+    </div>
+</section>
+
+<section class="landing-band stats-band" aria-label="Resumen de Afinia">
+    <div>
+        <strong>Personas</strong>
+        <span>Perfiles con intereses, ritmos y preferencias sociales.</span>
+    </div>
+    <div>
+        <strong>Grupos</strong>
+        <span>Comunidades por ciudad, tema o forma de relacionarse.</span>
+    </div>
+    <div>
+        <strong>Planes</strong>
+        <span>Salidas pequeñas con información de accesibilidad.</span>
+    </div>
+</section>
+
+<section class="landing-section split-section">
+    <div>
+        <p class="eyebrow">Cómo funciona</p>
+        <h2>Una forma más tranquila de conocer gente nueva</h2>
+        <p>El objetivo no es empujar a nadie a hablar, quedar o exponerse antes de tiempo. Afinia propone conexiones con contexto: qué busca cada persona, qué ambientes le van mejor y qué tipo de plan le apetece.</p>
+        <div class="steps">
+            <article>
+                <span>1</span>
+                <h3>Crea tu perfil</h3>
+                <p>Comparte intereses, ciudad y preferencias. Las notas personales son opcionales.</p>
+            </article>
+            <article>
+                <span>2</span>
+                <h3>Descubre afinidades</h3>
+                <p>Encuentra personas, grupos y planes compatibles con tu ritmo social.</p>
+            </article>
+            <article>
+                <span>3</span>
+                <h3>Conecta con seguridad</h3>
+                <p>El chat empieza después de aceptar una solicitud de conexión.</p>
+            </article>
+        </div>
+    </div>
+    <img class="rounded-image" src="{% static 'img/landing-cafe.jpg' %}" alt="Personas conversando en una cafetería accesible">
+</section>
+
+<section class="landing-section">
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Lo importante</p>
+            <h2>Diseñada para vínculos reales, no para correr</h2>
+        </div>
+    </div>
+    <div class="feature-grid">
+        <article class="feature">
+            <h3>Perfiles con contexto</h3>
+            <p>Intereses, objetivos y preferencias sociales para que empezar una conversación sea más fácil.</p>
+        </article>
+        <article class="feature">
+            <h3>Grupos moderables</h3>
+            <p>Espacios por ciudad, tema o vivencia compartida, con solicitudes de acceso cuando haga falta.</p>
+        </article>
+        <article class="feature">
+            <h3>Planes accesibles</h3>
+            <p>Actividades con información previa sobre lugar, ruido, plazas y accesibilidad.</p>
+        </article>
+        <article class="feature">
+            <h3>Privacidad desde el inicio</h3>
+            <p>Las notas sensibles son opcionales y pueden quedarse privadas o mostrarse solo a conexiones.</p>
+        </article>
+    </div>
+</section>
+
+<section class="landing-section trust-section">
+    <div>
+        <p class="eyebrow">Seguridad y calma</p>
+        <h2>Un espacio pensado para sentirse con margen</h2>
+        <p>La primera versión ya incluye solicitudes antes del chat, bloqueo, estados de grupo y panel de administración para moderar. El siguiente paso será reforzar reportes, verificación y reglas de comunidad.</p>
+    </div>
+    <div class="trust-list">
+        <span>Solicitudes antes de conversar</span>
+        <span>Grupos con acceso abierto o solicitud</span>
+        <span>Planes con plazas limitadas</span>
+        <span>Lenguaje claro y accesible</span>
+    </div>
+</section>
+
+<section class="landing-cta">
+    <p class="eyebrow">Afinia</p>
+    <h2>Empieza con una conexión pequeña. A veces basta con eso.</h2>
+    <div class="actions">
+        <a class="button" href="{% url 'signup' %}">Crear cuenta</a>
+        <a class="button secondary" href="{% url 'login' %}">Entrar</a>
+    </div>
+</section>
+{% endblock %}

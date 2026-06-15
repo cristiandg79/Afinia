@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Personas - Afinia{% endblock %}
+{% block content %}
+<section>
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Descubrir</p>
+            <h1>Personas afines</h1>
+        </div>
+    </div>
+
+    {% if pending_connections %}
+        <section class="request-panel" aria-label="Solicitudes de contacto pendientes">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">Pendiente</p>
+                    <h2>Solicitudes de contacto</h2>
+                </div>
+                <span class="request-count">{{ pending_connections|length }}</span>
+            </div>
+            <div class="request-list">
+                {% for connection in pending_connections %}
+                    <article class="request-card">
+                        <span class="chat-avatar">
+                            {% if connection.requester.profile.photo %}
+                                <img src="{{ connection.requester.profile.photo.url }}" alt="">
+                            {% else %}
+                                <span>{{ connection.requester.username|first|upper }}</span>
+                            {% endif %}
+                        </span>
+                        <div>
+                            <h3>{{ connection.requester.username }}</h3>
+                            <p>{{ connection.requester.profile.city|default:'Online' }}</p>
+                            <p class="muted">{{ connection.message|default:'Quiere conectar contigo para poder hablar.' }}</p>
+                        </div>
+                        <div class="request-actions">
+                            <a class="button small" href="{% url 'respond_connection' connection.pk 'accepted' %}?next={% url 'discover' %}">Aceptar</a>
+                            <a class="button small secondary" href="{% url 'respond_connection' connection.pk 'declined' %}?next={% url 'discover' %}">Rechazar</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <form class="filters people-filters" method="get">
+        <label>Usuario <input name="username" value="{{ username|default:'' }}" placeholder="Buscar nick"></label>
+        <label>Ciudad <input name="city" value="{{ city|default:'' }}" placeholder="Ej. Madrid"></label>
+        <label>Objetivo
+            <select name="goal">
+                <option value="">Cualquiera</option>
+                <option value="friendship" {% if goal == 'friendship' %}selected{% endif %}>Amistad</option>
+                <option value="dating" {% if goal == 'dating' %}selected{% endif %}>Citas</option>
+                <option value="groups" {% if goal == 'groups' %}selected{% endif %}>Grupos y planes</option>
+                <option value="talk" {% if goal == 'talk' %}selected{% endif %}>Hablar online</option>
+            </select>
+        </label>
+        <button class="button small" type="submit">Filtrar</button>
+        <a class="button small secondary" href="{% url 'discover' %}">Limpiar</a>
+    </form>
+    <div class="grid people-grid">
+        {% for profile in profiles %}
+            <article class="card people-card">
+                <div class="people-card__body">
+                    <div class="card-profile-head people-card__head">
+                        <span class="chat-avatar">
+                            {% if profile.photo %}
+                                <img src="{{ profile.photo.url }}" alt="Foto de {{ profile.user.username }}">
+                            {% else %}
+                                <span>{{ profile.user.username|first|upper }}</span>
+                            {% endif %}
+                        </span>
+                        <div>
+                            <h2>{{ profile.user.username }}</h2>
+                            <p>
+                                {% if profile.age %}{{ profile.age }} años - {% endif %}{{ profile.city|default:'Online' }}
+                            </p>
+                        </div>
+                    </div>
+                    <p class="people-card__bio">{{ profile.bio|truncatechars:150|default:'Perfil en construcción.' }}</p>
+                    <div class="people-card-tags">
+                        {% for goal_label in profile.goal_labels|slice:":2" %}
+                            <span class="tag">{{ goal_label }}</span>
+                        {% endfor %}
+                        {% if profile.horoscope_sign %}<span class="tag">{{ profile.horoscope_sign }}</span>{% endif %}
+                    </div>
+                </div>
+                <div class="people-card-actions">
+                    <a class="button small secondary" href="{{ profile.get_absolute_url }}">Ver perfil</a>
+                    <a class="button small" href="{% url 'request_connection' profile.user.pk %}">Conectar</a>
+                </div>
+            </article>
+        {% empty %}
+            <p class="muted">No hay resultados con estos filtros.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
