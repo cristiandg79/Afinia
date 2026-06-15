@@ -9,6 +9,20 @@
         </div>
         <a class="button small" href="{% url 'plan_create' %}">Crear plan</a>
     </div>
+    <form class="filters people-filters community-filters" method="get">
+        <label>
+            Título del plan
+            <input type="search" name="q" value="{{ title_query }}" placeholder="Buscar por título">
+        </label>
+        <label>
+            Ciudad
+            <input type="search" name="city" value="{{ city_query }}" placeholder="Ej. Barcelona">
+        </label>
+        <button class="button small" type="submit">Buscar</button>
+        {% if title_query or city_query %}
+            <a class="button small secondary" href="{% url 'plan_list' %}">Limpiar</a>
+        {% endif %}
+    </form>
     <div class="grid community-grid">
         {% for plan in plans %}
             <article class="card community-card">
@@ -25,7 +39,7 @@
                 </div>
             </article>
         {% empty %}
-            <p class="muted">Aún no hay planes publicados.</p>
+            <p class="muted">{% if title_query or city_query %}No hay planes que coincidan con la búsqueda.{% else %}Aún no hay planes publicados.{% endif %}</p>
         {% endfor %}
     </div>
 </section>

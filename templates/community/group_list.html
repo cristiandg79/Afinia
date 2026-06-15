@@ -9,6 +9,16 @@
         </div>
         <a class="button small" href="{% url 'group_create' %}">Crear grupo</a>
     </div>
+    <form class="filters people-filters community-filters" method="get">
+        <label>
+            Título del grupo
+            <input type="search" name="q" value="{{ title_query }}" placeholder="Buscar por título">
+        </label>
+        <button class="button small" type="submit">Buscar</button>
+        {% if title_query %}
+            <a class="button small secondary" href="{% url 'group_list' %}">Limpiar</a>
+        {% endif %}
+    </form>
     <div class="grid community-grid">
         {% for group in groups %}
             <article class="card community-card">
@@ -22,7 +32,7 @@
                 </div>
             </article>
         {% empty %}
-            <p class="muted">Aún no hay grupos. Puedes crear el primero.</p>
+            <p class="muted">{% if title_query %}No hay grupos que coincidan con la búsqueda.{% else %}Aún no hay grupos. Puedes crear el primero.{% endif %}</p>
         {% endfor %}
     </div>
 </section>

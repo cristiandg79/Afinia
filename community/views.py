@@ -112,8 +112,14 @@ def plan_moderator_users(plan):
 
 @login_required
 def group_list(request):
-    groups = Group.objects.order_by('-created_at')
-    return render(request, 'community/group_list.html', {'groups': groups})
+    groups = Group.objects.exclude(Q(name='Chat general') | Q(name__startswith='Chat: ')).order_by('-created_at')
+    title_query = request.GET.get('q', '').strip()
+    if title_query:
+        groups = groups.filter(name__icontains=title_query)
+    return render(request, 'community/group_list.html', {
+        'groups': groups,
+        'title_query': title_query,
+    })
 
 
 @login_required
@@ -253,7 +259,17 @@ def group_membership_response(request, pk, status):
 @login_required
 def plan_list(request):
     plans = Plan.objects.select_related('group', 'created_by').order_by('-created_at')
-    return render(request, 'community/plan_list.html', {'plans': plans})
+    title_query = request.GET.get('q', '').strip()
+    city_query = request.GET.get('city', '').strip()
+    if title_query:
+        plans = plans.filter(title__icontains=title_query)
+    if city_query:
+        plans = plans.filter(city__icontains=city_query)
+    return render(request, 'community/plan_list.html', {
+        'plans': plans,
+        'title_query': title_query,
+        'city_query': city_query,
+    })
 
 
 @login_required
