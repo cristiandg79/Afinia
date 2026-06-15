@@ -72,7 +72,7 @@ class Profile(models.Model):
         return self.user.username
 
     def get_absolute_url(self):
-        return reverse('profile_detail', kwargs={'pk': self.pk})
+        return reverse('profile_detail', kwargs={'username': self.user.username})
 
     def goal_labels(self):
         labels = dict(self.Goal.choices)

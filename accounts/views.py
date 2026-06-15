@@ -220,8 +220,8 @@ def profile_delete(request):
 
 
 @login_required
-def profile_detail(request, pk):
-    profile = get_object_or_404(Profile, pk=pk)
+def profile_detail(request, username):
+    profile = get_object_or_404(Profile, user__username=username)
     connection = Connection.objects.filter(
         Q(requester=request.user, receiver=profile.user) | Q(requester=profile.user, receiver=request.user)
     ).first()
