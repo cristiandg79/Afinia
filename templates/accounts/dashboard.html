@@ -8,8 +8,6 @@
         {% if not profile.onboarding_completed %}
             <p>Completa tu perfil para que las sugerencias sean más útiles.</p>
             <a class="button" href="{% url 'profile_edit' %}">Completar perfil</a>
-        {% else %}
-            <p>Estas buscando: {{ profile.goals|join:', ' }}</p>
         {% endif %}
     </div>
 </section>
