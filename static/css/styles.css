@@ -242,6 +242,10 @@ h1 {
     text-transform: uppercase;
 }
 
+.dashboard-greeting {
+    text-transform: none;
+}
+
 .muted {
     color: var(--muted);
 }

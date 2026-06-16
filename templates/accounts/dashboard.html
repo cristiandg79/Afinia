@@ -3,7 +3,7 @@
 {% block content %}
 <section class="dashboard-head">
     <div>
-        <p class="eyebrow">Hola, {{ user.username }}</p>
+        <p class="eyebrow dashboard-greeting">Hola, {{ user.username }}</p>
         <h1>Tu espacio de conexiones</h1>
         {% if not profile.onboarding_completed %}
             <p>Completa tu perfil para que las sugerencias sean más útiles.</p>
