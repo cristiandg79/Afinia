@@ -222,6 +222,11 @@ select:focus {
     min-height: 520px;
 }
 
+.dashboard-head {
+    min-height: auto;
+    padding: 28px 0 12px;
+}
+
 h1,
 h2,
 h3,
