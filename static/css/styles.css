@@ -917,7 +917,8 @@ h1 {
     min-width: 0;
 }
 
-.people-card__head h2 {
+.people-card__head h2,
+.people-card__head h3 {
     overflow-wrap: anywhere;
 }
 
@@ -952,6 +953,10 @@ h1 {
     min-width: 0;
     text-align: center;
     width: 100%;
+}
+
+.people-card-actions .button:only-child {
+    grid-column: 1 / -1;
 }
 
 .section-title {

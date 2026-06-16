@@ -502,9 +502,15 @@ def respond_connection(request, pk, status):
         connection.save()
         if status == Connection.Status.ACCEPTED:
             get_or_create_private_conversation(connection.requester, connection.receiver)
+            PanelNotification.objects.create(
+                user=connection.requester,
+                title='Solicitud aceptada',
+                body=f'{connection.receiver.username} ha aceptado tu solicitud para conectar.',
+                url=connection.receiver.profile.get_absolute_url(),
+            )
         from messaging.notifications import notify_user
 
-        notify_user(request.user)
+        notify_user(connection.requester)
         messages.success(request, 'Solicitud actualizada.')
     return redirect(next_url)
 
@@ -536,6 +542,26 @@ def block_contact(request, pk):
     for conversation in private_conversations:
         conversation.participants.remove(request.user, target)
     messages.success(request, 'Usuario bloqueado.')
+    return redirect('contacts')
+
+
+@login_required
+def delete_contact(request, pk):
+    target = get_object_or_404(User, pk=pk)
+    if target == request.user:
+        messages.info(request, 'No puedes eliminarte de tus contactos.')
+        return redirect('contacts')
+
+    deleted_count, _ = (
+        Connection.objects
+        .filter(status=Connection.Status.ACCEPTED)
+        .filter(Q(requester=request.user, receiver=target) | Q(requester=target, receiver=request.user))
+        .delete()
+    )
+    if deleted_count:
+        messages.success(request, 'Contacto eliminado.')
+    else:
+        messages.info(request, 'Ese usuario no estaba en tus contactos.')
     return redirect('contacts')
 
 

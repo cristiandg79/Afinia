@@ -16,6 +16,7 @@ urlpatterns = [
     path('pareja/<int:pk>/<str:action>/', views.dating_action, name='dating_action'),
     path('conexion/<int:pk>/solicitar/', views.request_connection, name='request_connection'),
     path('conexion/<int:pk>/<str:status>/', views.respond_connection, name='respond_connection'),
+    path('contactos/<int:pk>/eliminar/', views.delete_contact, name='delete_contact'),
     path('contactos/<int:pk>/bloquear/', views.block_contact, name='block_contact'),
     path('contactos/<int:pk>/desbloquear/', views.unblock_contact, name='unblock_contact'),
 ]

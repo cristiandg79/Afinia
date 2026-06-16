@@ -38,6 +38,10 @@
                 <div class="people-card-actions">
                     <a class="button small secondary" href="{{ item.profile.get_absolute_url }}">Ver perfil</a>
                     <a class="button small" href="{% url 'inbox' %}">Mensajes</a>
+                    <form method="post" action="{% url 'delete_contact' item.user.pk %}">
+                        {% csrf_token %}
+                        <button class="button small secondary danger" type="submit">Eliminar contacto</button>
+                    </form>
                     <form method="post" action="{% url 'block_contact' item.user.pk %}">
                         {% csrf_token %}
                         <button class="button small secondary danger" type="submit">Bloquear</button>

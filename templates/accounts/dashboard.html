@@ -232,24 +232,34 @@
         <h2>Personas sugeridas</h2>
         <a href="{% url 'discover' %}">Ver más</a>
     </div>
-    <div class="grid">
+    <div class="grid people-grid">
         {% for suggested in suggested_profiles %}
             <article class="card people-card">
-                <div class="card-profile-head">
-                    <span class="chat-avatar">
-                        {% if suggested.photo %}
-                            <img src="{{ suggested.photo.url }}" alt="Foto de {{ suggested.user.username }}">
-                        {% else %}
-                            <span>{{ suggested.user.username|first|upper }}</span>
-                        {% endif %}
-                    </span>
-                    <div>
-                        <h3>{{ suggested.user.username }}</h3>
-                        <p>{{ suggested.location_label }}</p>
+                <div class="people-card__body">
+                    <div class="card-profile-head people-card__head">
+                        <span class="chat-avatar">
+                            {% if suggested.photo %}
+                                <img src="{{ suggested.photo.url }}" alt="Foto de {{ suggested.user.username }}">
+                            {% else %}
+                                <span>{{ suggested.user.username|first|upper }}</span>
+                            {% endif %}
+                        </span>
+                        <div>
+                            <h3>{{ suggested.user.username }}</h3>
+                            <p>{{ suggested.location_label }}</p>
+                        </div>
+                    </div>
+                    <p class="people-card__bio">{{ suggested.bio|truncatechars:120|default:'Perfil en construcción.' }}</p>
+                    <div class="people-card-tags">
+                        {% for goal_label in suggested.goal_labels|slice:":2" %}
+                            <span class="tag">{{ goal_label }}</span>
+                        {% endfor %}
+                        {% if suggested.horoscope_sign %}<span class="tag">{{ suggested.horoscope_sign }}</span>{% endif %}
                     </div>
                 </div>
-                <p>{{ suggested.bio|truncatechars:120|default:'Perfil en construcción.' }}</p>
-                <a class="button small secondary" href="{{ suggested.get_absolute_url }}">Ver perfil</a>
+                <div class="people-card-actions">
+                    <a class="button small secondary" href="{{ suggested.get_absolute_url }}">Ver perfil</a>
+                </div>
             </article>
         {% empty %}
             <p class="muted">Aún no hay más perfiles.</p>
