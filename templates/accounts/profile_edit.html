@@ -20,7 +20,8 @@
                 <h2>Ubicación y presentación</h2>
                 <p class="muted">Tu nick público es el usuario de tu cuenta. La ciudad ayuda a encontrar personas y planes cercanos.</p>
             </div>
-            <div class="field-grid two">
+            <div class="field-grid two location-fields">
+                <label>{{ form.country.label }} {{ form.country }} {{ form.country.errors }}</label>
                 <label class="edit-city-field">{{ form.city.label }} {{ form.city }} {{ form.city.errors }}</label>
                 <div class="stacked-field edit-bio-field">
                     <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
@@ -29,6 +30,7 @@
                     {{ form.bio.errors }}
                 </div>
             </div>
+            <datalist id="location-city-suggestions"></datalist>
             <div class="toggle-row">
                 <label>{{ form.open_to_nearby }} <span>{{ form.open_to_nearby.label }}</span></label>
                 <label>{{ form.open_to_online }} <span>{{ form.open_to_online.label }}</span></label>

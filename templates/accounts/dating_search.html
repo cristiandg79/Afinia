@@ -12,6 +12,14 @@
 
     <form class="dating-filter-panel" method="get">
         <input type="hidden" name="searched" value="1">
+        <label><span>País</span>
+            <select name="country">
+                <option value="">Cualquier país</option>
+                {% for value, label in country_choices %}
+                    <option value="{{ value }}" {% if filters.country == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
         <label><span>Ciudad</span>
             <input name="city" value="{{ filters.city }}" placeholder="Ej. Madrid">
         </label>
@@ -59,7 +67,7 @@
                         <h2>{{ profile.user.username }}</h2>
                         <p class="dating-main-meta">
                             {% if profile.age %}{{ profile.age }} años{% else %}Edad no indicada{% endif %}
-                            - {{ profile.city|default:'Online' }}
+                            - {{ profile.location_label }}
                         </p>
                     </div>
                     <span class="profile-mini-link">{{ remaining_count }} perfiles</span>

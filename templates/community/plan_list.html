@@ -11,15 +11,24 @@
     </div>
     <form class="filters people-filters community-filters" method="get">
         <label>
-            Título del plan
+            Título de plan
             <input type="search" name="q" value="{{ title_query }}" placeholder="Buscar por título">
+        </label>
+        <label>
+            País
+            <select name="country">
+                <option value="">Cualquier país</option>
+                {% for value, label in country_choices %}
+                    <option value="{{ value }}" {% if country_query == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
         </label>
         <label>
             Ciudad
             <input type="search" name="city" value="{{ city_query }}" placeholder="Ej. Barcelona">
         </label>
         <button class="button small" type="submit">Buscar</button>
-        {% if title_query or city_query %}
+        {% if title_query or country_query or city_query %}
             <a class="button small secondary" href="{% url 'plan_list' %}">Limpiar</a>
         {% endif %}
     </form>
@@ -28,10 +37,10 @@
             <article class="card community-card">
                 <div class="community-card__body">
                     <h2>{{ plan.title }}</h2>
-                    <p>{{ plan.starts_at|date:'d/m/Y H:i' }} · {{ plan.city|default:'Online' }}</p>
+                    <p>{{ plan.starts_at|date:'d/m/Y H:i' }} · {{ plan.location_label }}</p>
                     <p>{{ plan.description|truncatechars:150 }}</p>
                     {% if plan.accessibility_info %}
-                        <p class="muted">Accesibilidad: {{ plan.accessibility_info|truncatechars:90 }}</p>
+                        <p class="muted">Accesibilidad y comodidad: {{ plan.accessibility_info|truncatechars:90 }}</p>
                     {% endif %}
                 </div>
                 <div class="community-card__actions">
@@ -39,7 +48,7 @@
                 </div>
             </article>
         {% empty %}
-            <p class="muted">{% if title_query or city_query %}No hay planes que coincidan con la búsqueda.{% else %}Aún no hay planes publicados.{% endif %}</p>
+            <p class="muted">{% if title_query or country_query or city_query %}No hay planes que coincidan con la búsqueda.{% else %}Aún no hay planes publicados.{% endif %}</p>
         {% endfor %}
     </div>
 </section>

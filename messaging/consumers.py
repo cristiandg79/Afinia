@@ -161,8 +161,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         details = []
         if profile and profile.age:
             details.append(f'{profile.age} años')
-        if profile and profile.city:
-            details.append(profile.city)
+        if profile and profile.location_label:
+            details.append(profile.location_label)
         return {
             'id': self.user.id,
             'username': self.user.username,

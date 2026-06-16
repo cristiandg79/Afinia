@@ -3,6 +3,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
+from .locations import LOCATION_COUNTRY_CHOICES, LOCATION_COUNTRY_LABELS
+
 
 class Profile(models.Model):
     class Goal(models.TextChoices):
@@ -41,6 +43,7 @@ class Profile(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     display_name = models.CharField(max_length=80)
+    country = models.CharField(max_length=8, choices=LOCATION_COUNTRY_CHOICES, default='ES')
     city = models.CharField(max_length=120, blank=True)
     province = models.CharField(max_length=120, blank=True)
     bio = models.TextField(blank=True)
@@ -73,6 +76,16 @@ class Profile(models.Model):
 
     def get_absolute_url(self):
         return reverse('profile_detail', kwargs={'username': self.user.username})
+
+    @property
+    def country_label(self):
+        return LOCATION_COUNTRY_LABELS.get(self.country, self.country or '')
+
+    @property
+    def location_label(self):
+        if self.city and self.country_label:
+            return f'{self.city}, {self.country_label}'
+        return self.city or self.country_label or 'Online'
 
     def goal_labels(self):
         labels = dict(self.Goal.choices)

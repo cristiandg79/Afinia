@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
+from accounts.locations import LOCATION_COUNTRY_CHOICES, LOCATION_COUNTRY_LABELS
+
 
 class Group(models.Model):
     class Privacy(models.TextChoices):
@@ -11,6 +13,7 @@ class Group(models.Model):
 
     name = models.CharField(max_length=120)
     description = models.TextField()
+    country = models.CharField(max_length=8, choices=LOCATION_COUNTRY_CHOICES, default='ES')
     city = models.CharField(max_length=120, blank=True)
     topic = models.CharField(max_length=120, blank=True)
     privacy = models.CharField(max_length=20, choices=Privacy.choices, default=Privacy.REQUEST)
@@ -26,6 +29,16 @@ class Group(models.Model):
 
     def get_absolute_url(self):
         return reverse('group_detail', kwargs={'pk': self.pk})
+
+    @property
+    def country_label(self):
+        return LOCATION_COUNTRY_LABELS.get(self.country, self.country or '')
+
+    @property
+    def location_label(self):
+        if self.city and self.country_label:
+            return f'{self.city}, {self.country_label}'
+        return self.city or self.country_label or 'Online'
 
 
 class GroupMembership(models.Model):
@@ -59,6 +72,7 @@ class Plan(models.Model):
     title = models.CharField(max_length=140)
     description = models.TextField()
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, blank=True, related_name='plans')
+    country = models.CharField(max_length=8, choices=LOCATION_COUNTRY_CHOICES, default='ES')
     city = models.CharField(max_length=120, blank=True)
     place = models.CharField(max_length=180, blank=True)
     starts_at = models.DateTimeField()
@@ -74,6 +88,16 @@ class Plan(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def country_label(self):
+        return LOCATION_COUNTRY_LABELS.get(self.country, self.country or '')
+
+    @property
+    def location_label(self):
+        if self.city and self.country_label:
+            return f'{self.city}, {self.country_label}'
+        return self.city or self.country_label or 'Online'
 
 
 class PlanAttendance(models.Model):

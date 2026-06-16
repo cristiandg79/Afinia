@@ -73,6 +73,7 @@ class Command(BaseCommand):
                 user=user,
                 defaults={
                     'display_name': username,
+                    'country': 'ES',
                     'city': city,
                     'province': province,
                     'bio': random.choice(self.bios),

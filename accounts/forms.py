@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from .locations import LOCATION_COUNTRY_CHOICES
 from .models import Profile
 
 
@@ -108,6 +109,7 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = [
             'photo',
+            'country',
             'city',
             'bio',
             'goals',
@@ -125,7 +127,13 @@ class ProfileForm(forms.ModelForm):
         ]
         widgets = {
             'photo': forms.ClearableFileInput(),
-            'city': forms.TextInput(attrs={'placeholder': 'Ej. Madrid'}),
+            'country': forms.Select(attrs={'data-location-country': 'true'}),
+            'city': forms.TextInput(attrs={
+                'placeholder': 'Ej. Madrid',
+                'autocomplete': 'address-level2',
+                'data-location-city': 'true',
+                'list': 'location-city-suggestions',
+            }),
             'bio': forms.Textarea(attrs={
                 'rows': 4,
                 'placeholder': 'Cuenta algo sencillo: que te gusta, que buscas o que plan te apetece.',
@@ -141,6 +149,8 @@ class ProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['photo'].label = 'Foto principal'
+        self.fields['country'].label = 'País'
+        self.fields['country'].choices = LOCATION_COUNTRY_CHOICES
         self.fields['city'].label = 'Ciudad'
         self.fields['bio'].label = 'Presentación breve'
         self.fields['health_context'].label = 'Discapacidad, neurodivergencia o salud mental'

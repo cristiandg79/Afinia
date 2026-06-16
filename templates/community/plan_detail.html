@@ -2,7 +2,7 @@
 {% block title %}{{ plan.title }} - Afinia{% endblock %}
 {% block content %}
 <article class="profile">
-    <p class="eyebrow">{{ plan.starts_at|date:'d/m/Y H:i' }} · {{ plan.city|default:'Online' }}</p>
+    <p class="eyebrow">{{ plan.starts_at|date:'d/m/Y H:i' }} · {{ plan.location_label }}</p>
     <h1>{{ plan.title }}</h1>
     <p>{{ plan.description }}</p>
     {% if plan.place %}
@@ -10,7 +10,7 @@
     {% endif %}
     <p><strong>Plazas:</strong> {{ plan.capacity }} · <strong>Ambiente:</strong> {{ plan.get_mood_display }}</p>
     {% if plan.accessibility_info %}
-        <p><strong>Accesibilidad:</strong> {{ plan.accessibility_info }}</p>
+        <p><strong>Accesibilidad y comodidad:</strong> {{ plan.accessibility_info }}</p>
     {% endif %}
     {% if is_moderator %}
         <p class="notice">Eres moderador de este plan.</p>
@@ -53,7 +53,7 @@
                 </span>
                 <div>
                     <h3>{{ request.user.username }}</h3>
-                    <p>{{ request.user.profile.city|default:'Online' }}</p>
+                    <p>{{ request.user.profile.location_label }}</p>
                 </div>
                 <div class="request-actions">
                     <a class="button small" href="{% url 'plan_attendance_response' request.pk 'approved' %}">Aceptar</a>
@@ -85,7 +85,7 @@
                 </span>
                 <div>
                     <h3>{{ attendee.user.username }}</h3>
-                    <p>{{ attendee.user.profile.city|default:'Online' }}</p>
+                    <p>{{ attendee.user.profile.location_label }}</p>
                 </div>
                 {% if attendee.user != user and attendee.user != plan.created_by %}
                     <div class="request-actions">

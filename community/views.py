@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from accounts.locations import LOCATION_COUNTRY_CHOICES
+
 from .forms import GroupForm, PlanForm
 from .models import Group, GroupMembership, Plan, PlanAttendance
 
@@ -114,11 +116,20 @@ def plan_moderator_users(plan):
 def group_list(request):
     groups = Group.objects.exclude(Q(name='Chat general') | Q(name__startswith='Chat: ')).order_by('-created_at')
     title_query = request.GET.get('q', '').strip()
+    country_query = request.GET.get('country', '').strip()
+    city_query = request.GET.get('city', '').strip()
     if title_query:
         groups = groups.filter(name__icontains=title_query)
+    if country_query:
+        groups = groups.filter(country=country_query)
+    if city_query:
+        groups = groups.filter(city__icontains=city_query)
     return render(request, 'community/group_list.html', {
         'groups': groups,
         'title_query': title_query,
+        'country_query': country_query,
+        'city_query': city_query,
+        'country_choices': LOCATION_COUNTRY_CHOICES,
     })
 
 
@@ -260,15 +271,20 @@ def group_membership_response(request, pk, status):
 def plan_list(request):
     plans = Plan.objects.select_related('group', 'created_by').order_by('-created_at')
     title_query = request.GET.get('q', '').strip()
+    country_query = request.GET.get('country', '').strip()
     city_query = request.GET.get('city', '').strip()
     if title_query:
         plans = plans.filter(title__icontains=title_query)
+    if country_query:
+        plans = plans.filter(country=country_query)
     if city_query:
         plans = plans.filter(city__icontains=city_query)
     return render(request, 'community/plan_list.html', {
         'plans': plans,
         'title_query': title_query,
+        'country_query': country_query,
         'city_query': city_query,
+        'country_choices': LOCATION_COUNTRY_CHOICES,
     })
 
 

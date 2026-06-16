@@ -23,9 +23,12 @@
             <p class="step-kicker">Paso 1 de 8</p>
             <h2>Ubicación</h2>
             <p class="muted">Tu nick público es el usuario con el que creaste la cuenta. La ubicación ayuda a sugerirte personas y planes cercanos.</p>
-            <div class="field-grid">
+            <div class="field-grid two location-fields">
+                <label>{{ form.country.label }} {{ form.country }}</label>
                 <label>{{ form.city.label }} {{ form.city }}</label>
             </div>
+            <datalist id="location-city-suggestions"></datalist>
+            {{ form.country.errors }}
             {{ form.city.errors }}
         </div>
 

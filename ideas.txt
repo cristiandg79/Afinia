@@ -23,3 +23,4 @@ Datos de la pagina:
 http://127.0.0.1:8000/
 usuario: demo
 contraseña: demo12345
+.\publicar.ps1 "Add community search filters"

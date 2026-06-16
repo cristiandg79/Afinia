@@ -30,7 +30,7 @@
                         </span>
                         <div>
                             <h3>{{ connection.requester.username }}</h3>
-                            <p>{{ connection.requester.profile.city|default:'Online' }}</p>
+                            <p>{{ connection.requester.profile.location_label }}</p>
                             <p class="muted">{{ connection.message|default:'Quiere conectar contigo para poder hablar.' }}</p>
                         </div>
                         <div class="request-actions">
@@ -45,6 +45,14 @@
 
     <form class="filters people-filters" method="get">
         <label>Usuario <input name="username" value="{{ username|default:'' }}" placeholder="Buscar nick"></label>
+        <label>País
+            <select name="country">
+                <option value="">Cualquier país</option>
+                {% for value, label in country_choices %}
+                    <option value="{{ value }}" {% if country == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
         <label>Ciudad <input name="city" value="{{ city|default:'' }}" placeholder="Ej. Madrid"></label>
         <label>Objetivo
             <select name="goal">
@@ -73,7 +81,7 @@
                         <div>
                             <h2>{{ profile.user.username }}</h2>
                             <p>
-                                {% if profile.age %}{{ profile.age }} años - {% endif %}{{ profile.city|default:'Online' }}
+                                {% if profile.age %}{{ profile.age }} años - {% endif %}{{ profile.location_label }}
                             </p>
                         </div>
                     </div>

@@ -63,6 +63,7 @@ class Command(BaseCommand):
 
             profile, _ = Profile.objects.get_or_create(user=user, defaults={'display_name': user.username})
             profile.display_name = user.username
+            profile.country = 'ES'
             profile.city = city
             profile.province = province
             profile.bio = rng.choice(bios)
@@ -101,9 +102,10 @@ class Command(BaseCommand):
             owner = users[index % len(users)]
             group, _ = Group.objects.get_or_create(
                 name=name,
-                defaults={'description': description, 'city': city, 'topic': topic, 'created_by': owner},
+                defaults={'description': description, 'country': 'ES', 'city': city, 'topic': topic, 'created_by': owner},
             )
             group.description = description
+            group.country = 'ES'
             group.city = city
             group.topic = topic
             group.privacy = rng.choice(['open', 'request', 'request'])
@@ -135,6 +137,7 @@ class Command(BaseCommand):
                 defaults={
                     'description': 'Plan pensado para conocerse con calma, con información previa y grupo reducido.',
                     'group': group,
+                    'country': group.country,
                     'city': city,
                     'place': rng.choice(places),
                     'starts_at': timezone.now() + timedelta(days=index + 2, hours=rng.randint(0, 8)),

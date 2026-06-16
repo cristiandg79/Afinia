@@ -30,7 +30,7 @@
                     </span>
                     <div>
                         <h3>{{ connection.requester.username }}</h3>
-                        <p>{{ connection.requester.profile.city|default:'Online' }}</p>
+                        <p>{{ connection.requester.profile.location_label }}</p>
                     </div>
                 </div>
                 <p>{{ connection.message|default:'Quiere conectar contigo.' }}</p>
@@ -170,7 +170,7 @@
                     <div class="community-card__body">
                         <p class="eyebrow">{{ membership.get_status_display }}</p>
                         <h2>{{ membership.group.name }}</h2>
-                        <p>{{ membership.group.city|default:'Online' }}{% if membership.group.topic %} · {{ membership.group.topic }}{% endif %}</p>
+                        <p>{{ membership.group.location_label }}{% if membership.group.topic %} · {{ membership.group.topic }}{% endif %}</p>
                         <p>{{ membership.group.description|truncatechars:120 }}</p>
                     </div>
                     <div class="community-card__actions">
@@ -189,7 +189,7 @@
                     <div class="community-card__body">
                         <p class="eyebrow">{{ attendance.get_status_display }}</p>
                         <h2>{{ attendance.plan.title }}</h2>
-                        <p>{{ attendance.plan.starts_at|date:'d/m/Y H:i' }} · {{ attendance.plan.city|default:'Online' }}</p>
+                        <p>{{ attendance.plan.starts_at|date:'d/m/Y H:i' }} · {{ attendance.plan.location_label }}</p>
                         <p>{{ attendance.plan.description|truncatechars:120 }}</p>
                     </div>
                     <div class="community-card__actions">
@@ -220,7 +220,7 @@
                     </span>
                     <div>
                         <h3>{{ suggested.user.username }}</h3>
-                        <p>{{ suggested.city|default:'Online' }}</p>
+                        <p>{{ suggested.location_label }}</p>
                     </div>
                 </div>
                 <p>{{ suggested.bio|truncatechars:120|default:'Perfil en construcción.' }}</p>

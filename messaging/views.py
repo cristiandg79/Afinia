@@ -96,8 +96,8 @@ def private_chat_subtitle(profile):
     parts = []
     if profile.age:
         parts.append(f'{profile.age} años')
-    if profile.city:
-        parts.append(profile.city)
+    if profile.location_label:
+        parts.append(profile.location_label)
     return ' · '.join(parts) or 'Chat privado'
 
 
@@ -136,7 +136,7 @@ def conversation_presenter(conversation, current_user):
         initials = initials_from(conversation.group.name)
     elif conversation.plan:
         title = conversation.plan.title
-        subtitle = conversation.plan.city or 'Plan'
+        subtitle = conversation.plan.location_label
         avatar_url = ''
         initials = initials_from(conversation.plan.title)
     else:
@@ -292,8 +292,8 @@ def conversation_detail(request, pk):
             details = []
             if profile and profile.age:
                 details.append(f'{profile.age} años')
-            if profile and profile.city:
-                details.append(profile.city)
+            if profile and profile.location_label:
+                details.append(profile.location_label)
             chat_participants.append({
                 'user': participant,
                 'profile': profile,

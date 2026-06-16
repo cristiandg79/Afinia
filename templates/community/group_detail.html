@@ -2,7 +2,7 @@
 {% block title %}{{ group.name }} - Afinia{% endblock %}
 {% block content %}
 <article class="profile">
-    <p class="eyebrow">{{ group.city|default:'Online' }}{% if group.topic %} · {{ group.topic }}{% endif %}</p>
+    <p class="eyebrow">{{ group.location_label }}{% if group.topic %} · {{ group.topic }}{% endif %}</p>
     <h1>{{ group.name }}</h1>
     <p>{{ group.description }}</p>
     {% if membership %}
@@ -41,7 +41,7 @@
                 </span>
                 <div>
                     <h3>{{ request.user.username }}</h3>
-                    <p>{{ request.user.profile.city|default:'Online' }}</p>
+                    <p>{{ request.user.profile.location_label }}</p>
                 </div>
                 <div class="request-actions">
                     <a class="button small" href="{% url 'group_membership_response' request.pk 'approved' %}">Aceptar</a>
@@ -73,7 +73,7 @@
                 </span>
                 <div>
                     <h3>{{ member.user.username }}</h3>
-                    <p>{{ member.user.profile.city|default:'Online' }} · {{ member.get_status_display }}</p>
+                    <p>{{ member.user.profile.location_label }} · {{ member.get_status_display }}</p>
                 </div>
                 {% if member.user != user and member.user != group.created_by %}
                     <div class="request-actions">

@@ -8,6 +8,7 @@
     <form method="post" class="form-card">
         {% csrf_token %}
         {{ form|crispy }}
+        <datalist id="location-city-suggestions"></datalist>
         <button class="button" type="submit">Crear grupo</button>
     </form>
 </section>

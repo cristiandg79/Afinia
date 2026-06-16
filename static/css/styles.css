@@ -690,7 +690,13 @@ h1 {
 }
 
 .edit-bio-field {
+    grid-column: 1 / -1;
     margin-top: 0;
+}
+
+.location-fields select,
+.location-fields input {
+    background: #f8faf8;
 }
 
 .toggle-row {
@@ -1641,12 +1647,12 @@ textarea {
     border: 1px solid var(--border);
     border-radius: 8px;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 12px;
-    overflow-x: auto;
+    overflow-x: hidden;
     padding: 16px;
-    white-space: nowrap;
+    white-space: normal;
 }
 
 .dating-filter-panel label {
@@ -1656,7 +1662,8 @@ textarea {
     font-size: 0.95rem;
     font-weight: 700;
     gap: 7px;
-    flex: 0 0 auto;
+    flex: 1 1 145px;
+    min-width: 0;
 }
 
 .dating-filter-panel label span {
@@ -1664,16 +1671,24 @@ textarea {
 }
 
 .dating-filter-panel input[name="city"] {
-    width: 112px;
+    min-width: 0;
+    width: 100%;
+}
+
+.dating-filter-panel select[name="country"] {
+    min-width: 0;
+    width: 100%;
 }
 
 .dating-filter-panel input[name="min_age"],
 .dating-filter-panel input[name="max_age"] {
-    width: 62px;
+    min-width: 0;
+    width: 100%;
 }
 
 .dating-filter-panel select[name="sex"] {
-    width: 122px;
+    min-width: 0;
+    width: 100%;
 }
 
 .dating-filter-panel input,
@@ -1688,9 +1703,10 @@ textarea {
     align-items: center;
     align-self: center;
     display: flex;
-    flex: 0 0 auto;
+    flex: 1 1 180px;
     gap: 8px;
     justify-content: flex-end;
+    min-width: 0;
 }
 
 .dating-filter-actions .button {
@@ -2429,17 +2445,21 @@ textarea {
     .dating-filter-panel input[name="city"],
     .dating-filter-panel input[name="min_age"],
     .dating-filter-panel input[name="max_age"],
+    .dating-filter-panel select[name="country"],
     .dating-filter-panel select[name="sex"] {
         flex: 1 1 100%;
         width: 100%;
     }
 
     .dating-filter-actions {
+        flex-wrap: wrap;
         justify-content: stretch;
         width: 100%;
     }
 
     .dating-filter-actions .button {
+        flex: 1 1 140px;
+        min-width: 0;
         width: 100%;
     }
 

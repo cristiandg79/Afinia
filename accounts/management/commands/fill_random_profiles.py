@@ -13,10 +13,13 @@ from accounts.models import Profile, ProfilePhoto
 class Command(BaseCommand):
     help = 'Rellena todos los usuarios con datos y fotos aleatorias de desarrollo.'
 
-    cities = [
-        'Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Zaragoza', 'Malaga',
-        'Bilbao', 'Alicante', 'Vigo', 'Granada', 'Murcia', 'Valladolid',
-        'Cordoba', 'Gijon', 'A Coruna', 'Santander', 'Salamanca', 'Tarragona',
+    locations = [
+        ('ES', 'Madrid'), ('ES', 'Barcelona'), ('ES', 'Valencia'), ('ES', 'Sevilla'),
+        ('ES', 'Zaragoza'), ('ES', 'Málaga'), ('ES', 'Bilbao'), ('ES', 'Alicante'),
+        ('MX', 'Ciudad de México'), ('MX', 'Guadalajara'), ('MX', 'Monterrey'),
+        ('AR', 'Buenos Aires'), ('AR', 'Córdoba'), ('AR', 'Rosario'),
+        ('CO', 'Bogotá'), ('CO', 'Medellín'), ('CO', 'Cali'),
+        ('CL', 'Santiago'), ('PE', 'Lima'), ('UY', 'Montevideo'),
     ]
     bios = [
         'Me gusta conocer gente con calma, hablar primero y hacer planes sencillos.',
@@ -67,8 +70,10 @@ class Command(BaseCommand):
                 defaults={'display_name': user.username},
             )
             sex = random.choice([Profile.Sex.WOMAN, Profile.Sex.MAN, Profile.Sex.NON_BINARY])
+            country, city = random.choice(self.locations)
             profile.display_name = user.username
-            profile.city = random.choice(self.cities)
+            profile.country = country
+            profile.city = city
             profile.province = ''
             profile.bio = random.choice(self.bios)
             profile.goals = self.random_goals()

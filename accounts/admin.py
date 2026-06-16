@@ -5,9 +5,9 @@ from .models import Connection, DatingAction, Profile, ProfilePhoto
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'city', 'onboarding_completed', 'updated_at')
-    search_fields = ('user__username', 'city')
-    list_filter = ('onboarding_completed', 'open_to_nearby', 'open_to_online')
+    list_display = ('user', 'country', 'city', 'onboarding_completed', 'updated_at')
+    search_fields = ('user__username', 'city', 'country')
+    list_filter = ('country', 'onboarding_completed', 'open_to_nearby', 'open_to_online')
 
 
 @admin.register(Connection)

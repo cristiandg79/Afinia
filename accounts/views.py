@@ -14,10 +14,12 @@ from messaging.chat_rooms import is_chat_group
 from messaging.models import PanelNotification
 
 from .forms import ProfileForm, SignUpForm
+from .locations import LOCATION_COUNTRY_CHOICES
 from .models import Connection, DatingAction, Profile, ProfilePhoto
 
 
 PROFILE_FORM_STEPS = {
+    'country': 1,
     'city': 1,
     'goals': 2,
     'interests': 3,
@@ -238,10 +240,13 @@ def discover(request):
         .order_by('-created_at')
     )
     username = request.GET.get('username', '').strip()
+    country = request.GET.get('country', '').strip()
     city = request.GET.get('city', '').strip()
     goal = request.GET.get('goal')
     if username:
         profiles = profiles.filter(user__username__icontains=username)
+    if country:
+        profiles = profiles.filter(country=country)
     if city:
         profiles = profiles.filter(city__icontains=city)
     if goal:
@@ -249,8 +254,10 @@ def discover(request):
     return render(request, 'accounts/discover.html', {
         'profiles': profiles,
         'username': username,
+        'country': country,
         'city': city,
         'goal': goal,
+        'country_choices': LOCATION_COUNTRY_CHOICES,
         'pending_connections': pending_connections,
     })
 
@@ -306,11 +313,15 @@ def inferred_dating_sex(profile):
 
 def clean_dating_filters(data, profile):
     filters = {
+        'country': data.get('country', '').strip(),
         'city': data.get('city', '').strip(),
         'min_age': data.get('min_age', '').strip(),
         'max_age': data.get('max_age', '').strip(),
         'sex': data.get('sex', '').strip(),
     }
+    valid_countries = {value for value, _ in LOCATION_COUNTRY_CHOICES}
+    if filters['country'] not in valid_countries:
+        filters['country'] = ''
     if filters['sex'] not in ['', Profile.Sex.WOMAN, Profile.Sex.MAN]:
         filters['sex'] = ''
     if not filters['sex']:
@@ -344,6 +355,8 @@ def dating_search(request):
         .select_related('user')
         .prefetch_related('extra_photos')
     )
+    if should_show_profiles and filters['country']:
+        profiles = profiles.filter(country=filters['country'])
     if should_show_profiles and filters['city']:
         profiles = profiles.filter(city__icontains=filters['city'])
     if should_show_profiles and filters['sex']:
@@ -373,6 +386,7 @@ def dating_search(request):
         'should_show_profiles': should_show_profiles,
         'showing_seen_profiles': showing_seen_profiles,
         'querystring': querystring,
+        'country_choices': LOCATION_COUNTRY_CHOICES,
         'sex_choices': [
             ('', 'Cualquier perfil'),
             (Profile.Sex.WOMAN, 'Mujeres'),

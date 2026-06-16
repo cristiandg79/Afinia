@@ -126,6 +126,52 @@ document.querySelectorAll('[data-birth-widget]').forEach((root) => {
     refreshBirthSummary();
 });
 
+document.querySelectorAll('[data-location-country]').forEach((countrySelect) => {
+    const form = countrySelect.closest('form');
+    const cityInput = form?.querySelector('[data-location-city]');
+    const datalistId = cityInput?.getAttribute('list');
+    const datalist = datalistId ? document.getElementById(datalistId) : null;
+    if (!cityInput || !datalist) {
+        return;
+    }
+
+    const citySuggestions = {
+        ES: ['Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Zaragoza', 'Málaga', 'Murcia', 'Palma', 'Las Palmas de Gran Canaria', 'Bilbao', 'Alicante', 'Córdoba', 'Valladolid', 'Vigo', 'Gijón', 'A Coruña'],
+        MX: ['Ciudad de México', 'Guadalajara', 'Monterrey', 'Puebla', 'Tijuana', 'León', 'Mérida', 'Querétaro', 'Cancún', 'Toluca'],
+        AR: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'La Plata', 'Mar del Plata', 'San Miguel de Tucumán', 'Salta'],
+        CO: ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena', 'Bucaramanga', 'Pereira', 'Manizales'],
+        CL: ['Santiago', 'Valparaíso', 'Concepción', 'La Serena', 'Antofagasta', 'Temuco', 'Viña del Mar'],
+        PE: ['Lima', 'Arequipa', 'Trujillo', 'Chiclayo', 'Cusco', 'Piura', 'Iquitos'],
+        VE: ['Caracas', 'Maracaibo', 'Valencia', 'Barquisimeto', 'Maracay', 'Mérida'],
+        EC: ['Quito', 'Guayaquil', 'Cuenca', 'Manta', 'Ambato', 'Loja'],
+        UY: ['Montevideo', 'Salto', 'Paysandú', 'Maldonado', 'Rivera'],
+        PY: ['Asunción', 'Ciudad del Este', 'San Lorenzo', 'Luque', 'Encarnación'],
+        BO: ['La Paz', 'Santa Cruz de la Sierra', 'Cochabamba', 'Sucre', 'Tarija'],
+        CR: ['San José', 'Alajuela', 'Cartago', 'Heredia', 'Liberia'],
+        DO: ['Santo Domingo', 'Santiago de los Caballeros', 'La Romana', 'San Pedro de Macorís'],
+        GT: ['Ciudad de Guatemala', 'Quetzaltenango', 'Escuintla', 'Mixco', 'Villa Nueva'],
+        HN: ['Tegucigalpa', 'San Pedro Sula', 'La Ceiba', 'Choloma'],
+        SV: ['San Salvador', 'Santa Ana', 'San Miguel', 'Soyapango'],
+        NI: ['Managua', 'León', 'Granada', 'Masaya'],
+        PA: ['Ciudad de Panamá', 'San Miguelito', 'David', 'Colón'],
+        CU: ['La Habana', 'Santiago de Cuba', 'Camagüey', 'Holguín'],
+        PR: ['San Juan', 'Bayamón', 'Carolina', 'Ponce', 'Mayagüez'],
+        US: ['Miami', 'Nueva York', 'Los Ángeles', 'Chicago', 'Houston', 'San Antonio'],
+    };
+
+    function refreshCitySuggestions() {
+        datalist.innerHTML = '';
+        (citySuggestions[countrySelect.value] || []).forEach((city) => {
+            const option = document.createElement('option');
+            option.value = city;
+            datalist.append(option);
+        });
+    }
+
+    countrySelect.addEventListener('change', refreshCitySuggestions);
+    refreshCitySuggestions();
+});
+
 document.querySelectorAll('[data-notifications]').forEach(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const socket = new WebSocket(`${protocol}://${window.location.host}/ws/notificaciones/`);

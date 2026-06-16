@@ -24,7 +24,7 @@
                     <div>
                         <h2>{{ item.user.username }}</h2>
                         <p>
-                            {% if item.profile.age %}{{ item.profile.age }} años - {% endif %}{{ item.profile.city|default:'Online' }}
+                            {% if item.profile.age %}{{ item.profile.age }} años - {% endif %}{{ item.profile.location_label }}
                         </p>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                     </span>
                     <div>
                         <h2>{{ item.user.username }}</h2>
-                        <p>{{ item.profile.city|default:'Online' }}</p>
+                        <p>{{ item.profile.location_label }}</p>
                     </div>
                 </div>
                 <p>Este usuario no puede enviarte mensajes privados ni conectar contigo mientras siga bloqueado.</p>

@@ -13,7 +13,7 @@ Aplicacion web Django para una comunidad inclusiva orientada a amistad, citas, g
 1. Clonar el repositorio:
    ```powershell
    git clone URL_DEL_REPOSITORIO
-   cd "chat citas amigos"
+   cd Afinia
    ```
 
 2. Crear y activar entorno virtual:
