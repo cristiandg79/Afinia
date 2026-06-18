@@ -23,7 +23,7 @@ INTEREST_CHOICES = [
     ('music', 'Música'),
     ('walks', 'Paseos tranquilos'),
     ('art', 'Arte'),
-    ('sports', 'Actividad física adaptada'),
+    ('sports', 'Actividad física'),
     ('pets', 'Animales'),
     ('support', 'Apoyo entre iguales'),
 ]
