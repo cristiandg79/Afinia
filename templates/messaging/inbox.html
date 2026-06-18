@@ -10,24 +10,13 @@
     </div>
 
     {% if conversation_items %}
-        <form method="post" action="{% url 'delete_conversations' %}" class="conversation-bulk-form">
-            {% csrf_token %}
-            <div class="conversation-bulk-actions">
-                <span>Selecciona conversaciones para eliminarlas.</span>
-                <button class="button small danger" type="submit">Eliminar seleccionadas</button>
-            </div>
+        <div class="conversation-bulk-form">
             <div class="conversation-list" aria-label="Lista de conversaciones">
                 {% for item in conversation_items %}
-                    <div class="conversation-select-row">
-                        <label class="conversation-check">
-                            <input type="checkbox" name="conversation_ids" value="{{ item.conversation.pk }}">
-                            <span class="sr-only">Seleccionar {{ item.title }}</span>
-                        </label>
-                        {% include 'messaging/_conversation_row.html' %}
-                    </div>
+                    {% include 'messaging/_conversation_row.html' %}
                 {% endfor %}
             </div>
-        </form>
+        </div>
     {% else %}
         <div class="conversation-list" aria-label="Lista de conversaciones">
             <div class="empty-state">

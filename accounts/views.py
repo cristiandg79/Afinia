@@ -447,6 +447,28 @@ def get_or_create_private_conversation(user_a, user_b):
     return conversation
 
 
+@login_required
+def contact_conversation(request, pk):
+    target = get_object_or_404(User, pk=pk)
+    if target == request.user:
+        messages.info(request, 'No puedes abrir un chat contigo mismo.')
+        return redirect('contacts')
+    if users_are_blocked(request.user, target):
+        messages.info(request, 'No puedes enviar mensajes a un usuario bloqueado.')
+        return redirect('contacts')
+    is_contact = Connection.objects.filter(
+        status=Connection.Status.ACCEPTED
+    ).filter(
+        Q(requester=request.user, receiver=target) | Q(requester=target, receiver=request.user)
+    ).exists()
+    if not is_contact:
+        messages.info(request, 'Solo puedes escribir a tus contactos.')
+        return redirect('contacts')
+
+    conversation = get_or_create_private_conversation(request.user, target)
+    return redirect('conversation_detail', pk=conversation.pk)
+
+
 def users_are_blocked(user_a, user_b):
     return Connection.objects.filter(
         Q(requester=user_a, receiver=user_b, status=Connection.Status.BLOCKED)

@@ -12,6 +12,7 @@ urlpatterns = [
     path('perfil/<str:username>/', views.profile_detail, name='profile_detail'),
     path('personas/', views.discover, name='discover'),
     path('contactos/', views.contacts, name='contacts'),
+    path('contactos/<int:pk>/mensajes/', views.contact_conversation, name='contact_conversation'),
     path('pareja/', views.dating_search, name='dating_search'),
     path('pareja/<int:pk>/<str:action>/', views.dating_action, name='dating_action'),
     path('conexion/<int:pk>/solicitar/', views.request_connection, name='request_connection'),

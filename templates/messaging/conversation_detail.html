@@ -24,12 +24,6 @@
             <p>{{ chat_header.subtitle }}</p>
             <p class="chat-status" data-chat-status>Conectando chat...</p>
         </div>
-        {% if not is_public_chat and not is_community_chat %}
-            <form method="post" action="{% url 'delete_conversation' conversation.pk %}" class="chat-delete-form">
-                {% csrf_token %}
-                <button class="button small danger" type="submit">Eliminar conversaci&oacute;n</button>
-            </form>
-        {% endif %}
     </header>
 
     <div class="chat-window {% if is_public_chat or is_community_chat %}chat-window--public{% endif %}">

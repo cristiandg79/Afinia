@@ -224,23 +224,12 @@ def chat_room_enter(request, slug):
 
 @login_required
 def delete_conversations(request):
-    if request.method == 'POST':
-        selected_ids = request.POST.getlist('conversation_ids')
-        if selected_ids:
-            conversations = Conversation.objects.filter(pk__in=selected_ids, participants=request.user).select_related('group')
-            conversations = [conversation for conversation in conversations if not is_chat_conversation(conversation)]
-            Conversation.objects.filter(pk__in=[conversation.pk for conversation in conversations]).delete()
     return redirect('inbox')
 
 
 @login_required
 def delete_conversation(request, pk):
     conversation = get_object_or_404(Conversation, pk=pk, participants=request.user)
-    if is_chat_conversation(conversation):
-        return redirect('conversation_detail', pk=conversation.pk)
-    if request.method == 'POST':
-        conversation.delete()
-        return redirect('inbox')
     return redirect('conversation_detail', pk=conversation.pk)
 
 
