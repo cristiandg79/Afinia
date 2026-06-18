@@ -2022,6 +2022,13 @@ textarea {
     margin-bottom: 4px;
 }
 
+.message-bubble p,
+.people-card__bio,
+.profile-readable p,
+.conversation-preview {
+    font-family: Arial, Helvetica, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
 .message-meta {
     align-items: center;
     display: flex;
@@ -2156,7 +2163,37 @@ textarea {
     position: static;
 }
 
-.emoji-toggle,
+.emoji-toggle {
+    align-items: center;
+    background: #edf7f2;
+    border: 1px solid #cfe6da;
+    border-radius: 999px;
+    box-shadow: inset 0 -1px 0 rgba(23, 33, 29, 0.06);
+    color: #1e6f53;
+    cursor: pointer;
+    display: inline-flex;
+    height: 44px;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0;
+    position: relative;
+    width: 44px;
+}
+
+.emoji-toggle span {
+    display: block;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    font-size: 1.35rem;
+    line-height: 1;
+    transform: translateY(1px);
+}
+
+.emoji-toggle:hover,
+.emoji-toggle:focus-visible {
+    background: #dff3e9;
+    border-color: #9fceb9;
+}
+
 .image-upload-button {
     align-items: center;
     background: #f8faf8;
@@ -2168,11 +2205,9 @@ textarea {
     font-weight: 800;
     font-size: 1.2rem;
     justify-content: center;
-    height: 44px;
     min-height: 44px;
     padding: 10px 12px;
     position: relative;
-    width: 44px;
 }
 
 .image-upload-button {
@@ -2185,17 +2220,17 @@ textarea {
 .emoji-panel {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 16px;
     bottom: 118px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 24px 70px rgba(23, 33, 29, 0.22);
     display: grid;
-    gap: 8px;
-    grid-template-rows: auto auto minmax(180px, 1fr);
-    max-height: min(430px, 70vh);
-    padding: 10px;
+    gap: 12px;
+    grid-template-rows: auto auto auto minmax(210px, 1fr);
+    max-height: min(500px, 74vh);
+    padding: 14px;
     position: fixed;
     right: max(18px, calc((100vw - 920px) / 2 + 18px));
-    width: min(360px, 88vw);
+    width: min(410px, 92vw);
     z-index: 60;
 }
 
@@ -2203,57 +2238,93 @@ textarea {
     display: none;
 }
 
+.emoji-panel__head {
+    display: grid;
+    gap: 2px;
+}
+
+.emoji-panel__head strong {
+    font-size: 1rem;
+}
+
+.emoji-panel__head span {
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
 .emoji-panel input[type="search"] {
     background: #f8faf8;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    min-height: 40px;
-    padding: 8px 10px;
+    border-radius: 999px;
+    min-height: 42px;
+    padding: 9px 14px;
     width: 100%;
 }
 
 .emoji-tabs {
-    display: grid;
+    display: flex;
     gap: 6px;
-    grid-template-columns: repeat(6, 1fr);
+    overflow-x: auto;
+    padding-bottom: 2px;
 }
 
 .emoji-tabs button,
 .emoji-grid button {
-    background: #f8faf8;
-    border: 1px solid var(--border);
-    border-radius: 8px;
     cursor: pointer;
-    font-size: 1.15rem;
-    padding: 0;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
 }
 
 .emoji-tabs button {
-    height: 36px;
+    background: #f8faf8;
+    border: 1px solid #dce8e2;
+    border-radius: 999px;
+    color: #34423c;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 800;
+    height: 34px;
+    padding: 0 12px;
+}
+
+.emoji-grid button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 12px;
+    display: inline-flex;
+    font-size: 1.55rem;
+    height: 42px;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    width: 42px;
 }
 
 .emoji-tabs button.is-active {
-    background: #dff3e9;
-    border-color: var(--primary);
+    background: #1f7a5b;
+    border-color: #1f7a5b;
+    color: white;
 }
 
 .emoji-grid {
     display: grid;
-    gap: 6px;
-    grid-template-columns: repeat(8, 36px);
-    max-height: 260px;
+    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+    max-height: 300px;
     overflow-y: auto;
-    padding-right: 2px;
-}
-
-.emoji-grid button {
-    height: 36px;
-    width: 36px;
+    padding: 4px;
 }
 
 .emoji-grid button:hover,
 .emoji-tabs button:hover {
-    background: #eef7f2;
+    background: #edf7f2;
+}
+
+.emoji-grid button:active {
+    transform: scale(0.94);
 }
 
 .image-upload-button input {
@@ -2441,6 +2512,18 @@ textarea {
 
     .chat-compose {
         grid-template-columns: 1fr;
+    }
+
+    .emoji-picker {
+        justify-self: start;
+    }
+
+    .emoji-panel {
+        bottom: 92px;
+        left: 12px;
+        max-height: min(460px, 72vh);
+        right: 12px;
+        width: auto;
     }
 
     .request-card {

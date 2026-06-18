@@ -588,7 +588,7 @@ document.querySelectorAll('[data-emoji-picker]').forEach((picker) => {
     const emojiCategories = [
         {
             id: 'caras',
-            label: '\uD83D\uDE00',
+            label: 'Caras',
             name: 'Caras',
             keywords: 'caras emociones feliz triste amor risa saludo',
             emojis: [
@@ -604,7 +604,7 @@ document.querySelectorAll('[data-emoji-picker]').forEach((picker) => {
         },
         {
             id: 'gestos',
-            label: '\uD83D\uDC4D',
+            label: 'Gestos',
             name: 'Gestos',
             keywords: 'manos gestos ok aplauso abrazo fuerza',
             emojis: [
@@ -616,7 +616,7 @@ document.querySelectorAll('[data-emoji-picker]').forEach((picker) => {
         },
         {
             id: 'corazones',
-            label: '\u2764\uFE0F',
+            label: 'Amor',
             name: 'Corazones',
             keywords: 'amor corazones amistad apoyo flores',
             emojis: [
@@ -628,7 +628,7 @@ document.querySelectorAll('[data-emoji-picker]').forEach((picker) => {
         },
         {
             id: 'planes',
-            label: '\u2615',
+            label: 'Planes',
             name: 'Planes',
             keywords: 'planes cafe cine musica juegos lectura comida deporte',
             emojis: [
@@ -640,7 +640,7 @@ document.querySelectorAll('[data-emoji-picker]').forEach((picker) => {
         },
         {
             id: 'viajes',
-            label: '\uD83D\uDE97',
+            label: 'Lugares',
             name: 'Lugares',
             keywords: 'lugares viajes ciudad casa tiempo transporte naturaleza',
             emojis: [
@@ -652,7 +652,7 @@ document.querySelectorAll('[data-emoji-picker]').forEach((picker) => {
         },
         {
             id: 'objetos',
-            label: '\uD83D\uDCA1',
+            label: 'Objetos',
             name: 'Objetos',
             keywords: 'objetos ideas trabajo salud mensajes',
             emojis: [

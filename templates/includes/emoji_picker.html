@@ -1,7 +1,13 @@
 <div class="emoji-picker {{ class_name|default:'' }}" data-emoji-picker data-emoji-target="{{ target|default:'body' }}">
-    <button class="emoji-toggle" type="button" data-emoji-toggle aria-label="A&ntilde;adir emoticono">&#9786;</button>
+    <button class="emoji-toggle" type="button" data-emoji-toggle aria-label="A&ntilde;adir emoticono" title="A&ntilde;adir emoticono">
+        <span aria-hidden="true">😊</span>
+    </button>
     <div class="emoji-panel" data-emoji-panel hidden>
-        <input type="search" data-emoji-search placeholder="Buscar emoji">
+        <div class="emoji-panel__head">
+            <strong>Emoticonos</strong>
+            <span>Elige uno para insertarlo</span>
+        </div>
+        <input type="search" data-emoji-search placeholder="Buscar emoticono">
         <div class="emoji-tabs" data-emoji-tabs></div>
         <div class="emoji-grid" data-emoji-grid></div>
     </div>
