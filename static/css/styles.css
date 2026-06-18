@@ -885,8 +885,8 @@ h1 {
 }
 
 .card-profile-head > div {
+    flex: 1 1 auto;
     min-width: 0;
-    width: 100%;
 }
 
 .card-profile-head h2,
@@ -899,19 +899,22 @@ h1 {
 .card-profile-head h3,
 .user-name-truncate {
     display: block;
+    line-height: 1.25;
     max-width: 100%;
     overflow: hidden;
+    padding-bottom: 2px;
+    padding-right: 4px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .people-card > p,
 .dating-body > p {
+    line-height: 1.5;
     max-width: 100%;
     min-width: 0;
-    overflow: hidden;
     overflow-wrap: anywhere;
-    word-break: break-word;
+    word-break: normal;
 }
 
 .community-grid {
@@ -985,13 +988,12 @@ h1 {
 }
 
 .people-card__bio {
-    line-height: 1.35;
+    line-height: 1.5;
     margin-bottom: 0;
     max-width: 100%;
     min-width: 0;
-    overflow: hidden;
     overflow-wrap: anywhere;
-    word-break: break-word;
+    word-break: normal;
 }
 
 .people-card .chat-avatar {
