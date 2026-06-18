@@ -27,6 +27,7 @@
                 <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
                 {{ form.username }}
                 {% if form.username.help_text %}<span class="helptext">{{ form.username.help_text }}</span>{% endif %}
+                <span aria-hidden="true" style="display: block; height: 18px;"></span>
                 {{ form.username.errors }}
             </div>
             <div class="auth-field">
