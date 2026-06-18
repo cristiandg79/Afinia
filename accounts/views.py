@@ -77,7 +77,7 @@ def signup(request):
 @login_required
 def dashboard(request):
     profile = request.user.profile
-    suggested_profiles = Profile.objects.exclude(user=request.user).order_by('-updated_at')[:6]
+    suggested_profiles = Profile.objects.exclude(user=request.user).order_by('-updated_at')[:8]
     pending_connections = Connection.objects.filter(receiver=request.user, status=Connection.Status.PENDING)
     moderated_groups = (
         Group.objects

@@ -26,12 +26,12 @@
                     <a href="{% url 'dating_search' %}">Afinidades</a>
                     <a href="{% url 'group_list' %}">Grupos</a>
                     <a href="{% url 'plan_list' %}">Planes</a>
+                    <a href="{% url 'chat_lobby' %}">Chat</a>
                     <a class="nav-link-with-badge" href="{% url 'inbox' %}">
                         Mensajes
                         <span class="notification-badge {% if not notification_counts.messages %}is-hidden{% endif %}" data-badge="messages">{{ notification_counts.messages }}</span>
                     </a>
                     <a href="{% url 'contacts' %}">Contactos</a>
-                    <a href="{% url 'chat_lobby' %}">Chat</a>
                     <details class="user-menu">
                         <summary>
                             {% if user.profile.photo %}
