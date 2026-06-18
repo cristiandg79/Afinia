@@ -91,7 +91,7 @@
                             </p>
                         </div>
                     </div>
-                    <p class="people-card__bio">{{ profile.bio|truncatechars:150|default:'Perfil en construcción.' }}</p>
+                    <p class="people-card__bio">{{ profile.bio|default:'Perfil en construcción.' }}</p>
                     <div class="people-card-tags">
                         {% for goal_label in profile.goal_labels|slice:":2" %}
                             <span class="tag">{{ goal_label }}</span>
