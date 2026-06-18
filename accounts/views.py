@@ -79,12 +79,6 @@ def dashboard(request):
     profile = request.user.profile
     suggested_profiles = Profile.objects.exclude(user=request.user).order_by('-updated_at')[:6]
     pending_connections = Connection.objects.filter(receiver=request.user, status=Connection.Status.PENDING)
-    sent_connection_requests = (
-        Connection.objects
-        .filter(requester=request.user, status=Connection.Status.PENDING)
-        .select_related('receiver__profile')
-        .order_by('-created_at')
-    )
     moderated_groups = (
         Group.objects
         .filter(Q(created_by=request.user) | Q(groupmembership__user=request.user, groupmembership__status=GroupMembership.Status.MODERATOR))
@@ -163,7 +157,6 @@ def dashboard(request):
         'profile': profile,
         'suggested_profiles': suggested_profiles,
         'pending_connections': pending_connections,
-        'sent_connection_requests': sent_connection_requests,
         'pending_group_memberships': pending_group_memberships,
         'pending_plan_attendances': pending_plan_attendances,
         'my_group_requests': my_group_requests,

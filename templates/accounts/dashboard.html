@@ -11,32 +11,6 @@
     </div>
 </section>
 
-{% if sent_connection_requests %}
-<section aria-label="Solicitudes de conexión enviadas">
-    <div class="grid">
-        {% for connection in sent_connection_requests %}
-            <article class="card">
-                <div class="card-profile-head">
-                    <span class="chat-avatar">
-                        {% if connection.receiver.profile.photo %}
-                            <img src="{{ connection.receiver.profile.photo.url }}" alt="Foto de {{ connection.receiver.username }}">
-                        {% else %}
-                            <span>{{ connection.receiver.username|first|upper }}</span>
-                        {% endif %}
-                    </span>
-                    <div>
-                        <h3>{{ connection.receiver.username }}</h3>
-                        <p>{{ connection.receiver.profile.location_label }}</p>
-                    </div>
-                </div>
-                <p>Has solicitado conectar con este perfil.</p>
-                <a class="button small secondary" href="{{ connection.receiver.profile.get_absolute_url }}">Ver perfil</a>
-            </article>
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
 {% if pending_connections %}
 <section>
     <h2>Solicitudes pendientes</h2>
