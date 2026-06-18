@@ -41,34 +41,14 @@
 </section>
 {% endif %}
 
-{% if pending_group_memberships or pending_plan_attendances or my_group_requests or my_plan_requests or panel_notifications or private_message_notifications or community_chat_notifications %}
-<section class="request-panel" aria-label="Avisos de grupos y planes">
+{% if private_message_notifications or community_chat_notifications %}
+<section class="request-panel" aria-label="Avisos de mensajes">
     <div class="section-title">
         <div>
             <p class="eyebrow">Avisos</p>
-            <h2>Grupos y planes</h2>
+            <h2>Mensajes</h2>
         </div>
     </div>
-
-    {% if panel_notifications %}
-        <h3>Novedades</h3>
-        <div class="request-list">
-            {% for notification in panel_notifications %}
-                <article class="request-card">
-                    <span class="chat-avatar"><span>!</span></span>
-                    <div>
-                        <h3>{{ notification.title }}</h3>
-                        <p>{{ notification.body }}</p>
-                    </div>
-                    {% if notification.url %}
-                        <div class="request-actions">
-                            <a class="button small secondary" href="{{ notification.url }}">Ver</a>
-                        </div>
-                    {% endif %}
-                </article>
-            {% endfor %}
-        </div>
-    {% endif %}
 
     {% if private_message_notifications %}
         <h3>Mensajes privados nuevos</h3>
@@ -101,6 +81,37 @@
                     <div class="request-actions">
                         <a class="button small secondary" href="{% url 'conversation_detail' item.conversation.pk %}">Abrir chat</a>
                     </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if pending_group_memberships or pending_plan_attendances or my_group_requests or my_plan_requests or panel_notifications %}
+<section class="request-panel" aria-label="Avisos de grupos y planes">
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Avisos</p>
+            <h2>Grupos y planes</h2>
+        </div>
+    </div>
+
+    {% if panel_notifications %}
+        <h3>Novedades</h3>
+        <div class="request-list">
+            {% for notification in panel_notifications %}
+                <article class="request-card">
+                    <span class="chat-avatar"><span>!</span></span>
+                    <div>
+                        <h3>{{ notification.title }}</h3>
+                        <p>{{ notification.body }}</p>
+                    </div>
+                    {% if notification.url %}
+                        <div class="request-actions">
+                            <a class="button small secondary" href="{{ notification.url }}">Ver</a>
+                        </div>
+                    {% endif %}
                 </article>
             {% endfor %}
         </div>
