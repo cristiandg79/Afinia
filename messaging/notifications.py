@@ -51,6 +51,35 @@ def unread_count_for_conversation(conversation, user):
     return messages.count()
 
 
+def private_message_unread_items(user):
+    if not user.is_authenticated:
+        return []
+
+    items = []
+    conversations = (
+        user.conversations
+        .select_related('group', 'plan')
+        .prefetch_related('participants', 'read_states')
+        .order_by('-updated_at')
+    )
+    for conversation in conversations:
+        if is_chat_conversation(conversation) or is_community_conversation(conversation):
+            continue
+        unread_count = unread_count_for_conversation(conversation, user)
+        if not unread_count:
+            continue
+        other_user = next(
+            (participant for participant in conversation.participants.all() if participant.id != user.id),
+            None,
+        )
+        items.append({
+            'conversation': conversation,
+            'title': other_user.username if other_user else 'Conversación privada',
+            'unread_count': unread_count,
+        })
+    return items
+
+
 def community_chat_unread_items(user):
     if not user.is_authenticated:
         return []
