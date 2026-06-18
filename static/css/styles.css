@@ -886,6 +886,7 @@ h1 {
 
 .card-profile-head > div {
     min-width: 0;
+    width: 100%;
 }
 
 .card-profile-head h2,
@@ -897,10 +898,20 @@ h1 {
 .card-profile-head h2,
 .card-profile-head h3,
 .user-name-truncate {
+    display: block;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.people-card > p,
+.dating-body > p {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .community-grid {
@@ -952,6 +963,8 @@ h1 {
     grid-template-rows: 1fr auto;
     height: 100%;
     min-height: 290px;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .people-card__body {
@@ -959,6 +972,7 @@ h1 {
     display: grid;
     gap: 12px;
     grid-template-rows: auto minmax(66px, auto) minmax(36px, auto);
+    min-width: 0;
 }
 
 .people-card__head {
@@ -973,6 +987,11 @@ h1 {
 .people-card__bio {
     line-height: 1.35;
     margin-bottom: 0;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .people-card .chat-avatar {
@@ -1758,6 +1777,8 @@ textarea {
 .dating-body {
     display: grid;
     gap: 14px;
+    min-width: 0;
+    overflow: hidden;
     padding: 18px;
 }
 
