@@ -556,7 +556,7 @@ h1 {
 
 .auth-fields {
     display: grid;
-    gap: 16px;
+    gap: 22px;
 }
 
 .auth-field {
@@ -573,6 +573,7 @@ h1 {
     color: var(--muted);
     font-size: 0.9rem;
     font-weight: 400;
+    margin-bottom: 4px;
 }
 
 .auth-fields .helptext ul {
@@ -581,7 +582,7 @@ h1 {
 }
 
 .auth-field + .auth-field {
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
 .fine-print {
