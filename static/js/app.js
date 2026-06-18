@@ -538,6 +538,10 @@ document.querySelectorAll('input[name="image"]').forEach((input) => {
 document.querySelectorAll('.profile-photo-field input[type="file"]').forEach((input) => {
     const field = input.closest('.profile-photo-field');
     const preview = field?.querySelector('[data-photo-preview]');
+    const currentPhoto = field?.querySelector('[data-current-photo]');
+    const selectedFile = field?.querySelector('[data-selected-file]');
+    const trigger = field?.querySelector('[data-file-trigger]');
+    const deletePhoto = field?.querySelector('input[name="delete_photo"]');
     if (!preview) {
         return;
     }
@@ -547,10 +551,28 @@ document.querySelectorAll('.profile-photo-field input[type="file"]').forEach((in
         if (!file || !file.type.startsWith('image/')) {
             preview.hidden = true;
             preview.removeAttribute('src');
+            if (currentPhoto) {
+                currentPhoto.hidden = false;
+            }
+            if (selectedFile) {
+                selectedFile.textContent = '';
+            }
             return;
         }
         preview.src = URL.createObjectURL(file);
         preview.hidden = false;
+        if (currentPhoto) {
+            currentPhoto.hidden = true;
+        }
+        if (selectedFile) {
+            selectedFile.textContent = `Imagen seleccionada: ${file.name}`;
+        }
+        if (trigger) {
+            trigger.textContent = 'Cambiar imagen';
+        }
+        if (deletePhoto) {
+            deletePhoto.checked = false;
+        }
     });
 });
 

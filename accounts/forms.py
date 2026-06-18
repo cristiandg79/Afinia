@@ -122,7 +122,7 @@ class ProfileForm(forms.ModelForm):
             'smoker',
         ]
         widgets = {
-            'photo': forms.ClearableFileInput(),
+            'photo': forms.FileInput(attrs={'accept': 'image/*'}),
             'country': forms.Select(attrs={'data-location-country': 'true'}),
             'city': forms.TextInput(attrs={
                 'placeholder': 'Ej. Madrid',

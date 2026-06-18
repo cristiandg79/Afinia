@@ -1156,6 +1156,14 @@ textarea {
     border-color: var(--primary);
 }
 
+.selected-file-name {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
 .profile-photo-field img {
     border-radius: 999px;
     height: 92px;

@@ -137,12 +137,13 @@
                 <div class="profile-photo-field featured">
                     <span>{{ form.photo.label }}</span>
                     {% if form.instance.photo %}
-                        <img src="{{ form.instance.photo.url }}" alt="Foto principal actual">
+                        <img src="{{ form.instance.photo.url }}" alt="Foto principal actual" data-current-photo>
                         <label class="delete-photo-option">{{ form.delete_photo }} <span>{{ form.delete_photo.label }}</span></label>
                     {% endif %}
                     <img class="photo-preview" data-photo-preview alt="Vista previa de la foto principal" hidden>
                     {{ form.photo }}
-                    <label class="file-upload-trigger" for="{{ form.photo.id_for_label }}">Seleccionar imagen</label>
+                    <label class="file-upload-trigger" for="{{ form.photo.id_for_label }}" data-file-trigger>Seleccionar imagen</label>
+                    <span class="selected-file-name" data-selected-file></span>
                     <span class="field-hint">{{ form.photo.help_text }}</span>
                 </div>
                 <div class="profile-photo-field"><span>{{ form.extra_photo_1.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_1 }}<label class="file-upload-trigger" for="{{ form.extra_photo_1.id_for_label }}">Seleccionar imagen</label></div>
