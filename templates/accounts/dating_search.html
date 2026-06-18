@@ -43,6 +43,13 @@
                 {% endfor %}
             </select>
         </label>
+        <label>Orientaci&oacute;n sexual
+            <select name="orientation">
+                {% for value, label in orientation_choices %}
+                    <option value="{{ value }}" {% if filters.orientation == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
         <button class="button small" type="submit">Filtrar</button>
         <a class="button small secondary" href="{% url 'dating_search' %}?clear=1">Limpiar</a>
     </form>

@@ -328,12 +328,16 @@ def clean_dating_filters(data, profile):
         'min_age': data.get('min_age', '').strip(),
         'max_age': data.get('max_age', '').strip(),
         'sex': data.get('sex', '').strip(),
+        'orientation': data.get('orientation', '').strip(),
     }
     valid_countries = {value for value, _ in LOCATION_COUNTRY_CHOICES}
     if filters['country'] not in valid_countries:
         filters['country'] = ''
     if filters['sex'] not in ['', Profile.Sex.WOMAN, Profile.Sex.MAN]:
         filters['sex'] = ''
+    valid_orientations = {value for value, _ in Profile.Orientation.choices}
+    if filters['orientation'] not in valid_orientations:
+        filters['orientation'] = ''
     if not filters['sex']:
         filters['sex'] = inferred_dating_sex(profile)
     return filters
@@ -373,6 +377,8 @@ def dating_search(request):
         profiles = filter_by_user_radius(profiles, request.user.profile, filters['radius'])
     if should_show_profiles and filters['sex']:
         profiles = profiles.filter(sex=filters['sex'])
+    if should_show_profiles and filters['orientation']:
+        profiles = profiles.filter(orientation=filters['orientation'])
 
     dating_profiles = [profile for profile in profiles if 'dating' in profile.goals] if should_show_profiles else []
     min_age = int(filters['min_age']) if filters['min_age'].isdigit() else None
@@ -405,6 +411,7 @@ def dating_search(request):
             (Profile.Sex.WOMAN, 'Mujeres'),
             (Profile.Sex.MAN, 'Hombres'),
         ],
+        'orientation_choices': [('', 'Cualquier orientación'), *Profile.Orientation.choices],
     })
 
 
