@@ -41,7 +41,7 @@
 </section>
 {% endif %}
 
-{% if pending_group_memberships or pending_plan_attendances or my_group_requests or my_plan_requests or panel_notifications %}
+{% if pending_group_memberships or pending_plan_attendances or my_group_requests or my_plan_requests or panel_notifications or community_chat_notifications %}
 <section class="request-panel" aria-label="Avisos de grupos y planes">
     <div class="section-title">
         <div>
@@ -65,6 +65,24 @@
                             <a class="button small secondary" href="{{ notification.url }}">Ver</a>
                         </div>
                     {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if community_chat_notifications %}
+        <h3>Mensajes nuevos en chats</h3>
+        <div class="request-list">
+            {% for item in community_chat_notifications %}
+                <article class="request-card">
+                    <span class="chat-avatar"><span>{% if item.kind == 'Grupo' %}G{% else %}P{% endif %}</span></span>
+                    <div>
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.kind }} · {{ item.unread_count }} mensaje{% if item.unread_count != 1 %}s{% endif %} nuevo{% if item.unread_count != 1 %}s{% endif %}</p>
+                    </div>
+                    <div class="request-actions">
+                        <a class="button small secondary" href="{% url 'conversation_detail' item.conversation.pk %}">Abrir chat</a>
+                    </div>
                 </article>
             {% endfor %}
         </div>

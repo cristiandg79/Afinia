@@ -51,6 +51,38 @@ def unread_count_for_conversation(conversation, user):
     return messages.count()
 
 
+def community_chat_unread_items(user):
+    if not user.is_authenticated:
+        return []
+
+    items = []
+    conversations = (
+        user.conversations
+        .select_related('group', 'plan')
+        .prefetch_related('read_states')
+        .order_by('-updated_at')
+    )
+    for conversation in conversations:
+        if not is_community_conversation(conversation):
+            continue
+        unread_count = unread_count_for_conversation(conversation, user)
+        if not unread_count:
+            continue
+        if conversation.group:
+            title = conversation.group.name
+            kind = 'Grupo'
+        else:
+            title = conversation.plan.title
+            kind = 'Plan'
+        items.append({
+            'conversation': conversation,
+            'title': title,
+            'kind': kind,
+            'unread_count': unread_count,
+        })
+    return items
+
+
 def pending_connection_count(user):
     if not user.is_authenticated:
         return 0
@@ -95,19 +127,7 @@ def pending_panel_count(user):
     )
     own_requests += PlanAttendance.objects.filter(user=user, status=PlanAttendance.Status.REQUESTED).count()
     unread_panel_notifications = PanelNotification.objects.filter(user=user, is_read=False).count()
-    community_chat_messages = 0
-    conversations = user.conversations.select_related('group', 'plan').prefetch_related('read_states')
-    for conversation in conversations:
-        if not is_community_conversation(conversation):
-            continue
-        state = next(
-            (read_state for read_state in conversation.read_states.all() if read_state.user_id == user.id),
-            None,
-        )
-        messages = Message.objects.filter(conversation=conversation).exclude(sender=user)
-        if state and state.last_read_at:
-            messages = messages.filter(created_at__gt=state.last_read_at)
-        community_chat_messages += messages.count()
+    community_chat_messages = sum(item['unread_count'] for item in community_chat_unread_items(user))
     return moderation_requests + own_requests + unread_panel_notifications + community_chat_messages
 
 

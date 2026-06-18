@@ -12,6 +12,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from community.models import Group, GroupMembership, Plan, PlanAttendance
 from messaging.chat_rooms import is_chat_group
 from messaging.models import PanelNotification
+from messaging.notifications import community_chat_unread_items
 
 from .choices import HEALTH_CONTEXT_CHOICES
 from .forms import ProfileForm, SignUpForm
@@ -160,6 +161,7 @@ def dashboard(request):
         .filter(user=request.user, is_read=False)
         .order_by('-created_at')[:10]
     )
+    community_chat_notifications = community_chat_unread_items(request.user)
     if panel_notifications:
         PanelNotification.objects.filter(pk__in=[notification.pk for notification in panel_notifications]).update(is_read=True)
     return render(request, 'accounts/dashboard.html', {
@@ -173,6 +175,7 @@ def dashboard(request):
         'my_group_memberships': my_group_memberships,
         'my_plan_attendances': my_plan_attendances,
         'panel_notifications': panel_notifications,
+        'community_chat_notifications': community_chat_notifications,
     })
 
 
