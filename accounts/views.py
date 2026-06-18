@@ -181,7 +181,7 @@ def profile_edit(request):
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             updated = form.save(commit=False)
-            if form.cleaned_data.get('delete_photo') and updated.photo:
+            if form.cleaned_data.get('delete_photo') and not form.cleaned_data.get('photo') and updated.photo:
                 updated.photo.delete(save=False)
             updated.onboarding_completed = True
             updated.save()

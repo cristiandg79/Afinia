@@ -120,7 +120,7 @@
             <div>
                 <p class="step-kicker">Fotos</p>
                 <h2>Imágenes de perfil</h2>
-                <p class="muted">Puedes cambiar la foto principal, añadir nuevas fotos o eliminar las que ya no quieras mostrar.</p>
+                <p class="muted">La foto principal es obligatoria. Puedes cambiarla por una foto, avatar, logo o paisaje, y añadir fotos extra si quieres.</p>
             </div>
             <div class="profile-photo-upload-grid edit-photo-grid">
                 <div class="profile-photo-field featured">
@@ -132,6 +132,7 @@
                     <img class="photo-preview" data-photo-preview alt="Vista previa de la foto principal" hidden>
                     {{ form.photo }}
                     <label class="file-upload-trigger" for="{{ form.photo.id_for_label }}">Seleccionar imagen</label>
+                    <span class="field-hint">{{ form.photo.help_text }}</span>
                     {{ form.photo.errors }}
                 </div>
                 <div class="profile-photo-field"><span>{{ form.extra_photo_1.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_1 }}<label class="file-upload-trigger" for="{{ form.extra_photo_1.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_1.errors }}</div>

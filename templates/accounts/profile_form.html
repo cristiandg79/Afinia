@@ -132,7 +132,7 @@
         <div class="wizard-step" data-step="8">
             <p class="step-kicker">Paso 8 de 8</p>
             <h2>Fotos de perfil</h2>
-            <p class="muted">Opcional. Puedes añadir una foto principal y hasta cuatro fotos más para que tu perfil se sienta más cercano.</p>
+            <p class="muted">La foto principal es obligatoria. Puede ser una foto, avatar, logo o paisaje; las fotos adicionales son opcionales.</p>
             <div class="profile-photo-upload-grid">
                 <div class="profile-photo-field featured">
                     <span>{{ form.photo.label }}</span>
@@ -143,6 +143,7 @@
                     <img class="photo-preview" data-photo-preview alt="Vista previa de la foto principal" hidden>
                     {{ form.photo }}
                     <label class="file-upload-trigger" for="{{ form.photo.id_for_label }}">Seleccionar imagen</label>
+                    <span class="field-hint">{{ form.photo.help_text }}</span>
                 </div>
                 <div class="profile-photo-field"><span>{{ form.extra_photo_1.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_1 }}<label class="file-upload-trigger" for="{{ form.extra_photo_1.id_for_label }}">Seleccionar imagen</label></div>
                 <div class="profile-photo-field"><span>{{ form.extra_photo_2.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_2 }}<label class="file-upload-trigger" for="{{ form.extra_photo_2.id_for_label }}">Seleccionar imagen</label></div>

@@ -36,6 +36,9 @@ SOCIAL_CHOICES = [
     ('slow_pace', 'Me gusta ir poco a poco'),
 ]
 
+PHOTO_REQUIRED_MESSAGE = 'Es obligatorio poner una foto principal. Puede ser una foto, avatar, logo o paisaje.'
+
+
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'}))
     email2 = forms.EmailField(label='Repite el email', widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'}))
@@ -142,6 +145,8 @@ class ProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['photo'].label = 'Foto principal'
+        self.fields['photo'].help_text = 'Obligatoria. Puede ser una foto, avatar, logo o paisaje.'
+        self.fields['photo'].required = False
         self.fields['country'].label = 'País'
         self.fields['country'].choices = LOCATION_COUNTRY_CHOICES
         self.fields['city'].label = 'Ciudad'
@@ -170,3 +175,17 @@ class ProfileForm(forms.ModelForm):
         if age < 18:
             raise forms.ValidationError('Debes tener al menos 18 años para crear un perfil.')
         return birth_date
+
+    def clean(self):
+        cleaned_data = super().clean()
+        photo = cleaned_data.get('photo')
+        delete_photo = cleaned_data.get('delete_photo')
+        has_current_photo = bool(self.instance and self.instance.photo)
+        has_uploaded_photo = bool(self.files.get(self.add_prefix('photo')))
+        photo_was_cleared = photo is False
+        keeps_current_photo = has_current_photo and not delete_photo and not photo_was_cleared
+
+        if not has_uploaded_photo and not keeps_current_photo:
+            self.add_error('photo', PHOTO_REQUIRED_MESSAGE)
+
+        return cleaned_data
