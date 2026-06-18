@@ -45,7 +45,7 @@
             <article class="card community-card">
                 <div class="community-card__body">
                     <h2>{{ plan.title }}</h2>
-                    <p>{{ plan.starts_at|date:'l, d/m/Y H:i' }} · {{ plan.location_label }}</p>
+                    <p>{{ plan.starts_at|date:'l, d/m/Y H:i'|capfirst }} · {{ plan.location_label }}</p>
                     <p>{{ plan.description|truncatechars:150 }}</p>
                     {% if plan.accessibility_info %}
                         <p class="muted">Accesibilidad y comodidad: {{ plan.accessibility_info|truncatechars:90 }}</p>

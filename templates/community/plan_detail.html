@@ -2,7 +2,7 @@
 {% block title %}{{ plan.title }} - Afinia{% endblock %}
 {% block content %}
 <article class="profile">
-    <p class="eyebrow">{{ plan.starts_at|date:'l, d/m/Y H:i' }} · {{ plan.location_label }}</p>
+    <p class="eyebrow">{{ plan.starts_at|date:'l, d/m/Y H:i'|capfirst }} · {{ plan.location_label }}</p>
     <h1>{{ plan.title }}</h1>
     <p>{{ plan.description }}</p>
     {% if plan.place %}
