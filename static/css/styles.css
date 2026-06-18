@@ -132,6 +132,10 @@ select:focus {
     padding: 6px 12px 6px 6px;
 }
 
+.user-menu summary > span:last-child {
+    max-width: 150px;
+}
+
 .user-menu summary::-webkit-details-marker {
     display: none;
 }
@@ -880,10 +884,23 @@ h1 {
     margin-bottom: 14px;
 }
 
+.card-profile-head > div {
+    min-width: 0;
+}
+
 .card-profile-head h2,
 .card-profile-head h3,
 .card-profile-head p {
     margin-bottom: 2px;
+}
+
+.card-profile-head h2,
+.card-profile-head h3,
+.user-name-truncate {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .community-grid {
@@ -951,11 +968,6 @@ h1 {
 
 .people-card__head > div {
     min-width: 0;
-}
-
-.people-card__head h2,
-.people-card__head h3 {
-    overflow-wrap: anywhere;
 }
 
 .people-card__bio {
@@ -1754,6 +1766,10 @@ textarea {
     display: flex;
     gap: 12px;
     justify-content: space-between;
+}
+
+.dating-title > div {
+    min-width: 0;
 }
 
 .dating-title h2,

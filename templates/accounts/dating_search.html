@@ -76,7 +76,7 @@
             <div class="dating-body">
                 <div class="dating-title">
                     <div>
-                        <h2>{{ profile.user.username }}</h2>
+                        <h2 class="user-name-truncate" title="{{ profile.user.username }}">{{ profile.user.username }}</h2>
                         <p class="dating-main-meta">
                             {% if profile.age %}{{ profile.age }} años{% else %}Edad no indicada{% endif %}
                             - {{ profile.location_label }}

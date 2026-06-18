@@ -85,7 +85,7 @@
                             {% endif %}
                         </span>
                         <div>
-                            <h2>{{ profile.user.username }}</h2>
+                            <h2 title="{{ profile.user.username }}">{{ profile.user.username }}</h2>
                             <p>
                                 {% if profile.age %}{{ profile.age }} años - {% endif %}{{ profile.location_label }}
                             </p>
