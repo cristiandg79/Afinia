@@ -186,7 +186,7 @@
                     <div class="community-card__body">
                         <p class="eyebrow">{{ attendance.panel_role_label }}</p>
                         <h2>{{ attendance.plan.title }}</h2>
-                        <p>{{ attendance.plan.starts_at|date:'d/m/Y H:i' }} · {{ attendance.plan.location_label }}</p>
+                        <p>{{ attendance.plan.starts_at|date:'l, d/m/Y H:i' }} · {{ attendance.plan.location_label }}</p>
                         <p>{{ attendance.plan.description|truncatechars:120 }}</p>
                     </div>
                     <div class="community-card__actions">
