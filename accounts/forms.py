@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from .choices import HEALTH_CONTEXT_CHOICES
 from .locations import LOCATION_COUNTRY_CHOICES
 from .models import Profile
 
@@ -34,29 +35,6 @@ SOCIAL_CHOICES = [
     ('clear_plans', 'Me ayuda saber el plan con antelacion'),
     ('slow_pace', 'Me gusta ir poco a poco'),
 ]
-
-HEALTH_CONTEXT_CHOICES = [
-    ('physical_disability', 'Discapacidad física o movilidad reducida'),
-    ('visual_disability', 'Discapacidad visual'),
-    ('hearing_disability', 'Discapacidad auditiva'),
-    ('intellectual_disability', 'Discapacidad intelectual'),
-    ('autism', 'Autismo / espectro autista'),
-    ('adhd', 'TDAH'),
-    ('anxiety', 'Ansiedad'),
-    ('depression', 'Depresion'),
-    ('bipolar', 'Trastorno bipolar'),
-    ('ocd', 'TOC'),
-    ('ptsd', 'Trauma / TEPT'),
-    ('psychosis', 'Psicosis o esquizofrenia'),
-    ('eating_disorder', 'Trastorno de la conducta alimentaria'),
-    ('chronic_illness', 'Enfermedad crónica'),
-    ('rare_disease', 'Enfermedad rara'),
-    ('brain_injury', 'Daño cerebral adquirido'),
-    ('pain_fatigue', 'Dolor cronico o fatiga'),
-    ('other', 'Otra situación'),
-    ('prefer_not_detail', 'Prefiero no detallarlo'),
-]
-
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'}))

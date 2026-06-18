@@ -13,6 +13,7 @@ from community.models import Group, GroupMembership, Plan, PlanAttendance
 from messaging.chat_rooms import is_chat_group
 from messaging.models import PanelNotification
 
+from .choices import HEALTH_CONTEXT_CHOICES
 from .forms import ProfileForm, SignUpForm
 from .locations import LOCATION_COUNTRY_CHOICES
 from .models import Connection, DatingAction, Profile, ProfilePhoto
@@ -242,21 +243,25 @@ def discover(request):
     username = request.GET.get('username', '').strip()
     country = request.GET.get('country', '').strip()
     city = request.GET.get('city', '').strip()
-    goal = request.GET.get('goal')
+    situation = request.GET.get('situation')
+    valid_situations = {value for value, _ in HEALTH_CONTEXT_CHOICES}
+    if situation not in valid_situations:
+        situation = ''
     if username:
         profiles = profiles.filter(user__username__icontains=username)
     if country:
         profiles = profiles.filter(country=country)
     if city:
         profiles = profiles.filter(city__icontains=city)
-    if goal:
-        profiles = [profile for profile in profiles if goal in profile.goals]
+    if situation:
+        profiles = [profile for profile in profiles if situation in profile.health_context]
     return render(request, 'accounts/discover.html', {
         'profiles': profiles,
         'username': username,
         'country': country,
         'city': city,
-        'goal': goal,
+        'situation': situation,
+        'situation_choices': HEALTH_CONTEXT_CHOICES,
         'country_choices': LOCATION_COUNTRY_CHOICES,
         'pending_connections': pending_connections,
     })

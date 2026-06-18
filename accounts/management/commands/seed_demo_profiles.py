@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
+from accounts.choices import HEALTH_CONTEXT_CHOICES
 from accounts.models import Profile
 
 
@@ -26,10 +27,7 @@ class Command(BaseCommand):
     ]
     interests = ['cafe', 'cinema', 'gaming', 'reading', 'music', 'walks', 'art', 'sports', 'support']
     social_preferences = ['chat_first', 'small_groups', 'quiet_places', 'clear_plans', 'slow_pace']
-    health_contexts = [
-        ['anxiety'], ['depression'], ['autism'], ['adhd'], ['physical_disability'],
-        ['chronic_illness'], ['hearing_disability'], ['pain_fatigue'], ['prefer_not_detail'],
-    ]
+    health_contexts = [[value] for value, _ in HEALTH_CONTEXT_CHOICES]
     bios = [
         'Me gusta conocer gente con calma, hablar primero y hacer planes sencillos.',
         'Busco una conexión honesta, sin prisas y con buena conversación.',

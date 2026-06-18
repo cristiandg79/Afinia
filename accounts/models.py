@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
+from .choices import HEALTH_CONTEXT_LABELS
 from .locations import LOCATION_COUNTRY_CHOICES, LOCATION_COUNTRY_LABELS
 
 
@@ -117,28 +118,7 @@ class Profile(models.Model):
         return [labels.get(preference, preference) for preference in self.social_preferences]
 
     def health_context_labels(self):
-        labels = {
-            'physical_disability': 'Discapacidad física o movilidad reducida',
-            'visual_disability': 'Discapacidad visual',
-            'hearing_disability': 'Discapacidad auditiva',
-            'intellectual_disability': 'Discapacidad intelectual',
-            'autism': 'Autismo / espectro autista',
-            'adhd': 'TDAH',
-            'anxiety': 'Ansiedad',
-            'depression': 'Depresion',
-            'bipolar': 'Trastorno bipolar',
-            'ocd': 'TOC',
-            'ptsd': 'Trauma / TEPT',
-            'psychosis': 'Psicosis o esquizofrenia',
-            'eating_disorder': 'Trastorno de la conducta alimentaria',
-            'chronic_illness': 'Enfermedad crónica',
-            'rare_disease': 'Enfermedad rara',
-            'brain_injury': 'Daño cerebral adquirido',
-            'pain_fatigue': 'Dolor cronico o fatiga',
-            'other': 'Otra situación',
-            'prefer_not_detail': 'Prefiero no detallarlo',
-        }
-        return [labels.get(item, item) for item in self.health_context]
+        return [HEALTH_CONTEXT_LABELS.get(item, item) for item in self.health_context]
 
     @property
     def age(self):

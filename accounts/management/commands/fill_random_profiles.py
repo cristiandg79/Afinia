@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
+from accounts.choices import HEALTH_CONTEXT_CHOICES
 from accounts.models import Profile, ProfilePhoto
 
 
@@ -33,19 +34,12 @@ class Command(BaseCommand):
     ]
     interests = ['cafe', 'cinema', 'gaming', 'reading', 'music', 'walks', 'art', 'sports', 'pets', 'support']
     social_preferences = ['chat_first', 'small_groups', 'quiet_places', 'clear_plans', 'slow_pace']
-    health_contexts = [
-        ['anxiety'],
-        ['depression'],
-        ['autism'],
-        ['adhd'],
-        ['physical_disability'],
-        ['visual_disability'],
-        ['hearing_disability'],
-        ['chronic_illness'],
-        ['pain_fatigue'],
-        ['prefer_not_detail'],
+    health_contexts = [[value] for value, _ in HEALTH_CONTEXT_CHOICES] + [
         ['anxiety', 'adhd'],
         ['autism', 'anxiety'],
+        ['insomnia', 'anxiety'],
+        ['panic_attacks', 'agoraphobia'],
+        ['chronic_illness', 'pain_fatigue'],
     ]
     goals = ['dating', 'friendship', 'groups', 'talk']
     palette = [
