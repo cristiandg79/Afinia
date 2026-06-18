@@ -4,7 +4,6 @@
 <section class="dashboard-head">
     <div>
         <p class="eyebrow dashboard-greeting">Hola, {{ user.username }}</p>
-        <h1>Tu espacio de conexiones</h1>
         {% if not profile.onboarding_completed %}
             <p>Completa tu perfil para que las sugerencias sean más útiles.</p>
             <a class="button" href="{% url 'profile_edit' %}">Completar perfil</a>
@@ -13,8 +12,7 @@
 </section>
 
 {% if sent_connection_requests %}
-<section>
-    <h2>Solicitud para conectar</h2>
+<section aria-label="Solicitudes de conexión enviadas">
     <div class="grid">
         {% for connection in sent_connection_requests %}
             <article class="card">
