@@ -559,11 +559,14 @@ h1 {
     gap: 16px;
 }
 
-.auth-fields label {
-    color: var(--text);
+.auth-field {
     display: grid;
-    font-weight: 700;
     gap: 7px;
+}
+
+.auth-field label {
+    color: var(--text);
+    font-weight: 700;
 }
 
 .auth-fields .helptext {
