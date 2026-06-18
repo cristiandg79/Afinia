@@ -143,9 +143,18 @@ def dashboard(request):
                 PlanAttendance.Status.APPROVED,
             ],
         )
-        .select_related('plan')
+        .select_related('plan', 'plan__group')
         .order_by('-created_at')
     )
+    for attendance in my_plan_attendances:
+        is_plan_moderator = attendance.plan.created_by_id == request.user.id
+        if attendance.plan.group_id:
+            is_plan_moderator = is_plan_moderator or GroupMembership.objects.filter(
+                group=attendance.plan.group,
+                user=request.user,
+                status=GroupMembership.Status.MODERATOR,
+            ).exists()
+        attendance.panel_role_label = 'Moderador' if is_plan_moderator else 'Miembro'
     panel_notifications = list(
         PanelNotification.objects
         .filter(user=request.user, is_read=False)

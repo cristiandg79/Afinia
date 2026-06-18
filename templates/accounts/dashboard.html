@@ -165,7 +165,7 @@
             {% for membership in my_group_memberships %}
                 <article class="card community-card">
                     <div class="community-card__body">
-                        <p class="eyebrow">{{ membership.get_status_display }}</p>
+                        <p class="eyebrow">{% if membership.status == 'moderator' %}Moderador{% else %}Miembro{% endif %}</p>
                         <h2>{{ membership.group.name }}</h2>
                         <p>{{ membership.group.location_label }}{% if membership.group.topic %} · {{ membership.group.topic }}{% endif %}</p>
                         <p>{{ membership.group.description|truncatechars:120 }}</p>
@@ -184,7 +184,7 @@
             {% for attendance in my_plan_attendances %}
                 <article class="card community-card">
                     <div class="community-card__body">
-                        <p class="eyebrow">{{ attendance.get_status_display }}</p>
+                        <p class="eyebrow">{{ attendance.panel_role_label }}</p>
                         <h2>{{ attendance.plan.title }}</h2>
                         <p>{{ attendance.plan.starts_at|date:'d/m/Y H:i' }} · {{ attendance.plan.location_label }}</p>
                         <p>{{ attendance.plan.description|truncatechars:120 }}</p>
