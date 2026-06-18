@@ -71,14 +71,12 @@
             {% endfor %}
         </dd>
         {% if profile.health_context %}
-            {% if profile.accessibility_visibility == 'public' or profile.user == user %}
-                <dt>Situación</dt>
-                <dd>
-                    {% for item in profile.health_context_labels %}
-                        <span class="tag">{{ item }}</span>
-                    {% endfor %}
-                </dd>
-            {% endif %}
+            <dt>Situación de salud</dt>
+            <dd>
+                {% for item in profile.health_context_labels %}
+                    <span class="tag">{{ item }}</span>
+                {% endfor %}
+            </dd>
         {% endif %}
         <dt>Modalidad</dt>
         <dd>
