@@ -27,8 +27,6 @@ PROFILE_FORM_STEPS = {
     'social_preferences': 4,
     'health_context': 5,
     'bio': 6,
-    'open_to_nearby': 6,
-    'open_to_online': 6,
     'sex': 7,
     'orientation': 7,
     'birth_date': 7,

@@ -102,10 +102,6 @@
                 {% include 'includes/emoji_picker.html' with target='bio' class_name='profile-emoji-picker' %}
             </div>
             {{ form.bio.errors }}
-            <div class="toggle-row">
-                <label>{{ form.open_to_nearby }} <span>{{ form.open_to_nearby.label }}</span></label>
-                <label>{{ form.open_to_online }} <span>{{ form.open_to_online.label }}</span></label>
-            </div>
         </div>
 
         <div class="wizard-step" data-step="7">

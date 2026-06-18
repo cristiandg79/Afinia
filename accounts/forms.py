@@ -117,8 +117,6 @@ class ProfileForm(forms.ModelForm):
             'height_cm',
             'weight_kg',
             'smoker',
-            'open_to_nearby',
-            'open_to_online',
         ]
         widgets = {
             'photo': forms.ClearableFileInput(),
@@ -155,9 +153,6 @@ class ProfileForm(forms.ModelForm):
         self.fields['height_cm'].label = 'Altura (cm)'
         self.fields['weight_kg'].label = 'Peso (kg)'
         self.fields['smoker'].label = 'Fumador/a'
-        self.fields['open_to_nearby'].label = 'Quiero ver personas y planes cerca'
-        self.fields['open_to_online'].label = 'También quiero conocer gente online'
-
         optional_selects = ['sex', 'orientation', 'smoker']
         for field_name in optional_selects:
             self.fields[field_name].required = False
