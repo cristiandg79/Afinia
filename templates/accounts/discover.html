@@ -54,6 +54,13 @@
             </select>
         </label>
         <label>Ciudad <input name="city" value="{{ city|default:'' }}" placeholder="Ej. Madrid"></label>
+        <label>Distancia
+            <select name="radius">
+                {% for value, label in radius_choices %}
+                    <option value="{{ value }}" {% if radius == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
         <label>Situaci&oacute;n
             <select name="situation">
                 <option value="">Cualquiera</option>

@@ -23,6 +23,13 @@
         <label><span>Ciudad</span>
             <input name="city" value="{{ filters.city }}" placeholder="Ej. Madrid">
         </label>
+        <label><span>Distancia</span>
+            <select name="radius">
+                {% for value, label in radius_choices %}
+                    <option value="{{ value }}" {% if filters.radius == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
         <label><span>Edad min.</span>
             <input type="number" name="min_age" min="18" max="99" value="{{ filters.min_age }}" placeholder="18">
         </label>

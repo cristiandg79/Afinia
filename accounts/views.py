@@ -15,6 +15,7 @@ from messaging.models import PanelNotification
 
 from .choices import HEALTH_CONTEXT_CHOICES
 from .forms import ProfileForm, SignUpForm
+from .geolocation import RADIUS_CHOICES, clean_radius, filter_by_user_radius
 from .locations import LOCATION_COUNTRY_CHOICES
 from .models import Connection, DatingAction, Profile, ProfilePhoto
 
@@ -241,6 +242,7 @@ def discover(request):
     username = request.GET.get('username', '').strip()
     country = request.GET.get('country', '').strip()
     city = request.GET.get('city', '').strip()
+    radius = clean_radius(request.GET.get('radius', ''))
     situation = request.GET.get('situation')
     valid_situations = {value for value, _ in HEALTH_CONTEXT_CHOICES}
     if situation not in valid_situations:
@@ -253,14 +255,18 @@ def discover(request):
         profiles = profiles.filter(city__icontains=city)
     if situation:
         profiles = [profile for profile in profiles if situation in profile.health_context]
+    if radius:
+        profiles = filter_by_user_radius(profiles, request.user.profile, radius)
     return render(request, 'accounts/discover.html', {
         'profiles': profiles,
         'username': username,
         'country': country,
         'city': city,
+        'radius': radius,
         'situation': situation,
         'situation_choices': HEALTH_CONTEXT_CHOICES,
         'country_choices': LOCATION_COUNTRY_CHOICES,
+        'radius_choices': RADIUS_CHOICES,
         'pending_connections': pending_connections,
     })
 
@@ -318,6 +324,7 @@ def clean_dating_filters(data, profile):
     filters = {
         'country': data.get('country', '').strip(),
         'city': data.get('city', '').strip(),
+        'radius': clean_radius(data.get('radius', '')),
         'min_age': data.get('min_age', '').strip(),
         'max_age': data.get('max_age', '').strip(),
         'sex': data.get('sex', '').strip(),
@@ -362,6 +369,8 @@ def dating_search(request):
         profiles = profiles.filter(country=filters['country'])
     if should_show_profiles and filters['city']:
         profiles = profiles.filter(city__icontains=filters['city'])
+    if should_show_profiles and filters['radius']:
+        profiles = filter_by_user_radius(profiles, request.user.profile, filters['radius'])
     if should_show_profiles and filters['sex']:
         profiles = profiles.filter(sex=filters['sex'])
 
@@ -390,6 +399,7 @@ def dating_search(request):
         'showing_seen_profiles': showing_seen_profiles,
         'querystring': querystring,
         'country_choices': LOCATION_COUNTRY_CHOICES,
+        'radius_choices': RADIUS_CHOICES,
         'sex_choices': [
             ('', 'Cualquier perfil'),
             (Profile.Sex.WOMAN, 'Mujeres'),

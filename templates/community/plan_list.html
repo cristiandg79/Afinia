@@ -27,8 +27,16 @@
             Ciudad
             <input type="search" name="city" value="{{ city_query }}" placeholder="Ej. Barcelona">
         </label>
+        <label>
+            Distancia
+            <select name="radius">
+                {% for value, label in radius_choices %}
+                    <option value="{{ value }}" {% if radius_query == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
         <button class="button small" type="submit">Buscar</button>
-        {% if title_query or country_query or city_query %}
+        {% if title_query or country_query or city_query or radius_query %}
             <a class="button small secondary" href="{% url 'plan_list' %}">Limpiar</a>
         {% endif %}
     </form>
@@ -48,7 +56,7 @@
                 </div>
             </article>
         {% empty %}
-            <p class="muted">{% if title_query or country_query or city_query %}No hay planes que coincidan con la búsqueda.{% else %}Aún no hay planes publicados.{% endif %}</p>
+            <p class="muted">{% if title_query or country_query or city_query or radius_query %}No hay planes que coincidan con la búsqueda.{% else %}Aún no hay planes publicados.{% endif %}</p>
         {% endfor %}
     </div>
 </section>

@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from accounts.geolocation import RADIUS_CHOICES, clean_radius, filter_by_user_radius
 from accounts.locations import LOCATION_COUNTRY_CHOICES
 
 from .forms import GroupForm, PlanForm
@@ -118,18 +119,23 @@ def group_list(request):
     title_query = request.GET.get('q', '').strip()
     country_query = request.GET.get('country', '').strip()
     city_query = request.GET.get('city', '').strip()
+    radius_query = clean_radius(request.GET.get('radius', ''))
     if title_query:
         groups = groups.filter(name__icontains=title_query)
     if country_query:
         groups = groups.filter(country=country_query)
     if city_query:
         groups = groups.filter(city__icontains=city_query)
+    if radius_query:
+        groups = filter_by_user_radius(groups, request.user.profile, radius_query)
     return render(request, 'community/group_list.html', {
         'groups': groups,
         'title_query': title_query,
         'country_query': country_query,
         'city_query': city_query,
+        'radius_query': radius_query,
         'country_choices': LOCATION_COUNTRY_CHOICES,
+        'radius_choices': RADIUS_CHOICES,
     })
 
 
@@ -273,18 +279,23 @@ def plan_list(request):
     title_query = request.GET.get('q', '').strip()
     country_query = request.GET.get('country', '').strip()
     city_query = request.GET.get('city', '').strip()
+    radius_query = clean_radius(request.GET.get('radius', ''))
     if title_query:
         plans = plans.filter(title__icontains=title_query)
     if country_query:
         plans = plans.filter(country=country_query)
     if city_query:
         plans = plans.filter(city__icontains=city_query)
+    if radius_query:
+        plans = filter_by_user_radius(plans, request.user.profile, radius_query)
     return render(request, 'community/plan_list.html', {
         'plans': plans,
         'title_query': title_query,
         'country_query': country_query,
         'city_query': city_query,
+        'radius_query': radius_query,
         'country_choices': LOCATION_COUNTRY_CHOICES,
+        'radius_choices': RADIUS_CHOICES,
     })
 
 
