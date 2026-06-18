@@ -580,6 +580,10 @@ h1 {
     padding-left: 20px;
 }
 
+.auth-field + .auth-field {
+    margin-top: 6px;
+}
+
 .fine-print {
     color: var(--muted);
     font-size: 0.92rem;
