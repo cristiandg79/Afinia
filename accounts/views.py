@@ -178,13 +178,15 @@ def profile_edit(request):
     initial_step = 1
     is_onboarding = not profile.onboarding_completed
     if request.method == 'POST':
+        old_photo_name = profile.photo.name if profile.photo else ''
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             updated = form.save(commit=False)
-            if form.cleaned_data.get('delete_photo') and not form.cleaned_data.get('photo') and updated.photo:
-                updated.photo.delete(save=False)
+            has_new_main_photo = bool(form.cleaned_data.get('photo'))
             updated.onboarding_completed = True
             updated.save()
+            if has_new_main_photo and old_photo_name and old_photo_name != updated.photo.name:
+                updated.photo.storage.delete(old_photo_name)
             selected_photo_ids = request.POST.getlist('delete_extra_photos')
             if selected_photo_ids:
                 for photo in updated.extra_photos.filter(pk__in=selected_photo_ids):

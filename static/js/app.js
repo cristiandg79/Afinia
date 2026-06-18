@@ -541,7 +541,6 @@ document.querySelectorAll('.profile-photo-field input[type="file"]').forEach((in
     const currentPhoto = field?.querySelector('[data-current-photo]');
     const selectedFile = field?.querySelector('[data-selected-file]');
     const trigger = field?.querySelector('[data-file-trigger]');
-    const deletePhoto = field?.querySelector('input[name="delete_photo"]');
     if (!preview) {
         return;
     }
@@ -569,9 +568,6 @@ document.querySelectorAll('.profile-photo-field input[type="file"]').forEach((in
         }
         if (trigger) {
             trigger.textContent = 'Cambiar imagen';
-        }
-        if (deletePhoto) {
-            deletePhoto.checked = false;
         }
     });
 });

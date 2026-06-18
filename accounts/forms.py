@@ -73,7 +73,6 @@ class SignUpForm(UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
-    delete_photo = forms.BooleanField(label='Eliminar foto principal actual', required=False)
     extra_photo_1 = forms.ImageField(label='Foto adicional 1', required=False)
     extra_photo_2 = forms.ImageField(label='Foto adicional 2', required=False)
     extra_photo_3 = forms.ImageField(label='Foto adicional 3', required=False)
@@ -179,11 +178,10 @@ class ProfileForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         photo = cleaned_data.get('photo')
-        delete_photo = cleaned_data.get('delete_photo')
         has_current_photo = bool(self.instance and self.instance.photo)
         has_uploaded_photo = bool(self.files.get(self.add_prefix('photo')))
         photo_was_cleared = photo is False
-        keeps_current_photo = has_current_photo and not delete_photo and not photo_was_cleared
+        keeps_current_photo = has_current_photo and not photo_was_cleared
 
         if not has_uploaded_photo and not keeps_current_photo:
             self.add_error('photo', PHOTO_REQUIRED_MESSAGE)

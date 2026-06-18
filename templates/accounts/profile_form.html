@@ -138,7 +138,6 @@
                     <span>{{ form.photo.label }}</span>
                     {% if form.instance.photo %}
                         <img src="{{ form.instance.photo.url }}" alt="Foto principal actual" data-current-photo>
-                        <label class="delete-photo-option">{{ form.delete_photo }} <span>{{ form.delete_photo.label }}</span></label>
                     {% endif %}
                     <img class="photo-preview" data-photo-preview alt="Vista previa de la foto principal" hidden>
                     {{ form.photo }}
