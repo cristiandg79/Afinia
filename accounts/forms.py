@@ -38,18 +38,35 @@ SOCIAL_CHOICES = [
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'}))
+    email2 = forms.EmailField(label='Repite el email', widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'}))
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'email2', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].label = 'Usuario'
         self.fields['username'].help_text = 'Este será tu nick público. No puede estar repetido.'
         self.fields['username'].widget.attrs.update({'placeholder': 'ej. alex_madrid'})
+        self.password_help_text = self.fields['password1'].help_text
+        self.fields['password1'].help_text = ''
         self.fields['password1'].label = 'Contraseña'
         self.fields['password2'].label = 'Repite la contraseña'
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].strip()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError('Ya existe una cuenta con este email.')
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+        email2 = cleaned_data.get('email2')
+        if email and email2 and email.lower() != email2.lower():
+            self.add_error('email2', 'Los emails no coinciden.')
+        return cleaned_data
 
 
 class ProfileForm(forms.ModelForm):

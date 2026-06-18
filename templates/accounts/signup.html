@@ -19,7 +19,38 @@
             <h2>Datos de acceso</h2>
             <p class="muted">El usuario será tu nick público. No podrá estar repetido.</p>
         </div>
-        {{ form|crispy }}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <div class="auth-fields">
+            <label>
+                {{ form.username.label }}
+                {{ form.username }}
+                {% if form.username.help_text %}<span class="helptext">{{ form.username.help_text }}</span>{% endif %}
+                {{ form.username.errors }}
+            </label>
+            <label>
+                {{ form.email.label }}
+                {{ form.email }}
+                {{ form.email.errors }}
+            </label>
+            <label>
+                {{ form.email2.label }}
+                {{ form.email2 }}
+                {{ form.email2.errors }}
+            </label>
+            <label>
+                {{ form.password1.label }}
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </label>
+            <label>
+                {{ form.password2.label }}
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+                {% if form.password_help_text %}<span class="helptext password-help">{{ form.password_help_text|safe }}</span>{% endif %}
+            </label>
+        </div>
         <button class="button full" type="submit">Crear cuenta y continuar</button>
         <p class="fine-print">Al continuar aceptas crear una cuenta de prueba en Afinia. Más adelante añadiremos términos, privacidad y verificación formal.</p>
     </form>
