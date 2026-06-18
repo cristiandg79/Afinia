@@ -89,24 +89,6 @@
                                 {% endif %}
                             {% endif %}
                         </span>
-                        {% if message.sender == user and not is_public_chat %}
-                            <div class="message-actions">
-                                {% if message.body %}
-                                    <details>
-                                        <summary>Editar</summary>
-                                        <form method="post" action="{% url 'message_edit' message.pk %}" class="message-edit-form">
-                                            {% csrf_token %}
-                                            <textarea name="body" rows="3" maxlength="2000">{{ message.body }}</textarea>
-                                            <button class="button small" type="submit">Guardar</button>
-                                        </form>
-                                    </details>
-                                {% endif %}
-                                <form method="post" action="{% url 'message_delete' message.pk %}">
-                                    {% csrf_token %}
-                                    <button class="link-button danger-link" type="submit">Eliminar</button>
-                                </form>
-                            </div>
-                        {% endif %}
                     </div>
                 </article>
             {% empty %}

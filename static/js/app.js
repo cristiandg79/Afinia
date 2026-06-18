@@ -415,39 +415,6 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
         }
         bubble.append(meta);
 
-        if (Number(message.sender_id) === currentUserId && message.id && !isPublicChat) {
-            const actions = document.createElement('div');
-            actions.className = 'message-actions';
-
-            if (message.body) {
-                const details = document.createElement('details');
-                const summary = document.createElement('summary');
-                summary.textContent = 'Editar';
-                const editForm = document.createElement('form');
-                editForm.method = 'post';
-                editForm.action = `/mensajes/mensaje/${message.id}/editar/`;
-                editForm.className = 'message-edit-form';
-                editForm.innerHTML = `
-                    <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
-                    <textarea name="body" rows="3" maxlength="2000"></textarea>
-                    <button class="button small" type="submit">Guardar</button>
-                `;
-                editForm.querySelector('textarea').value = message.body;
-                details.append(summary, editForm);
-                actions.append(details);
-            }
-
-            const deleteForm = document.createElement('form');
-            deleteForm.method = 'post';
-            deleteForm.action = `/mensajes/mensaje/${message.id}/eliminar/`;
-            deleteForm.innerHTML = `
-                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
-                <button class="link-button danger-link" type="submit">Eliminar</button>
-            `;
-            actions.append(deleteForm);
-            bubble.append(actions);
-        }
-
         article.append(bubble);
         messages.append(article);
         article.scrollIntoView({ block: 'nearest' });
