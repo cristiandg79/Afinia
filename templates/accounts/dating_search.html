@@ -10,9 +10,9 @@
         </div>
     </div>
 
-    <form class="dating-filter-panel" method="get">
+    <form class="filters people-filters community-filters" method="get">
         <input type="hidden" name="searched" value="1">
-        <label><span>País</span>
+        <label>Pa&iacute;s
             <select name="country">
                 <option value="">Cualquier país</option>
                 {% for value, label in country_choices %}
@@ -20,33 +20,31 @@
                 {% endfor %}
             </select>
         </label>
-        <label><span>Ciudad</span>
+        <label>Ciudad
             <input name="city" value="{{ filters.city }}" placeholder="Ej. Madrid">
         </label>
-        <label><span>Distancia</span>
+        <label>Distancia
             <select name="radius">
                 {% for value, label in radius_choices %}
                     <option value="{{ value }}" {% if filters.radius == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
         </label>
-        <label><span>Edad min.</span>
+        <label>Edad min.
             <input type="number" name="min_age" min="18" max="99" value="{{ filters.min_age }}" placeholder="18">
         </label>
-        <label><span>Edad max.</span>
+        <label>Edad max.
             <input type="number" name="max_age" min="18" max="99" value="{{ filters.max_age }}" placeholder="60">
         </label>
-        <label><span>Busco</span>
+        <label>Busco
             <select name="sex">
                 {% for value, label in sex_choices %}
                     <option value="{{ value }}" {% if filters.sex == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
         </label>
-        <div class="dating-filter-actions">
-            <button class="button" type="submit">Filtrar</button>
-            <a class="button secondary" href="{% url 'dating_search' %}?clear=1">Limpiar</a>
-        </div>
+        <button class="button small" type="submit">Filtrar</button>
+        <a class="button small secondary" href="{% url 'dating_search' %}?clear=1">Limpiar</a>
     </form>
 
     {% if not should_show_profiles %}

@@ -1686,80 +1686,6 @@ textarea {
     max-width: 720px;
 }
 
-.dating-filter-panel {
-    align-items: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 12px;
-    overflow-x: hidden;
-    padding: 16px;
-    white-space: normal;
-}
-
-.dating-filter-panel label {
-    align-items: center;
-    color: var(--muted);
-    display: inline-flex;
-    font-size: 0.95rem;
-    font-weight: 700;
-    gap: 7px;
-    flex: 1 1 145px;
-    min-width: 0;
-}
-
-.dating-filter-panel label span {
-    flex: 0 0 auto;
-}
-
-.dating-filter-panel input[name="city"] {
-    min-width: 0;
-    width: 100%;
-}
-
-.dating-filter-panel select[name="country"],
-.dating-filter-panel select[name="radius"] {
-    min-width: 0;
-    width: 100%;
-}
-
-.dating-filter-panel input[name="min_age"],
-.dating-filter-panel input[name="max_age"] {
-    min-width: 0;
-    width: 100%;
-}
-
-.dating-filter-panel select[name="sex"] {
-    min-width: 0;
-    width: 100%;
-}
-
-.dating-filter-panel input,
-.dating-filter-panel select {
-    background: #f8faf8;
-    color: var(--text);
-    min-height: 42px;
-    padding: 8px 10px;
-}
-
-.dating-filter-actions {
-    align-items: center;
-    align-self: center;
-    display: flex;
-    flex: 1 1 180px;
-    gap: 8px;
-    justify-content: flex-end;
-    min-width: 0;
-}
-
-.dating-filter-actions .button {
-    min-height: 42px;
-    padding: 8px 14px;
-}
-
 .dating-repeat-notice {
     margin: 6px auto 0;
     max-width: 940px;
@@ -2389,7 +2315,6 @@ textarea {
     .toggle-row,
     .profile-photo-upload-grid,
     .dating-actions,
-    .dating-filter-panel,
     .dating-card-single {
         grid-template-columns: 1fr;
     }
@@ -2481,33 +2406,6 @@ textarea {
     .request-actions {
         grid-column: 1 / -1;
         justify-content: flex-start;
-    }
-
-    .dating-filter-panel {
-        flex-wrap: wrap;
-    }
-
-    .dating-filter-panel label,
-    .dating-filter-panel input[name="city"],
-    .dating-filter-panel input[name="min_age"],
-    .dating-filter-panel input[name="max_age"],
-    .dating-filter-panel select[name="country"],
-    .dating-filter-panel select[name="radius"],
-    .dating-filter-panel select[name="sex"] {
-        flex: 1 1 100%;
-        width: 100%;
-    }
-
-    .dating-filter-actions {
-        flex-wrap: wrap;
-        justify-content: stretch;
-        width: 100%;
-    }
-
-    .dating-filter-actions .button {
-        flex: 1 1 140px;
-        min-width: 0;
-        width: 100%;
     }
 
     .dating-hero {
