@@ -34,7 +34,6 @@ PROFILE_FORM_STEPS = {
     'birth_date': 7,
     'height_cm': 7,
     'weight_kg': 7,
-    'smoker': 7,
     'photo': 8,
     'extra_photo_1': 8,
     'extra_photo_2': 8,

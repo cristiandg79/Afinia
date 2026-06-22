@@ -118,7 +118,6 @@ class ProfileForm(forms.ModelForm):
             'birth_date',
             'height_cm',
             'weight_kg',
-            'smoker',
         ]
         widgets = {
             'photo': forms.FileInput(attrs={'accept': 'image/*'}),
@@ -156,8 +155,7 @@ class ProfileForm(forms.ModelForm):
         self.fields['birth_date'].label = 'Fecha de nacimiento'
         self.fields['height_cm'].label = 'Altura (cm)'
         self.fields['weight_kg'].label = 'Peso (kg)'
-        self.fields['smoker'].label = 'Fumador/a'
-        optional_selects = ['sex', 'orientation', 'smoker']
+        optional_selects = ['sex', 'orientation']
         for field_name in optional_selects:
             self.fields[field_name].required = False
             choices = [(value, label) for value, label in self.fields[field_name].choices if value]

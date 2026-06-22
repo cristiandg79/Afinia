@@ -91,8 +91,7 @@
             {% if profile.orientation %}<span class="tag">{{ profile.get_orientation_display }}</span>{% endif %}
             {% if profile.height_cm %}<span class="tag">{{ profile.height_cm }} cm</span>{% endif %}
             {% if profile.weight_kg %}<span class="tag">{{ profile.weight_kg }} kg</span>{% endif %}
-            {% if profile.smoker %}<span class="tag">Fumador/a: {{ profile.get_smoker_display }}</span>{% endif %}
-            {% if not profile.age and not profile.sex and not profile.orientation and not profile.height_cm and not profile.weight_kg and not profile.smoker %}
+            {% if not profile.age and not profile.sex and not profile.orientation and not profile.height_cm and not profile.weight_kg %}
                 No indicado
             {% endif %}
         </dd>
