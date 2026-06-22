@@ -52,7 +52,7 @@ def sync_plan_conversation(plan):
     conversation, _ = Conversation.objects.get_or_create(plan=plan)
     user_ids = PlanAttendance.objects.filter(
         plan=plan,
-        status=PlanAttendance.Status.APPROVED,
+        status__in=[PlanAttendance.Status.APPROVED, PlanAttendance.Status.MODERATOR],
     ).values_list('user_id', flat=True)
     conversation.participants.set(User.objects.filter(pk__in=user_ids))
     return conversation
@@ -93,6 +93,12 @@ def moderated_plans_for(user):
 def is_plan_moderator(plan, user):
     if plan.created_by_id == user.id:
         return True
+    if PlanAttendance.objects.filter(
+        plan=plan,
+        user=user,
+        status=PlanAttendance.Status.MODERATOR,
+    ).exists():
+        return True
     if not plan.group_id:
         return False
     return GroupMembership.objects.filter(
@@ -104,6 +110,11 @@ def is_plan_moderator(plan, user):
 
 def plan_moderator_users(plan):
     moderator_ids = {plan.created_by_id}
+    moderator_ids.update(
+        PlanAttendance.objects
+        .filter(plan=plan, status=PlanAttendance.Status.MODERATOR)
+        .values_list('user_id', flat=True)
+    )
     if plan.group_id:
         moderator_ids.update(
             GroupMembership.objects
@@ -229,6 +240,9 @@ def group_remove_member(request, pk, user_pk):
     if member == request.user or member.id == group.created_by_id:
         messages.info(request, 'No puedes expulsar a esta persona del grupo.')
         return redirect(group.get_absolute_url())
+    if is_group_moderator(group, member):
+        messages.info(request, 'No puedes expulsar a una persona moderadora del grupo.')
+        return redirect(group.get_absolute_url())
     membership = GroupMembership.objects.filter(group=group, user=member).first()
     if membership:
         membership.delete()
@@ -340,7 +354,7 @@ def plan_detail(request, pk):
     plan = get_object_or_404(Plan.objects.select_related('group', 'created_by'), pk=pk)
     is_moderator = is_plan_moderator(plan, request.user)
     if is_moderator:
-        attendance, _ = PlanAttendance.objects.update_or_create(
+        attendance, _ = PlanAttendance.objects.get_or_create(
             plan=plan,
             user=request.user,
             defaults={'status': PlanAttendance.Status.APPROVED},
@@ -349,7 +363,7 @@ def plan_detail(request, pk):
         attendance = PlanAttendance.objects.filter(plan=plan, user=request.user).first()
     attendees = (
         PlanAttendance.objects
-        .filter(plan=plan, status=PlanAttendance.Status.APPROVED)
+        .filter(plan=plan, status__in=[PlanAttendance.Status.APPROVED, PlanAttendance.Status.MODERATOR])
         .select_related('user__profile')
         .order_by('user__username')
     )
@@ -361,7 +375,7 @@ def plan_detail(request, pk):
         .order_by('created_at')
     ) if is_moderator else []
     plan_chat = None
-    if attendance and attendance.status == PlanAttendance.Status.APPROVED:
+    if attendance and attendance.status in [PlanAttendance.Status.APPROVED, PlanAttendance.Status.MODERATOR]:
         plan_chat = sync_plan_conversation(plan)
     for attendee in attendees:
         attendee.is_plan_moderator = is_plan_moderator(plan, attendee.user)
@@ -400,7 +414,7 @@ def plan_create(request):
 def plan_join(request, pk):
     plan = get_object_or_404(Plan, pk=pk)
     if is_plan_moderator(plan, request.user):
-        PlanAttendance.objects.update_or_create(
+        PlanAttendance.objects.get_or_create(
             plan=plan,
             user=request.user,
             defaults={'status': PlanAttendance.Status.APPROVED},
@@ -441,6 +455,9 @@ def plan_remove_attendee(request, pk, user_pk):
     if attendee == request.user or attendee.id == plan.created_by_id:
         messages.info(request, 'No puedes expulsar a esta persona del plan.')
         return redirect('plan_detail', pk=plan.pk)
+    if is_plan_moderator(plan, attendee):
+        messages.info(request, 'No puedes expulsar a una persona moderadora del plan.')
+        return redirect('plan_detail', pk=plan.pk)
     attendance = PlanAttendance.objects.filter(plan=plan, user=attendee).first()
     if attendance:
         attendance.delete()
@@ -453,6 +470,41 @@ def plan_remove_attendee(request, pk, user_pk):
         )
         notify_panel_users([attendee, request.user, *plan_moderator_users(plan)])
         messages.success(request, 'Usuario eliminado del plan.')
+    return redirect('plan_detail', pk=plan.pk)
+
+
+@login_required
+def plan_make_moderator(request, pk, user_pk):
+    plan = get_object_or_404(Plan, pk=pk)
+    member = get_object_or_404(User, pk=user_pk)
+    if request.method != 'POST':
+        return redirect('plan_detail', pk=plan.pk)
+    if not is_plan_moderator(plan, request.user):
+        messages.error(request, 'No puedes gestionar este plan.')
+        return redirect('plan_detail', pk=plan.pk)
+    if member.id == plan.created_by_id:
+        messages.info(request, 'La persona que creó el plan ya modera este plan.')
+        return redirect('plan_detail', pk=plan.pk)
+    attendance = PlanAttendance.objects.filter(
+        plan=plan,
+        user=member,
+        status=PlanAttendance.Status.APPROVED,
+    ).first()
+    if not attendance:
+        messages.info(request, 'Solo puedes hacer moderador a una persona apuntada al plan.')
+        return redirect('plan_detail', pk=plan.pk)
+
+    attendance.status = PlanAttendance.Status.MODERATOR
+    attendance.save(update_fields=['status'])
+    sync_plan_conversation(plan)
+    create_panel_notification(
+        member,
+        'Ahora eres moderador',
+        f'Te han cambiado a moderador del plan {plan.title}.',
+        reverse('plan_detail', kwargs={'pk': plan.pk}),
+    )
+    notify_panel_users([member, request.user, *plan_moderator_users(plan)])
+    messages.success(request, f'{member.username} ahora es moderador del plan.')
     return redirect('plan_detail', pk=plan.pk)
 
 

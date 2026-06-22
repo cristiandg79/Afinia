@@ -103,7 +103,8 @@ class Plan(models.Model):
 class PlanAttendance(models.Model):
     class Status(models.TextChoices):
         REQUESTED = 'requested', 'Solicitado'
-        APPROVED = 'approved', 'Aprobado'
+        APPROVED = 'approved', 'Miembro'
+        MODERATOR = 'moderator', 'Moderador'
         DECLINED = 'declined', 'Rechazado'
 
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)

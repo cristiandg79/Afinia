@@ -18,7 +18,7 @@
             <a class="button" href="{% url 'conversation_detail' plan_chat.pk %}">Abrir chat del plan</a>
         {% endif %}
     {% elif attendance %}
-        <p class="notice">Tu estado en este plan: {{ attendance.get_status_display }}</p>
+        <p class="notice">Tu estado en este plan: {% if attendance.status == 'moderator' %}Moderador{% elif attendance.status == 'approved' %}Miembro{% else %}{{ attendance.get_status_display }}{% endif %}</p>
         {% if plan_chat %}
             <a class="button" href="{% url 'conversation_detail' plan_chat.pk %}">Abrir chat del plan</a>
         {% endif %}
@@ -85,14 +85,20 @@
                 </span>
                 <div>
                     <h3>{{ attendee.user.username }}</h3>
-                    <p>{{ attendee.user.profile.location_label }}</p>
+                    <p>{{ attendee.user.profile.location_label }} · {% if attendee.is_plan_moderator %}Moderador{% else %}Miembro{% endif %}</p>
                 </div>
-                {% if attendee.user != user and attendee.user != plan.created_by and not attendee.is_plan_moderator %}
+                {% if attendee.user != user and attendee.user != plan.created_by %}
                     <div class="request-actions">
-                        <form method="post" action="{% url 'plan_remove_attendee' plan.pk attendee.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar a {{ attendee.user.username|escapejs }} del plan?');">
-                            {% csrf_token %}
-                            <button class="button small secondary danger" type="submit">Eliminar</button>
-                        </form>
+                        {% if not attendee.is_plan_moderator %}
+                            <form method="post" action="{% url 'plan_make_moderator' plan.pk attendee.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres hacer moderador a {{ attendee.user.username|escapejs }}?');">
+                                {% csrf_token %}
+                                <button class="button small" type="submit">Hacer moderador</button>
+                            </form>
+                            <form method="post" action="{% url 'plan_remove_attendee' plan.pk attendee.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar a {{ attendee.user.username|escapejs }} del plan?');">
+                                {% csrf_token %}
+                                <button class="button small secondary danger" type="submit">Eliminar</button>
+                            </form>
+                        {% endif %}
                     </div>
                 {% endif %}
             </article>

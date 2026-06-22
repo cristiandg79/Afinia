@@ -141,13 +141,14 @@ def dashboard(request):
             status__in=[
                 PlanAttendance.Status.REQUESTED,
                 PlanAttendance.Status.APPROVED,
+                PlanAttendance.Status.MODERATOR,
             ],
         )
         .select_related('plan', 'plan__group')
         .order_by('-created_at')
     )
     for attendance in my_plan_attendances:
-        is_plan_moderator = attendance.plan.created_by_id == request.user.id
+        is_plan_moderator = attendance.status == PlanAttendance.Status.MODERATOR or attendance.plan.created_by_id == request.user.id
         if attendance.plan.group_id:
             is_plan_moderator = is_plan_moderator or GroupMembership.objects.filter(
                 group=attendance.plan.group,

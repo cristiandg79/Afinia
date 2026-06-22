@@ -17,5 +17,6 @@ urlpatterns = [
     path('planes/<int:pk>/unirse/', views.plan_join, name='plan_join'),
     path('planes/<int:pk>/salir/', views.plan_leave, name='plan_leave'),
     path('planes/<int:pk>/expulsar/<int:user_pk>/', views.plan_remove_attendee, name='plan_remove_attendee'),
+    path('planes/<int:pk>/moderador/<int:user_pk>/', views.plan_make_moderator, name='plan_make_moderator'),
     path('planes/solicitud/<int:pk>/<str:status>/', views.plan_attendance_response, name='plan_attendance_response'),
 ]
