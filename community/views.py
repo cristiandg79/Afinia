@@ -79,6 +79,27 @@ def group_moderator_users(group):
     return User.objects.filter(pk__in=moderator_ids)
 
 
+def group_member_users(group):
+    member_ids = set(
+        GroupMembership.objects
+        .filter(group=group, status__in=[GroupMembership.Status.APPROVED, GroupMembership.Status.MODERATOR])
+        .values_list('user_id', flat=True)
+    )
+    member_ids.add(group.created_by_id)
+    return User.objects.filter(pk__in=member_ids)
+
+
+def is_group_member(group, user):
+    return (
+        group.created_by_id == user.id
+        or GroupMembership.objects.filter(
+            group=group,
+            user=user,
+            status__in=[GroupMembership.Status.APPROVED, GroupMembership.Status.MODERATOR],
+        ).exists()
+    )
+
+
 def moderated_plans_for(user):
     return (
         Plan.objects
@@ -122,6 +143,10 @@ def plan_moderator_users(plan):
             .values_list('user_id', flat=True)
         )
     return User.objects.filter(pk__in=moderator_ids)
+
+
+def can_view_plan(plan, user):
+    return not plan.group_id or is_group_member(plan.group, user)
 
 
 @login_required
@@ -325,7 +350,23 @@ def group_membership_response(request, pk, status):
 
 @login_required
 def plan_list(request):
-    plans = Plan.objects.select_related('group', 'created_by').order_by('-created_at')
+    plans = (
+        Plan.objects
+        .select_related('group', 'created_by')
+        .filter(
+            Q(group__isnull=True)
+            | Q(group__created_by=request.user)
+            | Q(
+                group__groupmembership__user=request.user,
+                group__groupmembership__status__in=[
+                    GroupMembership.Status.APPROVED,
+                    GroupMembership.Status.MODERATOR,
+                ],
+            )
+        )
+        .distinct()
+        .order_by('-created_at')
+    )
     title_query = request.GET.get('q', '').strip()
     country_query = request.GET.get('country', '').strip()
     city_query = request.GET.get('city', '').strip()
@@ -352,6 +393,9 @@ def plan_list(request):
 @login_required
 def plan_detail(request, pk):
     plan = get_object_or_404(Plan.objects.select_related('group', 'created_by'), pk=pk)
+    if not can_view_plan(plan, request.user):
+        messages.error(request, 'Este plan es privado para las personas del grupo.')
+        return redirect('plan_list')
     is_moderator = is_plan_moderator(plan, request.user)
     if is_moderator:
         attendance, _ = PlanAttendance.objects.get_or_create(
@@ -411,8 +455,65 @@ def plan_create(request):
 
 
 @login_required
+def group_plan_create(request, pk):
+    group = get_object_or_404(Group, pk=pk)
+    if not is_group_member(group, request.user):
+        messages.error(request, 'Solo las personas del grupo pueden crear planes de grupo.')
+        return redirect(group.get_absolute_url())
+
+    if request.method == 'POST':
+        form = PlanForm(request.POST)
+        if form.is_valid():
+            plan = form.save(commit=False)
+            plan.group = group
+            plan.created_by = request.user
+            plan.save()
+            PlanAttendance.objects.get_or_create(
+                plan=plan,
+                user=request.user,
+                defaults={'status': PlanAttendance.Status.APPROVED},
+            )
+            sync_plan_conversation(plan)
+            group_chat = sync_group_conversation(group)
+
+            from messaging.models import Message
+
+            plan_url = reverse('plan_detail', kwargs={'pk': plan.pk})
+            Message.objects.create(
+                conversation=group_chat,
+                sender=request.user,
+                body=f'Nuevo plan de grupo: {plan.title}\n{request.build_absolute_uri(plan_url)}',
+            )
+            group_chat.save()
+
+            panel_users = [member for member in group_member_users(group) if member.id != request.user.id]
+            for member in panel_users:
+                create_panel_notification(
+                    member,
+                    'Nuevo plan de grupo',
+                    f'{request.user.username} ha creado el plan {plan.title} en {group.name}.',
+                    plan_url,
+                )
+            notify_panel_users([request.user, *panel_users])
+            messages.success(request, 'Plan de grupo creado.')
+            return redirect('plan_detail', pk=plan.pk)
+    else:
+        form = PlanForm(initial={
+            'country': group.country,
+            'city': group.city,
+        })
+    return render(request, 'community/plan_form.html', {
+        'form': form,
+        'group': group,
+    })
+
+
+@login_required
 def plan_join(request, pk):
     plan = get_object_or_404(Plan, pk=pk)
+    if not can_view_plan(plan, request.user):
+        messages.error(request, 'Este plan es privado para las personas del grupo.')
+        return redirect('plan_list')
     if is_plan_moderator(plan, request.user):
         PlanAttendance.objects.get_or_create(
             plan=plan,

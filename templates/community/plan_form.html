@@ -1,15 +1,21 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-{% block title %}Crear plan - Afinia{% endblock %}
+{% block title %}{% if group %}Crear plan de grupo{% else %}Crear plan{% endif %} - Afinia{% endblock %}
 {% block content %}
 <section class="form-page wide">
-    <h1>Crear plan</h1>
-    <p class="muted">Incluye información de accesibilidad y el tipo de ambiente para que la gente pueda decidir con tranquilidad.</p>
+    <h1>{% if group %}Crear plan de grupo{% else %}Crear plan{% endif %}</h1>
+    <p class="muted">
+        {% if group %}
+            Este plan sera privado para {{ group.name }}. Se avisara en el Panel y en el chat del grupo.
+        {% else %}
+            Incluye informacion de accesibilidad y el tipo de ambiente para que la gente pueda decidir con tranquilidad.
+        {% endif %}
+    </p>
     <form method="post" class="form-card">
         {% csrf_token %}
         {{ form|crispy }}
         <datalist id="location-city-suggestions"></datalist>
-        <button class="button" type="submit">Crear plan</button>
+        <button class="button" type="submit">{% if group %}Crear plan de grupo{% else %}Crear plan{% endif %}</button>
     </form>
 </section>
 {% endblock %}
