@@ -1,6 +1,6 @@
 HEALTH_CONTEXT_CHOICES = [
     ('agoraphobia', 'Agorafobia'),
-    ('anxiety', 'Ansiedad'),
+    ('anxiety', 'Ansiedad / Estrés'),
     ('social_anxiety', 'Ansiedad social'),
     ('panic_attacks', 'Ataques de pánico'),
     ('autism', 'Autismo / espectro autista'),
@@ -18,12 +18,13 @@ HEALTH_CONTEXT_CHOICES = [
     ('chronic_illness', 'Enfermedad crónica'),
     ('rare_disease', 'Enfermedad rara'),
     ('epilepsy', 'Epilepsia'),
+    ('psychosis', 'Esquizofrenia o Psicosis'),
     ('fibromyalgia', 'Fibromialgia'),
     ('specific_phobia', 'Fobia específica'),
     ('hypochondria', 'Hipocondría / aprensión por la salud'),
     ('insomnia', 'Insomnio'),
+    ('prefer_not_detail', 'Prefiero no detallarlo'),
     ('cardiorespiratory_condition', 'Problema cardiorrespiratorio'),
-    ('psychosis', 'Esquizofrenia o Psicosis'),
     ('adhd', 'TDAH'),
     ('ocd', 'TOC'),
     ('bipolar', 'Trastorno bipolar'),
@@ -31,7 +32,6 @@ HEALTH_CONTEXT_CHOICES = [
     ('speech_language_disorder', 'Trastorno del habla o lenguaje'),
     ('ptsd', 'Trauma / TEPT'),
     ('other', 'Otra situación'),
-    ('prefer_not_detail', 'Prefiero no detallarlo'),
 ]
 
 HEALTH_CONTEXT_LABELS = dict(HEALTH_CONTEXT_CHOICES)
