@@ -23,7 +23,6 @@ HEALTH_CONTEXT_CHOICES = [
     ('specific_phobia', 'Fobia específica'),
     ('hypochondria', 'Hipocondría / aprensión por la salud'),
     ('insomnia', 'Insomnio'),
-    ('prefer_not_detail', 'Prefiero no detallarlo'),
     ('cardiorespiratory_condition', 'Problema cardiorrespiratorio'),
     ('adhd', 'TDAH'),
     ('ocd', 'TOC'),
@@ -32,6 +31,7 @@ HEALTH_CONTEXT_CHOICES = [
     ('speech_language_disorder', 'Trastorno del habla o lenguaje'),
     ('ptsd', 'Trauma / TEPT'),
     ('other', 'Otra situación'),
+    ('prefer_not_detail', 'Prefiero no detallarlo'),
 ]
 
 HEALTH_CONTEXT_LABELS = dict(HEALTH_CONTEXT_CHOICES)
