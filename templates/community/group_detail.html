@@ -77,6 +77,12 @@
                 </div>
                 {% if member.user != user and member.user != group.created_by %}
                     <div class="request-actions">
+                        {% if can_assign_moderators and member.status == 'approved' %}
+                            <form method="post" action="{% url 'group_make_moderator' group.pk member.user.pk %}">
+                                {% csrf_token %}
+                                <button class="button small" type="submit">Hacer moderador</button>
+                            </form>
+                        {% endif %}
                         <form method="post" action="{% url 'group_remove_member' group.pk member.user.pk %}">
                             {% csrf_token %}
                             <button class="button small secondary danger" type="submit">Eliminar</button>

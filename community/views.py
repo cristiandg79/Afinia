@@ -160,6 +160,7 @@ def group_detail(request, pk):
     group_chat = None
     if membership and membership.status in [GroupMembership.Status.APPROVED, GroupMembership.Status.MODERATOR]:
         group_chat = sync_group_conversation(group)
+    can_assign_moderators = members.count() > 1
     return render(request, 'community/group_detail.html', {
         'group': group,
         'membership': membership,
@@ -167,6 +168,7 @@ def group_detail(request, pk):
         'members': members,
         'pending_memberships': pending_memberships,
         'group_chat': group_chat,
+        'can_assign_moderators': can_assign_moderators,
     })
 
 
@@ -239,6 +241,40 @@ def group_remove_member(request, pk, user_pk):
         )
         notify_panel_users([member, request.user, *group_moderator_users(group)])
         messages.success(request, 'Usuario eliminado del grupo.')
+    return redirect(group.get_absolute_url())
+
+
+@login_required
+def group_make_moderator(request, pk, user_pk):
+    group = get_object_or_404(Group, pk=pk)
+    member = get_object_or_404(User, pk=user_pk)
+    if request.method != 'POST':
+        return redirect(group.get_absolute_url())
+    if not is_group_moderator(group, request.user):
+        messages.error(request, 'No puedes gestionar este grupo.')
+        return redirect(group.get_absolute_url())
+    if member.id == group.created_by_id:
+        messages.info(request, 'La persona que creó el grupo ya modera este grupo.')
+        return redirect(group.get_absolute_url())
+    membership = GroupMembership.objects.filter(
+        group=group,
+        user=member,
+        status=GroupMembership.Status.APPROVED,
+    ).first()
+    if not membership:
+        messages.info(request, 'Solo puedes hacer moderador a un miembro del grupo.')
+        return redirect(group.get_absolute_url())
+
+    membership.status = GroupMembership.Status.MODERATOR
+    membership.save(update_fields=['status'])
+    create_panel_notification(
+        member,
+        'Ahora eres moderador',
+        f'Te han cambiado a moderador del grupo {group.name}.',
+        group.get_absolute_url(),
+    )
+    notify_panel_users([member, request.user, *group_moderator_users(group)])
+    messages.success(request, f'{member.username} ahora es moderador del grupo.')
     return redirect(group.get_absolute_url())
 
 
