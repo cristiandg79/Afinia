@@ -8,7 +8,7 @@
     {% if plan.place %}
         <p><strong>Lugar:</strong> {{ plan.place }}</p>
     {% endif %}
-    <p><strong>Plazas:</strong> {{ plan.capacity }} · <strong>Ambiente:</strong> {{ plan.get_mood_display }}</p>
+    <p>{% if not plan.group %}<strong>Plazas:</strong> {{ plan.capacity }} · {% endif %}<strong>Ambiente:</strong> {{ plan.get_mood_display }}</p>
     {% if plan.accessibility_info %}
         <p><strong>Accesibilidad y comodidad:</strong> {{ plan.accessibility_info }}</p>
     {% endif %}

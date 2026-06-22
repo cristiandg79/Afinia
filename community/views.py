@@ -462,11 +462,12 @@ def group_plan_create(request, pk):
         return redirect(group.get_absolute_url())
 
     if request.method == 'POST':
-        form = PlanForm(request.POST)
+        form = PlanForm(request.POST, group_plan=True)
         if form.is_valid():
             plan = form.save(commit=False)
             plan.group = group
             plan.created_by = request.user
+            plan.capacity = 0
             plan.save()
             PlanAttendance.objects.get_or_create(
                 plan=plan,
@@ -501,7 +502,7 @@ def group_plan_create(request, pk):
         form = PlanForm(initial={
             'country': group.country,
             'city': group.city,
-        })
+        }, group_plan=True)
     return render(request, 'community/plan_form.html', {
         'form': form,
         'group': group,

@@ -68,8 +68,10 @@ class PlanForm(forms.ModelForm):
             }),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, group_plan=False, **kwargs):
         super().__init__(*args, **kwargs)
+        if group_plan:
+            self.fields.pop('capacity', None)
         self.fields['country'].choices = LOCATION_COUNTRY_CHOICES
         self.fields['accessibility_info'].help_text = (
             'Ej. entrada sin escaleras, poco ruido, baño adaptado, transporte cercano, '
