@@ -23,7 +23,7 @@ HEALTH_CONTEXT_CHOICES = [
     ('hypochondria', 'Hipocondría / aprensión por la salud'),
     ('insomnia', 'Insomnio'),
     ('cardiorespiratory_condition', 'Problema cardiorrespiratorio'),
-    ('psychosis', 'Psicosis o esquizofrenia'),
+    ('psychosis', 'Esquizofrenia o Psicosis'),
     ('adhd', 'TDAH'),
     ('ocd', 'TOC'),
     ('bipolar', 'Trastorno bipolar'),
