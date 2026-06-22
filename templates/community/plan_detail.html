@@ -87,7 +87,7 @@
                     <h3>{{ attendee.user.username }}</h3>
                     <p>{{ attendee.user.profile.location_label }}</p>
                 </div>
-                {% if attendee.user != user and attendee.user != plan.created_by %}
+                {% if attendee.user != user and attendee.user != plan.created_by and not attendee.is_plan_moderator %}
                     <div class="request-actions">
                         <form method="post" action="{% url 'plan_remove_attendee' plan.pk attendee.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar a {{ attendee.user.username|escapejs }} del plan?');">
                             {% csrf_token %}

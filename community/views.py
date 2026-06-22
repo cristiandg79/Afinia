@@ -363,6 +363,8 @@ def plan_detail(request, pk):
     plan_chat = None
     if attendance and attendance.status == PlanAttendance.Status.APPROVED:
         plan_chat = sync_plan_conversation(plan)
+    for attendee in attendees:
+        attendee.is_plan_moderator = is_plan_moderator(plan, attendee.user)
     return render(request, 'community/plan_detail.html', {
         'plan': plan,
         'attendance': attendance,

@@ -83,10 +83,12 @@
                                 <button class="button small" type="submit">Hacer moderador</button>
                             </form>
                         {% endif %}
-                        <form method="post" action="{% url 'group_remove_member' group.pk member.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar a {{ member.user.username|escapejs }} del grupo?');">
-                            {% csrf_token %}
-                            <button class="button small secondary danger" type="submit">Eliminar</button>
-                        </form>
+                        {% if member.status != 'moderator' %}
+                            <form method="post" action="{% url 'group_remove_member' group.pk member.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar a {{ member.user.username|escapejs }} del grupo?');">
+                                {% csrf_token %}
+                                <button class="button small secondary danger" type="submit">Eliminar</button>
+                            </form>
+                        {% endif %}
                     </div>
                 {% endif %}
             </article>
