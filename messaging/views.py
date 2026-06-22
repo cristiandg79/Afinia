@@ -30,9 +30,6 @@ SPANISH_WEEKDAYS = {
     6: 'domingo',
 }
 
-EXCLUDED_CHAT_SITUATIONS = {'prefer_not_detail'}
-
-
 def chat_room_options():
     rooms = [
         {
@@ -43,13 +40,14 @@ def chat_room_options():
         }
     ]
     for value, label in HEALTH_CONTEXT_CHOICES:
-        if value in EXCLUDED_CHAT_SITUATIONS:
-            continue
+        description = f'Chat para compartir experiencias y conversar sobre {label.lower()}.'
+        if value == 'prefer_not_detail':
+            description = 'Chat para conversar sin entrar en detalles sobre tu situación personal.'
         rooms.append({
             'slug': value,
             'title': label,
             'kind': 'Situación',
-            'description': f'Chat para compartir experiencias y conversar sobre {label.lower()}.',
+            'description': description,
         })
     return rooms
 
