@@ -78,7 +78,7 @@
                 {% if member.user != user and member.user != group.created_by %}
                     <div class="request-actions">
                         {% if can_assign_moderators and member.status == 'approved' %}
-                            <form method="post" action="{% url 'group_make_moderator' group.pk member.user.pk %}">
+                            <form method="post" action="{% url 'group_make_moderator' group.pk member.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres hacer moderador a {{ member.user.username|escapejs }}?');">
                                 {% csrf_token %}
                                 <button class="button small" type="submit">Hacer moderador</button>
                             </form>
