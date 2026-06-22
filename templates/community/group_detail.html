@@ -9,7 +9,9 @@
         <p class="notice">Tu estado en este grupo: {% if membership.status == 'moderator' %}Moderador{% else %}Miembro{% endif %}</p>
         {% if group_chat %}
             <a class="button" href="{% url 'conversation_detail' group_chat.pk %}">Abrir chat del grupo</a>
-            <a class="button secondary" href="{% url 'group_plan_create' group.pk %}">Crear plan de grupo</a>
+            {% if is_moderator %}
+                <a class="button secondary" href="{% url 'group_plan_create' group.pk %}">Crear plan de grupo</a>
+            {% endif %}
         {% endif %}
         {% if group.created_by != user %}
             <form method="post" action="{% url 'group_leave' group.pk %}" class="inline-action-form">

@@ -457,8 +457,8 @@ def plan_create(request):
 @login_required
 def group_plan_create(request, pk):
     group = get_object_or_404(Group, pk=pk)
-    if not is_group_member(group, request.user):
-        messages.error(request, 'Solo las personas del grupo pueden crear planes de grupo.')
+    if not is_group_moderator(group, request.user):
+        messages.error(request, 'Solo los moderadores del grupo pueden crear planes de grupo.')
         return redirect(group.get_absolute_url())
 
     if request.method == 'POST':
