@@ -6,7 +6,7 @@ HEALTH_CONTEXT_CHOICES = [
     ('autism', 'Autismo / espectro autista'),
     ('burnout', 'Burnout / agotamiento'),
     ('brain_injury', 'Daño cerebral adquirido'),
-    ('depression', 'Depresión'),
+    ('depression', 'Depresión / Tristeza'),
     ('diabetes', 'Diabetes'),
     ('learning_disability', 'Dificultad de aprendizaje'),
     ('hearing_disability', 'Discapacidad auditiva'),
