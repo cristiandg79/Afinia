@@ -6,7 +6,7 @@
     <h1>{{ group.name }}</h1>
     <p>{{ group.description }}</p>
     {% if membership %}
-        <p class="notice">Tu estado en este grupo: {{ membership.get_status_display }}</p>
+        <p class="notice">Tu estado en este grupo: {% if membership.status == 'moderator' %}Moderador{% else %}Miembro{% endif %}</p>
         {% if group_chat %}
             <a class="button" href="{% url 'conversation_detail' group_chat.pk %}">Abrir chat del grupo</a>
         {% endif %}
