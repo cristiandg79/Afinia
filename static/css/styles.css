@@ -502,6 +502,18 @@ h1 {
     margin-top: 20px;
 }
 
+.form-card > div,
+.form-card .mb-3,
+.form-card .form-group,
+.form-card .control-group {
+    margin-bottom: 22px;
+}
+
+.form-card label {
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
 .form-card.compact {
     padding: 16px;
 }
