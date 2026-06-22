@@ -157,7 +157,7 @@
                         {% for photo in form.instance.extra_photos.all %}
                             <label class="gallery-delete-item">
                                 <img src="{{ photo.image.url }}" alt="Foto adicional de {{ user.username }}">
-                                <span><input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}"> Eliminar</span>
+                                <span><input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }"> Eliminar</span>
                             </label>
                         {% endfor %}
                     </div>

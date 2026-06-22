@@ -5,7 +5,7 @@
     <p class="eyebrow">Eliminar perfil</p>
     <h1>¿Quieres eliminar tu perfil?</h1>
     <p>Esta acción eliminará tu cuenta, tu perfil y tus datos asociados en esta versión local. No se puede deshacer.</p>
-    <form method="post" class="danger-box">
+    <form method="post" class="danger-box" onsubmit="return confirm('¿Estás seguro de que quieres eliminar tu perfil? Esta acción no se puede deshacer.');">
         {% csrf_token %}
         <button class="button danger" type="submit">Sí, eliminar mi perfil</button>
         <a class="button secondary" href="{% url 'my_profile' %}">Cancelar</a>

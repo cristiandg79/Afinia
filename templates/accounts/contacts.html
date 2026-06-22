@@ -38,11 +38,11 @@
                 <div class="people-card-actions">
                     <a class="button small secondary" href="{{ item.profile.get_absolute_url }}">Ver perfil</a>
                     <a class="button small" href="{% url 'contact_conversation' item.user.pk %}">Mensajes</a>
-                    <form method="post" action="{% url 'delete_contact' item.user.pk %}">
+                    <form method="post" action="{% url 'delete_contact' item.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar a {{ item.user.username|escapejs }} de tus contactos?');">
                         {% csrf_token %}
                         <button class="button small secondary danger" type="submit">Eliminar contacto</button>
                     </form>
-                    <form method="post" action="{% url 'block_contact' item.user.pk %}">
+                    <form method="post" action="{% url 'block_contact' item.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres bloquear a {{ item.user.username|escapejs }}? No podrá enviarte mensajes ni conectar contigo.');">
                         {% csrf_token %}
                         <button class="button small secondary danger" type="submit">Bloquear</button>
                     </form>

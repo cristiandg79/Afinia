@@ -89,7 +89,7 @@
                 </div>
                 {% if attendee.user != user and attendee.user != plan.created_by %}
                     <div class="request-actions">
-                        <form method="post" action="{% url 'plan_remove_attendee' plan.pk attendee.user.pk %}">
+                        <form method="post" action="{% url 'plan_remove_attendee' plan.pk attendee.user.pk %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar a {{ attendee.user.username|escapejs }} del plan?');">
                             {% csrf_token %}
                             <button class="button small secondary danger" type="submit">Eliminar</button>
                         </form>
