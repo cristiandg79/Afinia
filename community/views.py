@@ -214,6 +214,13 @@ def group_detail(request, pk):
     group = get_object_or_404(Group, pk=pk)
     membership = GroupMembership.objects.filter(group=group, user=request.user).first()
     is_moderator = is_group_moderator(group, request.user)
+    can_view_group_plans = is_group_member(group, request.user)
+    group_plans = (
+        Plan.objects
+        .filter(group=group)
+        .select_related('created_by')
+        .order_by('starts_at')
+    ) if can_view_group_plans else []
     members = (
         GroupMembership.objects
         .filter(group=group, status__in=[GroupMembership.Status.APPROVED, GroupMembership.Status.MODERATOR])
@@ -239,6 +246,8 @@ def group_detail(request, pk):
         'pending_memberships': pending_memberships,
         'group_chat': group_chat,
         'can_assign_moderators': can_assign_moderators,
+        'can_view_group_plans': can_view_group_plans,
+        'group_plans': group_plans,
     })
 
 

@@ -9,6 +9,7 @@
         <p class="notice">Tu estado en este grupo: {% if membership.status == 'moderator' %}Moderador{% elif membership.status == 'approved' %}Miembro{% elif membership.status == 'pending' %}Pendiente{% else %}{{ membership.get_status_display }}{% endif %}</p>
         {% if group_chat %}
             <a class="button" href="{% url 'conversation_detail' group_chat.pk %}">Abrir chat del grupo</a>
+            <a class="button secondary" href="#planes-del-grupo">Ver planes del grupo</a>
             {% if is_moderator %}
                 <a class="button secondary" href="{% url 'group_plan_create' group.pk %}">Crear plan de grupo</a>
             {% endif %}
@@ -23,6 +24,39 @@
         <a class="button" href="{% url 'group_join' group.pk %}">Solicitar unirme</a>
     {% endif %}
 </article>
+
+{% if can_view_group_plans %}
+<section class="moderation-panel" id="planes-del-grupo">
+    <div class="section-title">
+        <div>
+            <p class="eyebrow">Grupo</p>
+            <h2>Planes del grupo</h2>
+        </div>
+        {% if is_moderator %}
+            <a class="button small" href="{% url 'group_plan_create' group.pk %}">Crear plan de grupo</a>
+        {% endif %}
+    </div>
+    <div class="grid community-grid">
+        {% for plan in group_plans %}
+            <article class="card community-card">
+                <div class="community-card__body">
+                    <h3>{{ plan.title }}</h3>
+                    <p>{{ plan.starts_at|date:'l, d/m/Y H:i'|capfirst }} · {{ plan.location_label }}</p>
+                    <p>{{ plan.description|truncatechars:150 }}</p>
+                    {% if plan.accessibility_info %}
+                        <p class="muted">Accesibilidad y comodidad: {{ plan.accessibility_info|truncatechars:90 }}</p>
+                    {% endif %}
+                </div>
+                <div class="community-card__actions">
+                    <a class="button small secondary" href="{% url 'plan_detail' plan.pk %}">Ver plan</a>
+                </div>
+            </article>
+        {% empty %}
+            <p class="muted">Aún no hay planes en este grupo.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
 {% if is_moderator %}
 <section class="moderation-panel">
