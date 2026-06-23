@@ -726,7 +726,12 @@ def moderation_panel(request):
     profile_photos = ProfilePhoto.objects.select_related('profile__user').order_by('profile__user__username')[:40]
     groups = Group.objects.exclude(Q(name='Chat general') | Q(name__startswith='Chat: ')).select_related('created_by').order_by('name')[:40]
     plans = Plan.objects.select_related('created_by', 'group').order_by('title')[:40]
-    messages_list = Message.objects.select_related('sender', 'conversation__group', 'conversation__plan').order_by('-created_at')[:80]
+    messages_list = (
+        Message.objects
+        .filter(Q(conversation__group__isnull=False) | Q(conversation__plan__isnull=False))
+        .select_related('sender', 'conversation__group', 'conversation__plan')
+        .order_by('-created_at')[:80]
+    )
     blocked_emails = BlockedEmail.objects.select_related('user', 'blocked_by')[:40]
     return render(request, 'accounts/moderation_panel.html', {
         'users': users,

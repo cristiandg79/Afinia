@@ -15,7 +15,7 @@
         <button type="button" data-moderation-tab="muro" aria-controls="muro">Muro</button>
         <button type="button" data-moderation-tab="grupos" aria-controls="grupos">Grupos</button>
         <button type="button" data-moderation-tab="planes" aria-controls="planes">Planes</button>
-        <button type="button" data-moderation-tab="mensajes" aria-controls="mensajes">Mensajes</button>
+        <button type="button" data-moderation-tab="mensajes" aria-controls="mensajes">Chats</button>
         <button type="button" data-moderation-tab="fotos" aria-controls="fotos">Fotos</button>
         <button type="button" data-moderation-tab="emails" aria-controls="emails">Emails</button>
     </nav>
@@ -116,8 +116,8 @@
 
     <section class="moderation-section" id="mensajes" data-moderation-panel>
         <header>
-            <h2>Mensajes</h2>
-            <span>Últimos mensajes</span>
+            <h2>Chats</h2>
+            <span>Chats públicos, grupos y planes</span>
         </header>
         <div class="moderation-table">
             {% for message in messages_list %}
