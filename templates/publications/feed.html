@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
 {% block title %}Muro - Afinia{% endblock %}
 {% block content %}
 <section class="publications-page">
@@ -13,11 +12,26 @@
 
     <form method="post" enctype="multipart/form-data" class="publication-composer form-card">
         {% csrf_token %}
-        {{ form|crispy }}
+        <div class="publication-composer__url">
+            <label for="{{ form.link_url.id_for_label }}">{{ form.link_url.label }}</label>
+            {{ form.link_url }}
+            {{ form.link_url.errors }}
+        </div>
+        <div class="publication-composer__message">
+            <label for="{{ form.message.id_for_label }}">{{ form.message.label }}</label>
+            {{ form.message }}
+            {{ form.message.errors }}
+        </div>
         <div class="publication-composer__actions">
             {% include 'includes/emoji_picker.html' with target='message' %}
             <button class="button" type="submit">Publicar</button>
         </div>
+        <div class="publication-composer__photos">
+            <label for="{{ form.photos.id_for_label }}">{{ form.photos.label }}</label>
+            {{ form.photos }}
+            {{ form.photos.errors }}
+        </div>
+        {{ form.non_field_errors }}
     </form>
 
     <div class="publication-feed">

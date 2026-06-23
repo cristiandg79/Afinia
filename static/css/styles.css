@@ -597,6 +597,38 @@ h1 {
     resize: vertical;
 }
 
+.publication-composer {
+    display: grid;
+    gap: 12px;
+    grid-template-areas:
+        "url url"
+        "message actions"
+        "photos photos";
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.publication-composer > div {
+    margin-bottom: 0;
+}
+
+.publication-composer__url {
+    grid-area: url;
+}
+
+.publication-composer__message {
+    grid-area: message;
+    min-width: 0;
+}
+
+.publication-composer__photos {
+    grid-area: photos;
+}
+
+.publication-composer__url input,
+.publication-composer__message textarea {
+    width: 100%;
+}
+
 .publication-composer input[type="file"] {
     border: 1px dashed var(--border);
     border-radius: 8px;
@@ -606,8 +638,10 @@ h1 {
 
 .publication-composer__actions {
     align-items: stretch;
-    display: inline-grid;
+    align-self: end;
+    display: grid;
     gap: 8px;
+    grid-area: actions;
     justify-items: stretch;
     position: relative;
 }
@@ -2455,11 +2489,11 @@ textarea {
 }
 
 .chat-compose__actions {
-    align-items: end;
-    display: flex;
+    align-self: end;
+    display: grid;
     gap: 8px;
     grid-area: actions;
-    justify-content: flex-end;
+    justify-items: stretch;
 }
 
 .chat-compose__actions .button {
@@ -2893,13 +2927,33 @@ textarea {
     }
 
     .chat-compose__actions {
-        justify-content: flex-end;
+        justify-content: stretch;
     }
 
     .chat-compose__actions .button {
         min-width: 82px;
         padding-left: 12px;
         padding-right: 12px;
+    }
+
+    .publication-composer {
+        grid-template-areas:
+            "url url"
+            "message actions"
+            "photos photos";
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .publication-composer__actions .button {
+        min-width: 92px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .publication-composer__actions .emoji-panel {
+        left: auto;
+        right: 0;
+        width: min(320px, calc(100vw - 32px));
     }
 
     .chat-compose textarea {
