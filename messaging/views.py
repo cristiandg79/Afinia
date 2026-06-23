@@ -267,6 +267,7 @@ def conversation_detail(request, pk):
             return redirect('conversation_detail', pk=conversation.pk)
     else:
         form = MessageForm()
+    chat_messages = conversation.messages.select_related('sender__profile').order_by('-created_at')
     chat_header = conversation_presenter(conversation, request.user)
     chat_participants = []
     if is_public_chat or is_community_chat:
@@ -297,6 +298,7 @@ def conversation_detail(request, pk):
         'is_public_chat': is_public_chat,
         'is_community_chat': is_community_chat,
         'chat_participants': chat_participants,
+        'chat_messages': chat_messages,
     })
 
 

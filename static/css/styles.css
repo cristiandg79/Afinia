@@ -2146,7 +2146,7 @@ textarea {
 }
 
 .chat-thread {
-    align-content: end;
+    align-content: start;
     margin: 0;
     max-height: none;
     overflow-y: auto;

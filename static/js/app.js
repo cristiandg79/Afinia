@@ -447,7 +447,7 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
         bubble.append(meta);
 
         article.append(bubble);
-        messages.append(article);
+        messages.prepend(article);
         article.scrollIntoView({ block: 'nearest' });
     }
 

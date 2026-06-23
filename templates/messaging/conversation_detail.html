@@ -54,7 +54,7 @@
 
         <div class="chat-main">
         <div class="messages-list chat-thread" data-chat-messages>
-            {% for message in conversation.messages.all %}
+            {% for message in chat_messages %}
                 <article class="message {% if message.sender == user %}mine{% endif %} {% if is_public_chat or is_community_chat %}message--public{% endif %}" data-message-id="{{ message.pk }}">
                     {% if is_public_chat or is_community_chat %}
                         <span class="message-author-avatar">
