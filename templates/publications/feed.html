@@ -43,8 +43,18 @@
                         {% endfor %}
                         {% if publication.link_url %}
                             <a class="publication-link-preview" href="{{ publication.link_url }}" target="_blank" rel="noopener">
-                                <span>URL</span>
-                                <strong>{{ publication.link_url }}</strong>
+                                {% if publication.plan %}
+                                    <span>Plan</span>
+                                    <strong>{{ publication.plan.title }}</strong>
+                                    <small>Ver plan</small>
+                                {% elif publication.group %}
+                                    <span>Grupo</span>
+                                    <strong>{{ publication.group.name }}</strong>
+                                    <small>Ver grupo</small>
+                                {% else %}
+                                    <span>Enlace</span>
+                                    <strong>{{ publication.link_url }}</strong>
+                                {% endif %}
                             </a>
                         {% endif %}
                     </div>

@@ -572,11 +572,10 @@ h1 {
 .publication-media {
     display: grid;
     gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
-.publication-thumb,
-.publication-link-preview {
+.publication-thumb {
     aspect-ratio: 4 / 3;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -592,10 +591,13 @@ h1 {
 
 .publication-link-preview {
     background: #eef4f1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     color: var(--text);
     display: grid;
     gap: 8px;
-    padding: 14px;
+    min-height: 96px;
+    padding: 16px;
     text-decoration: none;
 }
 
@@ -606,8 +608,13 @@ h1 {
 }
 
 .publication-link-preview strong {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     overflow-wrap: anywhere;
+}
+
+.publication-link-preview small {
+    color: var(--primary-dark);
+    font-weight: 700;
 }
 
 .publication-message {

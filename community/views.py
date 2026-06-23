@@ -45,7 +45,7 @@ def create_group_publication(request, group):
         group=group,
         link_url=request.build_absolute_uri(group.get_absolute_url()),
         message=(
-            f'{group.created_by.username} ha creado un nuevo grupo publico: {group.name}.\n'
+            f'{group.created_by.username} ha creado un nuevo grupo público: {group.name}.\n'
             f'{group.description}'
         ),
     )
@@ -62,7 +62,7 @@ def create_plan_publication(request, plan):
         plan=plan,
         link_url=request.build_absolute_uri(reverse('plan_detail', kwargs={'pk': plan.pk})),
         message=(
-            f'{plan.created_by.username} ha creado un nuevo plan publico: {plan.title}.\n'
+            f'{plan.created_by.username} ha creado un nuevo plan público: {plan.title}.\n'
             f'{plan.description}'
         ),
     )
