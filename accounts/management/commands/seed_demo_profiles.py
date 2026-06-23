@@ -16,7 +16,7 @@ from accounts.models import Profile, ProfilePhoto
 
 
 class Command(BaseCommand):
-    help = 'Crea perfiles demo con datos de citas y fotos generadas.'
+    help = 'Crea perfiles demo con datos de citas y una foto principal generada.'
 
     first_names = [
         'Lucia', 'Clara', 'Marta', 'Nerea', 'Laura', 'Paula', 'Sara', 'Elena',
@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--count', type=int, default=72)
-        parser.add_argument('--reset', action='store_true', help='Borra demos anteriores antes de crear.')
+        parser.add_argument('--reset', action='store_true', help='Borra demos y tests anteriores antes de crear.')
 
     def handle(self, *args, **options):
         count = options['count']
@@ -119,14 +119,19 @@ class Command(BaseCommand):
                     'onboarding_completed': True,
                 },
             )
-            self.replace_photos(profile, first_name, last_name, sex, index)
+            self.replace_photo(profile, first_name, last_name, sex, index)
 
         self.stdout.write(self.style.SUCCESS(
             f'Perfiles demo recreados: {count}. Usuarios nuevos: {created}.'
         ))
 
     def delete_demo_users(self):
-        User.objects.filter(Q(username__startswith='demo_') | Q(email__endswith='@demo.afinia.local')).delete()
+        User.objects.filter(
+            Q(username__startswith='demo_')
+            | Q(username__startswith='test_')
+            | Q(email__endswith='@demo.afinia.local')
+            | Q(email__endswith='@test.afinia.local')
+        ).delete()
         demo_dir = Path(settings.MEDIA_ROOT) / 'profiles' / 'demo'
         if demo_dir.exists() and demo_dir.resolve().is_relative_to(Path(settings.MEDIA_ROOT).resolve()):
             shutil.rmtree(demo_dir)
@@ -167,27 +172,27 @@ class Command(BaseCommand):
         age = random.randint(22, 58)
         return date(today.year - age, random.randint(1, 12), random.randint(1, 28))
 
-    def replace_photos(self, profile, first_name, last_name, sex, index):
+    def replace_photo(self, profile, first_name, last_name, sex, index):
         if profile.photo:
             profile.photo.delete(save=False)
         for photo in list(profile.extra_photos.all()):
             photo.image.delete(save=False)
             photo.delete()
 
-        main_path = self.create_portrait(profile.user.username, first_name, last_name, sex, index, 'main')
-        profile.photo = f'profiles/demo/{main_path.name}'
+        ai_portrait = self.ai_portrait_for(index)
+        if ai_portrait:
+            profile.photo = f'profiles/demo_ai/{ai_portrait.name}'
+        else:
+            main_path = self.create_portrait(profile.user.username, first_name, last_name, sex, index, 'main')
+            profile.photo = f'profiles/demo/{main_path.name}'
         profile.save(update_fields=['photo'])
 
-        for number in range(1, 4):
-            extra_path = self.create_portrait(
-                profile.user.username,
-                first_name,
-                last_name,
-                sex,
-                index + number * 17,
-                f'extra_{number}',
-            )
-            ProfilePhoto.objects.create(profile=profile, image=f'profiles/demo/{extra_path.name}')
+    def ai_portrait_for(self, index):
+        ai_dir = Path(settings.MEDIA_ROOT) / 'profiles' / 'demo_ai'
+        portraits = sorted(ai_dir.glob('ai_portrait_*.png'))
+        if not portraits:
+            return None
+        return portraits[index % len(portraits)]
 
     def create_portrait(self, username, first_name, last_name, sex, seed, kind):
         rng = random.Random(seed)

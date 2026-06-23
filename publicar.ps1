@@ -36,6 +36,11 @@ foreach ($archivo in $archivos) {
         continue
     }
 
+    $extension = [System.IO.Path]::GetExtension($archivo).ToLowerInvariant()
+    if ($extension -in @(".zip", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".pdf")) {
+        continue
+    }
+
     foreach ($patron in $patronesSecretos) {
         $coincidencia = Select-String -Path $archivo -Pattern $patron -SimpleMatch -ErrorAction SilentlyContinue | Select-Object -First 1
         if ($coincidencia) {
