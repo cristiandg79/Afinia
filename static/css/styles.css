@@ -787,6 +787,10 @@ h1 {
     margin: 0;
 }
 
+.publication-actions > button {
+    min-width: 0;
+}
+
 .publication-action-button {
     align-items: center;
     background: transparent;
@@ -805,10 +809,50 @@ h1 {
     width: 100%;
 }
 
+.publication-action-button svg {
+    fill: none;
+    height: 22px;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    width: 22px;
+}
+
 .publication-action-button:hover,
 .publication-action-button.is-active {
     background: #edf7f2;
     color: #1e6f53;
+}
+
+.publication-action-button.is-active svg {
+    fill: currentColor;
+}
+
+.publication-share-fallback {
+    background: #f8faf8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 10px 24px rgba(16, 45, 38, 0.12);
+    display: grid;
+    gap: 6px;
+    grid-column: 1 / -1;
+    margin-top: 2px;
+    padding: 10px;
+}
+
+.publication-share-fallback span {
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.publication-share-fallback input {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 0;
+    padding: 9px 10px;
+    width: 100%;
 }
 
 .publication-comments {

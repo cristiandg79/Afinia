@@ -132,19 +132,58 @@ document.querySelectorAll('[data-people-grid]').forEach((grid) => {
 document.querySelectorAll('[data-share-url]').forEach((button) => {
     button.addEventListener('click', async () => {
         const url = button.dataset.shareUrl || window.location.href;
-        const originalText = button.textContent;
+        const originalLabel = button.getAttribute('aria-label') || 'Compartir';
+
+        function showShareFallback() {
+            const existingPanel = button.parentElement?.querySelector('.publication-share-fallback');
+            if (existingPanel) {
+                existingPanel.remove();
+            }
+            const panel = document.createElement('div');
+            panel.className = 'publication-share-fallback';
+            const label = document.createElement('span');
+            label.textContent = 'Copia este enlace';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = url;
+            input.readOnly = true;
+            input.setAttribute('aria-label', 'Enlace para compartir');
+            panel.append(label, input);
+            button.parentElement?.append(panel);
+            window.setTimeout(() => {
+                input.focus();
+                input.select();
+            }, 0);
+        }
+
+        function setTemporaryLabel(text) {
+            button.setAttribute('aria-label', text);
+            button.setAttribute('title', text);
+            window.setTimeout(() => {
+                button.setAttribute('aria-label', originalLabel);
+                button.setAttribute('title', originalLabel);
+            }, 1600);
+        }
+
         try {
             if (navigator.share) {
                 await navigator.share({ url, title: document.title });
             } else if (navigator.clipboard) {
                 await navigator.clipboard.writeText(url);
-                button.textContent = 'Copiado';
-                window.setTimeout(() => {
-                    button.textContent = originalText;
-                }, 1600);
+                setTemporaryLabel('Enlace copiado');
+            } else {
+                showShareFallback();
             }
-        } catch (_) {
-            button.textContent = originalText;
+        } catch (error) {
+            if (error?.name === 'AbortError') {
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(url);
+                setTemporaryLabel('Enlace copiado');
+            } catch (_) {
+                showShareFallback();
+            }
         }
     });
 });
