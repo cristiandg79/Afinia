@@ -6,7 +6,8 @@
         <div class="profile-title-block">
             <span class="profile-photo-large">
                 {% if profile.photo %}
-                    <img src="{{ profile.photo.url }}" alt="Foto de {{ profile.user.username }}">
+                    <img src="{{ profile.photo.url }}" alt="" onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+                    <span class="profile-photo-empty" hidden>Sin foto</span>
                 {% else %}
                     <span class="profile-photo-empty">Sin foto</span>
                 {% endif %}
@@ -36,10 +37,10 @@
             <h2>Fotos</h2>
             <div class="gallery-grid">
                 {% if profile.photo %}
-                    <img class="gallery-main" src="{{ profile.photo.url }}" alt="Foto principal de {{ profile.user.username }}">
+                    <img class="gallery-main" src="{{ profile.photo.url }}" alt="" onerror="this.remove();">
                 {% endif %}
                 {% for photo in profile.extra_photos.all %}
-                    <img src="{{ photo.image.url }}" alt="Foto de {{ profile.user.username }}">
+                    <img src="{{ photo.image.url }}" alt="" onerror="this.remove();">
                 {% endfor %}
             </div>
         </section>
