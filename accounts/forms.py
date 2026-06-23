@@ -42,10 +42,15 @@ PHOTO_REQUIRED_MESSAGE = 'Es obligatorio poner una foto principal. Puede ser una
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'}))
     email2 = forms.EmailField(label='Repite el email', widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'}))
+    accept_terms = forms.BooleanField(
+        label='Acepto los términos y la política de privacidad',
+        required=True,
+        error_messages={'required': 'Debes aceptar los Términos y Condiciones y la Política de Privacidad para crear la cuenta.'},
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'email2', 'password1', 'password2']
+        fields = ['username', 'email', 'email2', 'password1', 'password2', 'accept_terms']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
