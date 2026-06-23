@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-{% block title %}Publicaciones - Afinia{% endblock %}
+{% block title %}Muro - Afinia{% endblock %}
 {% block content %}
 <section class="publications-page">
     <div class="section-title publications-title">
         <div>
-            <p class="eyebrow">Publicaciones</p>
+            <p class="eyebrow">Muro</p>
             <h1>Comparte con la comunidad</h1>
             <p class="muted">Publica un mensaje con fotos o un enlace visible para el resto de personas de Afinia.</p>
         </div>
@@ -42,19 +42,27 @@
                             </a>
                         {% endfor %}
                         {% if publication.link_url %}
-                            <a class="publication-link-preview" href="{{ publication.link_url }}" target="_blank" rel="noopener">
+                            <a class="publication-link-preview {% if publication.link_image_url %}has-image{% endif %}" href="{{ publication.link_url }}" target="_blank" rel="noopener">
+                                {% if publication.link_image_url %}
+                                    <img src="{{ publication.link_image_url }}" alt="">
+                                {% endif %}
+                                <span>
                                 {% if publication.plan %}
-                                    <span>Plan</span>
+                                    <em>Plan</em>
                                     <strong>{{ publication.plan.title }}</strong>
                                     <small>Ver plan</small>
                                 {% elif publication.group %}
-                                    <span>Grupo</span>
+                                    <em>Grupo</em>
                                     <strong>{{ publication.group.name }}</strong>
                                     <small>Ver grupo</small>
                                 {% else %}
-                                    <span>Enlace</span>
-                                    <strong>{{ publication.link_url }}</strong>
+                                    <em>Enlace</em>
+                                    <strong>{{ publication.link_title|default:publication.link_url }}</strong>
+                                    {% if publication.link_description %}
+                                        <small>{{ publication.link_description|truncatechars:130 }}</small>
+                                    {% endif %}
                                 {% endif %}
+                                </span>
                             </a>
                         {% endif %}
                     </div>
@@ -64,7 +72,7 @@
             </article>
         {% empty %}
             <div class="empty-state soft-panel">
-                <h2>Aun no hay publicaciones</h2>
+                <h2>Aun no hay publicaciones en el muro</h2>
                 <p class="muted">Cuando alguien publique, aparecera aqui.</p>
             </div>
         {% endfor %}

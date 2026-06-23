@@ -1,9 +1,64 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from html.parser import HTMLParser
+from urllib.parse import urljoin
+from urllib.request import Request, urlopen
 
 from .forms import PublicationForm
 from .models import Publication, PublicationPhoto
+
+
+class LinkPreviewParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.meta = {}
+        self.title = ''
+        self._in_title = False
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == 'title':
+            self._in_title = True
+        if tag != 'meta':
+            return
+        key = attrs.get('property') or attrs.get('name')
+        content = attrs.get('content')
+        if key and content and key not in self.meta:
+            self.meta[key] = content.strip()
+
+    def handle_endtag(self, tag):
+        if tag == 'title':
+            self._in_title = False
+
+    def handle_data(self, data):
+        if self._in_title and not self.title:
+            self.title = data.strip()
+
+
+def fetch_link_preview(url):
+    if not url:
+        return {}
+    try:
+        request = Request(url, headers={'User-Agent': 'Afinia link preview'})
+        with urlopen(request, timeout=4) as response:
+            content_type = response.headers.get('content-type', '')
+            if 'text/html' not in content_type:
+                return {}
+            html = response.read(250000).decode(response.headers.get_content_charset() or 'utf-8', errors='ignore')
+    except Exception:
+        return {}
+
+    parser = LinkPreviewParser()
+    parser.feed(html)
+    image_url = parser.meta.get('og:image') or parser.meta.get('twitter:image') or ''
+    title = parser.meta.get('og:title') or parser.meta.get('twitter:title') or parser.title
+    description = parser.meta.get('og:description') or parser.meta.get('description') or parser.meta.get('twitter:description') or ''
+    return {
+        'link_title': (title or '')[:220],
+        'link_description': (description or '')[:500],
+        'link_image_url': urljoin(url, image_url) if image_url else '',
+    }
 
 
 @login_required
@@ -13,6 +68,8 @@ def publication_feed(request):
         if form.is_valid():
             publication = form.save(commit=False)
             publication.author = request.user
+            for field, value in fetch_link_preview(publication.link_url).items():
+                setattr(publication, field, value)
             publication.save()
             for photo in form.cleaned_data.get('photos', []):
                 PublicationPhoto.objects.create(publication=publication, image=photo)

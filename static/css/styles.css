@@ -595,16 +595,36 @@ h1 {
     border-radius: 8px;
     color: var(--text);
     display: grid;
-    gap: 8px;
+    gap: 0;
     min-height: 96px;
-    padding: 16px;
+    overflow: hidden;
     text-decoration: none;
 }
 
-.publication-link-preview span {
+.publication-link-preview.has-image {
+    grid-template-columns: minmax(110px, 0.38fr) minmax(0, 1fr);
+}
+
+.publication-link-preview img {
+    display: block;
+    height: 100%;
+    min-height: 120px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.publication-link-preview > span {
+    display: grid;
+    gap: 8px;
+    padding: 16px;
+}
+
+.publication-link-preview em {
     color: var(--accent);
     font-size: 0.78rem;
     font-weight: 700;
+    font-style: normal;
+    text-transform: uppercase;
 }
 
 .publication-link-preview strong {
