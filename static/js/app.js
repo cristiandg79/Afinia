@@ -447,7 +447,7 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
         bubble.append(meta);
 
         article.append(bubble);
-        messages.prepend(article);
+        messages.append(article);
         article.scrollIntoView({ block: 'nearest' });
     }
 
@@ -528,6 +528,10 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
     });
 
     textarea?.addEventListener('input', limitTextareaToMaxLength);
+
+    if (messages) {
+        messages.scrollTop = messages.scrollHeight;
+    }
 
     connect();
 });
