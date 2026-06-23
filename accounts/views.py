@@ -16,7 +16,7 @@ from messaging.notifications import community_chat_unread_items, private_message
 
 from .choices import HEALTH_CONTEXT_CHOICES
 from .forms import ProfileForm, SignUpForm
-from .geolocation import RADIUS_CHOICES, clean_radius, filter_by_radius, filter_by_user_radius
+from .geolocation import RADIUS_CHOICES, city_coords, clean_radius, distance_km, filter_by_radius, filter_by_user_radius
 from .locations import LOCATION_COUNTRY_CHOICES
 from .models import Connection, DatingAction, Profile, ProfilePhoto
 
@@ -55,6 +55,42 @@ def home(request):
     return render(request, 'accounts/home.html')
 
 
+def suggested_profiles_for(profile, limit=8):
+    connection_pairs = (
+        Connection.objects
+        .filter(Q(requester=profile.user) | Q(receiver=profile.user))
+        .values_list('requester_id', 'receiver_id')
+    )
+    excluded_user_ids = {user_id for pair in connection_pairs for user_id in pair}
+    excluded_user_ids.add(profile.user_id)
+
+    candidates = (
+        Profile.objects
+        .exclude(user_id__in=excluded_user_ids)
+        .select_related('user')
+        .order_by('-updated_at')[:300]
+    )
+    origin = city_coords(profile.country, profile.city)
+    user_health = set(profile.health_context or [])
+
+    def score(candidate):
+        candidate_coords = city_coords(candidate.country, candidate.city)
+        if origin and candidate_coords:
+            distance = distance_km(origin, candidate_coords)
+            location_score = max(0, 1000 - distance)
+        elif candidate.country == profile.country and candidate.city and profile.city and candidate.city.lower() == profile.city.lower():
+            location_score = 850
+        elif candidate.country == profile.country:
+            location_score = 500
+        else:
+            location_score = 0
+
+        shared_health = len(user_health.intersection(candidate.health_context or []))
+        return (location_score + (shared_health * 120), shared_health, candidate.updated_at)
+
+    return sorted(candidates, key=score, reverse=True)[:limit]
+
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -77,7 +113,7 @@ def signup(request):
 @login_required
 def dashboard(request):
     profile = request.user.profile
-    suggested_profiles = Profile.objects.exclude(user=request.user).order_by('-updated_at')[:8]
+    suggested_profiles = suggested_profiles_for(profile)
     pending_connections = Connection.objects.filter(receiver=request.user, status=Connection.Status.PENDING)
     moderated_groups = (
         Group.objects
