@@ -550,6 +550,17 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
     });
 
     textarea?.addEventListener('input', limitTextareaToMaxLength);
+    textarea?.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' || event.shiftKey || event.isComposing) {
+            return;
+        }
+        event.preventDefault();
+        if (form.requestSubmit) {
+            form.requestSubmit();
+        } else {
+            form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        }
+    });
 
     if (messages) {
         messages.scrollTop = messages.scrollHeight;
