@@ -54,18 +54,18 @@
                 {% if publication.photos.all or publication.link_url %}
                     <div class="publication-media">
                         {% for photo in publication.photos.all %}
-                            <span>
+                            <div class="publication-media-item">
                                 <a class="publication-thumb" href="{{ photo.image.url }}" target="_blank" rel="noopener">
                                     <img src="{{ photo.image.url }}" alt="Foto publicada por {{ publication.author.username }}">
                                 </a>
                                 {% if is_site_admin %}
-                                    <form class="moderation-actions" method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
+                                    <form class="moderation-actions moderation-actions--compact" method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
                                         {% csrf_token %}
                                         <input type="hidden" name="next" value="{{ request.get_full_path }}">
                                         <button class="button small danger" type="submit">Eliminar foto</button>
                                     </form>
                                 {% endif %}
-                            </span>
+                            </div>
                         {% endfor %}
                         {% if publication.link_url %}
                             <a class="publication-link-preview {% if publication.link_image_url %}has-image{% endif %}" href="{{ publication.link_url }}" target="_blank" rel="noopener">
@@ -128,7 +128,7 @@
                 </div>
 
                 {% if is_site_admin %}
-                    <div class="moderation-actions">
+                    <div class="moderation-actions publication-admin-actions">
                         <form method="post" action="{% url 'moderation_delete_publication' publication.pk %}" onsubmit="return confirm('¿Eliminar esta publicación del muro?');">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.get_full_path }}">
