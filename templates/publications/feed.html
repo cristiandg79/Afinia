@@ -14,7 +14,10 @@
     <form method="post" enctype="multipart/form-data" class="publication-composer form-card">
         {% csrf_token %}
         {{ form|crispy }}
-        <button class="button" type="submit">Publicar</button>
+        <div class="publication-composer__actions">
+            {% include 'includes/emoji_picker.html' with target='message' %}
+            <button class="button" type="submit">Publicar</button>
+        </div>
     </form>
 
     <div class="publication-feed">

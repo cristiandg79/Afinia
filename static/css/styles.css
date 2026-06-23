@@ -593,6 +593,7 @@ h1 {
 }
 
 .publication-composer textarea {
+    min-height: 150px;
     resize: vertical;
 }
 
@@ -601,6 +602,29 @@ h1 {
     border-radius: 8px;
     padding: 14px;
     width: 100%;
+}
+
+.publication-composer__actions {
+    align-items: stretch;
+    display: inline-grid;
+    gap: 8px;
+    justify-items: stretch;
+    position: relative;
+}
+
+.publication-composer__actions .emoji-picker {
+    justify-self: center;
+    position: static;
+}
+
+.publication-composer__actions .emoji-panel {
+    bottom: calc(100% + 8px);
+    grid-template-rows: auto auto auto minmax(140px, 1fr);
+    left: 0;
+    max-height: min(320px, 52vh);
+    position: absolute;
+    right: auto;
+    width: min(410px, calc(100vw - 48px));
 }
 
 .publication-feed {
