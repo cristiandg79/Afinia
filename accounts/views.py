@@ -5,6 +5,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -719,7 +720,7 @@ def unblock_contact(request, pk):
 @login_required
 @site_admin_required
 def moderation_panel(request):
-    users = User.objects.select_related('profile').order_by('username')[:80]
+    users = User.objects.select_related('profile').order_by(Lower('username'))[:80]
     publications = Publication.objects.select_related('author__profile').prefetch_related('photos').order_by('-created_at')[:40]
     publication_photos = PublicationPhoto.objects.select_related('publication__author').order_by('-created_at')[:40]
     profile_photos = ProfilePhoto.objects.select_related('profile__user').order_by('profile__user__username')[:40]
