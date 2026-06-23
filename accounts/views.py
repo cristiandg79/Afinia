@@ -16,7 +16,7 @@ from messaging.notifications import community_chat_unread_items, private_message
 
 from .choices import HEALTH_CONTEXT_CHOICES
 from .forms import ProfileForm, SignUpForm
-from .geolocation import RADIUS_CHOICES, clean_radius, filter_by_user_radius
+from .geolocation import RADIUS_CHOICES, clean_radius, filter_by_radius, filter_by_user_radius
 from .locations import LOCATION_COUNTRY_CHOICES
 from .models import Connection, DatingAction, Profile, ProfilePhoto
 
@@ -387,14 +387,16 @@ def dating_search(request):
     )
     if should_show_profiles and filters['country']:
         profiles = profiles.filter(country=filters['country'])
-    if should_show_profiles and filters['city']:
+    if should_show_profiles and filters['city'] and not filters['radius']:
         profiles = profiles.filter(city__icontains=filters['city'])
-    if should_show_profiles and filters['radius']:
-        profiles = filter_by_user_radius(profiles, request.user.profile, filters['radius'])
     if should_show_profiles and filters['sex']:
         profiles = profiles.filter(sex=filters['sex'])
     if should_show_profiles and filters['orientation']:
         profiles = profiles.filter(orientation=filters['orientation'])
+    if should_show_profiles and filters['radius']:
+        origin_country = filters['country'] or request.user.profile.country
+        origin_city = filters['city'] or request.user.profile.city
+        profiles = filter_by_radius(profiles, origin_country, origin_city, filters['radius'])
 
     dating_profiles = [profile for profile in profiles if 'dating' in profile.goals] if should_show_profiles else []
     min_age = int(filters['min_age']) if filters['min_age'].isdigit() else None

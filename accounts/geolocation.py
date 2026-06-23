@@ -281,13 +281,24 @@ def within_radius(origin_country, origin_city, target_country, target_city, radi
 
 
 def filter_by_user_radius(items, user_profile, radius, country_attr='country', city_attr='city'):
+    return filter_by_radius(
+        items,
+        user_profile.country,
+        user_profile.city,
+        radius,
+        country_attr=country_attr,
+        city_attr=city_attr,
+    )
+
+
+def filter_by_radius(items, origin_country, origin_city, radius, country_attr='country', city_attr='city'):
     if not radius:
         return items
     return [
         item for item in items
         if within_radius(
-            user_profile.country,
-            user_profile.city,
+            origin_country,
+            origin_city,
             getattr(item, country_attr, ''),
             getattr(item, city_attr, ''),
             radius,
