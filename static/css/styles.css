@@ -891,9 +891,10 @@ h1 {
 }
 
 .publication-comment-form {
+    align-items: start;
     display: grid;
     gap: 8px;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
 }
 
 .publication-comment-form input {
@@ -903,6 +904,17 @@ h1 {
     min-height: 42px;
     padding: 9px 14px;
     width: 100%;
+}
+
+.publication-comment-emoji {
+    align-self: start;
+}
+
+.publication-comment-emoji .emoji-panel {
+    bottom: calc(100% + 10px);
+    left: auto;
+    right: 0;
+    top: auto;
 }
 
 .signup-shell,

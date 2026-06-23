@@ -138,6 +138,7 @@
                         {% csrf_token %}
                         <label class="sr-only" for="comentario-{{ publication.pk }}">Comentario</label>
                         <input id="comentario-{{ publication.pk }}" name="body" maxlength="500" placeholder="Escribe un comentario">
+                        {% include 'includes/emoji_picker.html' with target='body' class_name='publication-comment-emoji' %}
                         <button class="button small" type="submit">Publicar</button>
                     </form>
                 </div>

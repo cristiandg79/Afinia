@@ -712,13 +712,13 @@ document.querySelectorAll('.profile-photo-field input[type="file"]').forEach((in
 document.querySelectorAll('[data-emoji-picker]').forEach((picker) => {
     const form = picker.closest('form');
     const targetName = picker.dataset.emojiTarget || 'body';
-    const textarea = form?.querySelector(`textarea[name="${targetName}"]`);
+    const textField = form?.querySelector(`textarea[name="${targetName}"], input[name="${targetName}"]`);
     const toggle = picker.querySelector('[data-emoji-toggle]');
     const panel = picker.querySelector('[data-emoji-panel]');
     const search = picker.querySelector('[data-emoji-search]');
     const tabs = picker.querySelector('[data-emoji-tabs]');
     const grid = picker.querySelector('[data-emoji-grid]');
-    if (!textarea || !toggle || !panel || !search || !tabs || !grid) {
+    if (!textField || !toggle || !panel || !search || !tabs || !grid) {
         return;
     }
 
@@ -803,12 +803,12 @@ document.querySelectorAll('[data-emoji-picker]').forEach((picker) => {
     let activeCategory = emojiCategories[0].id;
 
     function insertEmoji(emoji) {
-        const start = textarea.selectionStart || textarea.value.length;
-        const end = textarea.selectionEnd || textarea.value.length;
-        textarea.value = `${textarea.value.slice(0, start)}${emoji}${textarea.value.slice(end)}`;
-        textarea.focus();
-        textarea.selectionStart = start + emoji.length;
-        textarea.selectionEnd = start + emoji.length;
+        const start = textField.selectionStart || textField.value.length;
+        const end = textField.selectionEnd || textField.value.length;
+        textField.value = `${textField.value.slice(0, start)}${emoji}${textField.value.slice(end)}`;
+        textField.focus();
+        textField.selectionStart = start + emoji.length;
+        textField.selectionEnd = start + emoji.length;
     }
 
     function matchingEmojis(query) {
