@@ -107,6 +107,28 @@ document.querySelectorAll('.choice-card').forEach((card) => {
     refresh();
 });
 
+document.querySelectorAll('[data-people-grid]').forEach((grid) => {
+    const loadMoreButton = document.querySelector('[data-people-load-more]');
+    if (!loadMoreButton) {
+        return;
+    }
+
+    const pageSize = 8;
+
+    function refreshButton() {
+        loadMoreButton.hidden = !grid.querySelector('[data-people-card].is-hidden');
+    }
+
+    loadMoreButton.addEventListener('click', () => {
+        Array.from(grid.querySelectorAll('[data-people-card].is-hidden'))
+            .slice(0, pageSize)
+            .forEach((card) => card.classList.remove('is-hidden'));
+        refreshButton();
+    });
+
+    refreshButton();
+});
+
 document.querySelectorAll('[data-birth-widget]').forEach((root) => {
     const birthDateInput = root.querySelector('[data-birth-date]');
     const birthSummary = root.querySelector('[data-birth-summary]');

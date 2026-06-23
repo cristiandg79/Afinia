@@ -72,9 +72,9 @@
         <button class="button small" type="submit">Filtrar</button>
         <a class="button small secondary" href="{% url 'discover' %}">Limpiar</a>
     </form>
-    <div class="grid people-grid">
+    <div class="grid people-grid" data-people-grid>
         {% for profile in profiles %}
-            <article class="card people-card">
+            <article class="card people-card{% if forloop.counter > 8 %} is-hidden{% endif %}" data-people-card>
                 <div class="people-card__body">
                     <div class="card-profile-head people-card__head">
                         <span class="chat-avatar">
@@ -108,5 +108,10 @@
             <p class="muted">No hay resultados con estos filtros.</p>
         {% endfor %}
     </div>
+    {% if profiles|length > 8 %}
+        <div class="people-load-more">
+            <button class="button secondary" type="button" data-people-load-more>Ver más</button>
+        </div>
+    {% endif %}
 </section>
 {% endblock %}

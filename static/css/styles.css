@@ -1290,6 +1290,16 @@ h1 {
     grid-column: 1 / -1;
 }
 
+.people-card.is-hidden {
+    display: none;
+}
+
+.people-load-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+}
+
 .section-title {
     align-items: center;
     display: flex;
