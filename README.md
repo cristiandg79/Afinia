@@ -43,14 +43,19 @@ Aplicacion web Django para una comunidad inclusiva orientada a amistad, citas, g
    python manage.py migrate
    ```
 
-7. Cargar datos demo:
+7. Cargar la base de datos de entrega:
    ```powershell
-   python manage.py loaddata fixtures\demo_data.json
+   python manage.py loaddata fixtures\afinia_entrega_db.json
    ```
 
-8. Regenerar fotos demo locales:
+8. Restaurar imagenes:
    ```powershell
-   python manage.py fill_random_profiles
+   Expand-Archive -Path .\media_entrega_extra.zip -DestinationPath . -Force
+   Expand-Archive -Path .\demo_ai_profiles_women.zip -DestinationPath .\media\profiles\demo_ai -Force
+   Expand-Archive -Path .\demo_ai_profiles_men.zip -DestinationPath .\media\profiles\demo_ai -Force
+   Expand-Archive -Path .\demo_ai_profiles_variants_1.zip -DestinationPath .\media\profiles\demo_ai\variants -Force
+   Expand-Archive -Path .\demo_ai_profiles_variants_2.zip -DestinationPath .\media\profiles\demo_ai\variants -Force
+   Expand-Archive -Path .\demo_ai_profiles_variants_3.zip -DestinationPath .\media\profiles\demo_ai\variants -Force
    ```
 
 9. Crear administrador si hace falta:
@@ -69,5 +74,6 @@ La web quedara en `http://127.0.0.1:8000/`.
 
 - El archivo `.env` no se sube a GitHub porque contiene configuracion local.
 - La carpeta `media/` no se sube porque puede contener imagenes subidas por usuarios.
-- Los datos demo estan en `fixtures/demo_data.json`.
+- La base de datos de entrega esta en `fixtures/afinia_entrega_db.json`.
+- Las imagenes de entrega estan divididas en varios ZIP para no superar el limite de GitHub por archivo.
 - Si se quiere reiniciar la base de datos desde cero, se puede borrar el volumen de Docker y repetir migraciones/carga de datos.
