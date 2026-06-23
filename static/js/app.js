@@ -1,5 +1,27 @@
 document.documentElement.classList.add('js-ready');
 
+document.querySelectorAll('[data-menu-toggle]').forEach((button) => {
+    const nav = button.closest('.nav');
+    const menu = document.getElementById(button.getAttribute('aria-controls'));
+    if (!nav || !menu) {
+        return;
+    }
+
+    function setMenuOpen(isOpen) {
+        nav.classList.toggle('is-open', isOpen);
+        button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        button.setAttribute('aria-label', isOpen ? 'Cerrar menu' : 'Abrir menu');
+    }
+
+    button.addEventListener('click', () => {
+        setMenuOpen(!nav.classList.contains('is-open'));
+    });
+
+    menu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => setMenuOpen(false));
+    });
+});
+
 document.querySelectorAll('[data-onboarding]').forEach((root) => {
     const steps = Array.from(root.querySelectorAll('.wizard-step'));
     const previousButton = root.querySelector('[data-prev]');

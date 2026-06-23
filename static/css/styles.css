@@ -95,6 +95,50 @@ select:focus {
     text-decoration: none;
 }
 
+.menu-toggle {
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--primary-dark);
+    cursor: pointer;
+    display: none;
+    height: 44px;
+    justify-content: center;
+    padding: 0;
+    width: 44px;
+}
+
+.menu-toggle span {
+    background: currentColor;
+    border-radius: 999px;
+    display: block;
+    height: 2px;
+    position: absolute;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+    width: 22px;
+}
+
+.menu-toggle span:nth-child(1) {
+    transform: translateY(-7px);
+}
+
+.menu-toggle span:nth-child(3) {
+    transform: translateY(7px);
+}
+
+.menu-toggle[aria-expanded="true"] span:nth-child(1) {
+    transform: rotate(45deg);
+}
+
+.menu-toggle[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle[aria-expanded="true"] span:nth-child(3) {
+    transform: rotate(-45deg);
+}
+
 .nav-link-with-badge {
     align-items: center;
     display: inline-flex;
@@ -293,6 +337,13 @@ h1 {
 .button.danger {
     background: #b42318;
     border-color: #b42318;
+    color: white;
+}
+
+.button.secondary.danger {
+    background: #b42318;
+    border-color: #b42318;
+    color: white;
 }
 
 .button.light {
@@ -2545,14 +2596,49 @@ textarea {
     }
 
     .nav {
-        align-items: flex-start;
-        flex-direction: column;
+        align-items: center;
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 1fr auto;
+        padding: 12px 16px;
+    }
+
+    .brand--image img {
+        height: 46px;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        position: relative;
     }
 
     .nav-links {
         align-items: flex-start;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        display: none;
         flex-direction: column;
+        gap: 0;
+        grid-column: 1 / -1;
+        margin: 0 -16px;
+        padding: 6px 16px 14px;
         width: 100%;
+    }
+
+    .nav.is-open .nav-links {
+        display: flex;
+    }
+
+    .nav-links > a,
+    .nav-links > details {
+        border-bottom: 1px solid #eef2ef;
+        padding: 12px 0;
+        width: 100%;
+    }
+
+    .nav-links > a:last-child,
+    .nav-links > details:last-child {
+        border-bottom: 0;
     }
 
     .user-menu,
