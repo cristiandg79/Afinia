@@ -362,6 +362,11 @@ def clean_dating_filters(data, profile):
 @login_required
 def dating_search(request):
     acted_user_ids = set(DatingAction.objects.filter(user=request.user).values_list('target_id', flat=True))
+    requested_dating_user_ids = set(
+        DatingAction.objects
+        .filter(user=request.user, action=DatingAction.Action.LIKE)
+        .values_list('target_id', flat=True)
+    )
     requested_connection_user_ids = set(
         Connection.objects
         .filter(
@@ -373,6 +378,22 @@ def dating_search(request):
             ],
         )
         .values_list('receiver_id', flat=True)
+    )
+    connected_or_blocked_user_ids = set(
+        Connection.objects
+        .filter(
+            receiver=request.user,
+            status__in=[
+                Connection.Status.ACCEPTED,
+                Connection.Status.BLOCKED,
+            ],
+        )
+        .values_list('requester_id', flat=True)
+    )
+    hidden_dating_user_ids = (
+        requested_dating_user_ids
+        | requested_connection_user_ids
+        | connected_or_blocked_user_ids
     )
     if 'clear' in request.GET:
         request.user.profile.dating_preferences = {}
@@ -412,7 +433,7 @@ def dating_search(request):
 
     dating_profiles = [
         profile for profile in profiles
-        if 'dating' in profile.goals and profile.user_id not in requested_connection_user_ids
+        if 'dating' in profile.goals and profile.user_id not in hidden_dating_user_ids
     ] if should_show_profiles else []
     min_age = int(filters['min_age']) if filters['min_age'].isdigit() else None
     max_age = int(filters['max_age']) if filters['max_age'].isdigit() else None
