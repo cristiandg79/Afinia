@@ -519,7 +519,7 @@ def dating_action(request, pk, action):
             from messaging.notifications import notify_user
 
             notify_user(target)
-            messages.success(request, 'Interés enviado.')
+            messages.success(request, 'Solicitud para conectar enviada.')
     else:
         messages.info(request, 'Perfil descartado.')
 

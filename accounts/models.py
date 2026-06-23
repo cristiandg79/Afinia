@@ -162,7 +162,7 @@ class ProfilePhoto(models.Model):
 
 class DatingAction(models.Model):
     class Action(models.TextChoices):
-        LIKE = 'like', 'Me interesa'
+        LIKE = 'like', 'Solicitar conectar'
         PASS = 'pass', 'Pasar'
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='dating_actions')

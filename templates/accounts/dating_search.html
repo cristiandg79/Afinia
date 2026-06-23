@@ -6,7 +6,7 @@
         <div>
             <p class="eyebrow">Afinidades</p>
             <h1>Una persona cada vez, con calma.</h1>
-            <p>Filtra por zona, edad y si quieres ver hombres o mujeres. Pulsa Pasar o Me interesa para ver el siguiente perfil.</p>
+            <p>Filtra por zona, edad y si quieres ver hombres o mujeres. Pulsa Pasar o Solicitar conectar para ver el siguiente perfil.</p>
         </div>
     </div>
 
@@ -105,7 +105,7 @@
                 {% endif %}
                 <div class="dating-actions">
                     <a class="button secondary" href="{% url 'dating_action' profile.user.pk 'pass' %}{% if querystring %}?{{ querystring }}{% endif %}">Pasar</a>
-                    <a class="button" href="{% url 'dating_action' profile.user.pk 'like' %}{% if querystring %}?{{ querystring }}{% endif %}">Me interesa</a>
+                    <a class="button" href="{% url 'dating_action' profile.user.pk 'like' %}{% if querystring %}?{{ querystring }}{% endif %}">Solicitar conectar</a>
                     <a class="button secondary full" href="{{ profile.get_absolute_url }}">Ver perfil</a>
                 </div>
             </div>
