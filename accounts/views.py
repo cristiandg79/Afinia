@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -516,21 +516,9 @@ def dating_search(request):
 
 
 def get_or_create_private_conversation(user_a, user_b):
-    from messaging.models import Conversation
+    from messaging.services import get_or_create_private_conversation as get_or_create_conversation
 
-    conversation = (
-        Conversation.objects
-        .filter(group__isnull=True, plan__isnull=True, participants=user_a)
-        .filter(participants=user_b)
-        .annotate(participant_count=Count('participants'))
-        .filter(participant_count=2)
-        .first()
-    )
-    if conversation:
-        return conversation
-    conversation = Conversation.objects.create()
-    conversation.participants.add(user_a, user_b)
-    return conversation
+    return get_or_create_conversation(user_a, user_b)
 
 
 @login_required

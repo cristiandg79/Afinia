@@ -19,6 +19,7 @@ from .notifications import (
     unread_count_for_conversation,
 )
 from .presence import active_user_ids
+from .services import merge_private_conversations
 
 
 SPANISH_WEEKDAYS = {
@@ -170,10 +171,33 @@ def conversation_presenter(conversation, current_user):
 @login_required
 def inbox(request):
     conversations = request.user.conversations.select_related('group', 'plan').prefetch_related('participants__profile', 'messages')
+    private_conversations = []
+    seen_contacts = set()
+    for conversation in conversations:
+        if is_chat_conversation(conversation) or is_community_conversation(conversation):
+            continue
+        other_user = next(
+            (participant for participant in conversation.participants.all() if participant.id != request.user.id),
+            None,
+        )
+        if not other_user:
+            continue
+        if other_user.id in seen_contacts:
+            continue
+        seen_contacts.add(other_user.id)
+        private_conversations.append(merge_private_conversations(request.user, other_user) or conversation)
+
+    private_conversations.sort(
+        key=lambda conversation: (
+            conversation.messages.all().last().created_at
+            if conversation.messages.all().last()
+            else conversation.updated_at
+        ),
+        reverse=True,
+    )
     conversation_items = [
         conversation_presenter(conversation, request.user)
-        for conversation in conversations
-        if not is_chat_conversation(conversation) and not is_community_conversation(conversation)
+        for conversation in private_conversations
     ]
     return render(request, 'messaging/inbox.html', {'conversation_items': conversation_items})
 
