@@ -27,6 +27,75 @@
     </header>
 
     <div class="chat-window {% if is_public_chat or is_community_chat %}chat-window--public{% endif %}">
+        <div class="chat-main">
+            <div class="messages-list chat-thread" data-chat-messages>
+                {% for message in chat_messages %}
+                    <article class="message {% if message.sender == user %}mine{% endif %} {% if is_public_chat or is_community_chat %}message--public{% endif %}" data-message-id="{{ message.pk }}">
+                        {% if is_public_chat or is_community_chat %}
+                            <span class="message-author-avatar">
+                                {% if message.sender.profile.photo %}
+                                    <img src="{{ message.sender.profile.photo.url }}" alt="">
+                                {% else %}
+                                    <span>{{ message.sender.username|first|upper }}</span>
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                        <div class="message-bubble">
+                            {% if is_public_chat or is_community_chat %}
+                                <strong class="message-author-name">{{ message.sender.username }}</strong>
+                            {% elif message.sender != user %}
+                                <strong>{{ message.sender.username }}</strong>
+                            {% endif %}
+                            {% if message.body %}
+                                <p>{{ message.body }}</p>
+                            {% endif %}
+                            {% if message.image %}
+                                <a href="{{ message.image.url }}" target="_blank" rel="noopener">
+                                    <img class="message-image" src="{{ message.image.url }}" alt="Imagen enviada por {{ message.sender.username }}">
+                                </a>
+                            {% endif %}
+                            <span class="message-meta">
+                                <span>{{ message.created_at|date:'d/m/Y H:i' }}{% if message.edited_at %} &middot; editado{% endif %}</span>
+                                {% if message.sender == user and not is_public_chat %}
+                                    {% if message.read_at %}
+                                        <span class="message-ticks is-read" title="Le&iacute;do" aria-label="Le&iacute;do">&#10003;&#10003;</span>
+                                    {% else %}
+                                        <span class="message-ticks" title="Recibido" aria-label="Recibido">&#10003;&#10003;</span>
+                                    {% endif %}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </article>
+                {% empty %}
+                    <p class="muted" data-empty-chat>Todav&iacute;a no hay mensajes.</p>
+                {% endfor %}
+            </div>
+
+            <form method="post" class="chat-compose" data-chat-form enctype="multipart/form-data">
+                {% csrf_token %}
+                <label class="sr-only" for="{{ form.body.id_for_label }}">{{ form.body.label }}</label>
+                {{ form.body }}
+                {% if not is_public_chat and not is_community_chat %}
+                    <div class="chat-compose__extras">
+                        <label class="image-upload-button">
+                            {{ form.image }}
+                            <span>Imagen</span>
+                        </label>
+                        <span class="selected-image-name" data-image-name></span>
+                    </div>
+                {% endif %}
+                <div class="chat-compose__errors">
+                    {{ form.body.errors }}
+                    {{ form.image.errors }}
+                    {{ form.non_field_errors }}
+                </div>
+                <div class="chat-compose__actions">
+                    {% include 'includes/emoji_picker.html' with target='body' %}
+                    <button class="button" type="submit">Enviar</button>
+                </div>
+            </form>
+        </div>
+
         {% if is_public_chat or is_community_chat %}
             <aside class="chat-participants" aria-label="Usuarios en la sala">
                 <h2>En la sala</h2>
@@ -42,7 +111,7 @@
                             </span>
                             <span>
                                 <strong>{{ participant.user.username }}</strong>
-                                <small>{{ participant.details }}{% if is_community_chat %} · {% if participant.is_online %}Online{% else %}Offline{% endif %}{% endif %}</small>
+                                <small>{{ participant.details }}{% if is_community_chat %} &middot; {% if participant.is_online %}Online{% else %}Offline{% endif %}{% endif %}</small>
                             </span>
                         </a>
                     {% empty %}
@@ -51,69 +120,6 @@
                 </div>
             </aside>
         {% endif %}
-
-        <div class="chat-main">
-        <div class="messages-list chat-thread" data-chat-messages>
-            {% for message in chat_messages %}
-                <article class="message {% if message.sender == user %}mine{% endif %} {% if is_public_chat or is_community_chat %}message--public{% endif %}" data-message-id="{{ message.pk }}">
-                    {% if is_public_chat or is_community_chat %}
-                        <span class="message-author-avatar">
-                            {% if message.sender.profile.photo %}
-                                <img src="{{ message.sender.profile.photo.url }}" alt="">
-                            {% else %}
-                                <span>{{ message.sender.username|first|upper }}</span>
-                            {% endif %}
-                        </span>
-                    {% endif %}
-                    <div class="message-bubble">
-                        {% if is_public_chat or is_community_chat %}
-                            <strong class="message-author-name">{{ message.sender.username }}</strong>
-                        {% elif message.sender != user %}
-                            <strong>{{ message.sender.username }}</strong>
-                        {% endif %}
-                        {% if message.body %}
-                            <p>{{ message.body }}</p>
-                        {% endif %}
-                        {% if message.image %}
-                            <a href="{{ message.image.url }}" target="_blank" rel="noopener">
-                                <img class="message-image" src="{{ message.image.url }}" alt="Imagen enviada por {{ message.sender.username }}">
-                            </a>
-                        {% endif %}
-                        <span class="message-meta">
-                            <span>{{ message.created_at|date:'d/m/Y H:i' }}{% if message.edited_at %} &middot; editado{% endif %}</span>
-                            {% if message.sender == user and not is_public_chat %}
-                                {% if message.read_at %}
-                                    <span class="message-ticks is-read" title="Le&iacute;do" aria-label="Le&iacute;do">&#10003;&#10003;</span>
-                                {% else %}
-                                    <span class="message-ticks" title="Recibido" aria-label="Recibido">&#10003;&#10003;</span>
-                                {% endif %}
-                            {% endif %}
-                        </span>
-                    </div>
-                </article>
-            {% empty %}
-                <p class="muted" data-empty-chat>Todav&iacute;a no hay mensajes.</p>
-            {% endfor %}
-        </div>
-
-        <form method="post" class="chat-compose" data-chat-form enctype="multipart/form-data">
-            {% csrf_token %}
-            {% include 'includes/emoji_picker.html' with target='body' %}
-            <label class="sr-only" for="{{ form.body.id_for_label }}">{{ form.body.label }}</label>
-            {{ form.body }}
-            {% if not is_public_chat and not is_community_chat %}
-                <label class="image-upload-button">
-                    {{ form.image }}
-                    <span>Imagen</span>
-                </label>
-                <span class="selected-image-name" data-image-name></span>
-            {% endif %}
-            {{ form.body.errors }}
-            {{ form.image.errors }}
-            {{ form.non_field_errors }}
-            <button class="button" type="submit">Enviar</button>
-        </form>
-        </div>
     </div>
 </section>
 {% endblock %}

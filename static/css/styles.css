@@ -2048,7 +2048,7 @@ textarea {
     grid-template-rows: auto minmax(420px, 1fr);
     margin: 0 auto;
     max-width: 920px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .chat-layout--public {
@@ -2088,7 +2088,8 @@ textarea {
 }
 
 .chat-window--public {
-    grid-template-columns: minmax(230px, 280px) 1fr;
+    gap: 0;
+    grid-template-columns: 1fr;
 }
 
 .chat-main {
@@ -2096,15 +2097,16 @@ textarea {
     grid-template-rows: 1fr auto;
     min-height: 560px;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .chat-participants {
     background: var(--surface);
-    border-right: 1px solid var(--border);
+    border-top: 1px solid var(--border);
     display: grid;
     gap: 14px;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto;
+    max-height: 220px;
     padding: 18px;
 }
 
@@ -2115,19 +2117,29 @@ textarea {
 
 .chat-participant-list {
     align-content: start;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     overflow-y: auto;
 }
 
 .chat-participant {
     align-items: center;
+    background: #f8faf8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     color: var(--text);
     display: grid;
+    flex: 1 1 240px;
     gap: 10px;
     grid-template-columns: auto 1fr;
-    min-width: 0;
+    min-width: min(240px, 100%);
+    padding: 8px 10px;
     text-decoration: none;
+}
+
+.chat-participant > span:last-child {
+    min-width: 0;
 }
 
 .chat-participant:hover {
@@ -2378,30 +2390,61 @@ textarea {
 }
 
 .chat-compose {
-    align-items: end;
+    align-items: stretch;
     background: var(--surface);
     border-top: 1px solid var(--border);
     display: grid;
     gap: 12px;
-    grid-template-columns: auto 1fr auto minmax(120px, auto) auto;
+    grid-template-areas:
+        "message actions"
+        "extras actions"
+        "errors errors";
+    grid-template-columns: minmax(0, 1fr) auto;
     padding: 14px;
+    position: relative;
+    z-index: 20;
 }
 
 .chat-layout--public .chat-compose {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .chat-compose textarea {
-    max-height: 140px;
-    min-height: 52px;
+    grid-area: message;
+    max-height: 220px;
+    min-height: 96px;
     min-width: 0;
     resize: vertical;
     width: 100%;
 }
 
+.chat-compose__extras {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    grid-area: extras;
+}
+
+.chat-compose__errors {
+    grid-area: errors;
+}
+
+.chat-compose__actions {
+    align-content: end;
+    display: grid;
+    gap: 8px;
+    grid-area: actions;
+    justify-items: stretch;
+}
+
+.chat-compose__actions .button {
+    min-width: 104px;
+}
+
 .emoji-picker {
     align-self: center;
-    position: static;
+    position: relative;
 }
 
 .emoji-toggle {
@@ -2473,6 +2516,14 @@ textarea {
     right: max(18px, calc((100vw - 920px) / 2 + 18px));
     width: min(410px, 92vw);
     z-index: 60;
+}
+
+.chat-compose .emoji-panel {
+    bottom: calc(100% + 8px);
+    max-height: min(420px, 58vh);
+    position: absolute;
+    right: 0;
+    width: min(410px, calc(100vw - 32px));
 }
 
 .emoji-panel[hidden] {
@@ -2786,8 +2837,9 @@ textarea {
     }
 
     .chat-participants {
-        border-bottom: 1px solid var(--border);
+        border-bottom: 0;
         border-right: 0;
+        border-top: 1px solid var(--border);
         max-height: 260px;
     }
 
@@ -2804,12 +2856,21 @@ textarea {
     }
 
     .chat-compose {
+        grid-template-areas:
+            "message"
+            "extras"
+            "actions"
+            "errors";
         grid-template-columns: 1fr;
         padding: 12px;
     }
 
+    .chat-compose__actions {
+        justify-items: end;
+    }
+
     .emoji-picker {
-        justify-self: start;
+        justify-self: end;
     }
 
     .emoji-panel {
@@ -2818,6 +2879,14 @@ textarea {
         max-height: min(460px, 72vh);
         right: 12px;
         width: auto;
+    }
+
+    .chat-compose .emoji-panel {
+        bottom: calc(100% + 8px);
+        left: auto;
+        max-height: min(360px, 52vh);
+        right: 0;
+        width: min(320px, calc(100vw - 32px));
     }
 
     .request-card {
