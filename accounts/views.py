@@ -125,7 +125,6 @@ def dashboard(request):
         .filter(
             user=request.user,
             status__in=[
-                GroupMembership.Status.PENDING,
                 GroupMembership.Status.APPROVED,
                 GroupMembership.Status.MODERATOR,
             ],
@@ -139,7 +138,6 @@ def dashboard(request):
         .filter(
             user=request.user,
             status__in=[
-                PlanAttendance.Status.REQUESTED,
                 PlanAttendance.Status.APPROVED,
                 PlanAttendance.Status.MODERATOR,
             ],

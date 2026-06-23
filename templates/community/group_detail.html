@@ -6,7 +6,7 @@
     <h1>{{ group.name }}</h1>
     <p>{{ group.description }}</p>
     {% if membership %}
-        <p class="notice">Tu estado en este grupo: {% if membership.status == 'moderator' %}Moderador{% else %}Miembro{% endif %}</p>
+        <p class="notice">Tu estado en este grupo: {% if membership.status == 'moderator' %}Moderador{% elif membership.status == 'approved' %}Miembro{% elif membership.status == 'pending' %}Pendiente{% else %}{{ membership.get_status_display }}{% endif %}</p>
         {% if group_chat %}
             <a class="button" href="{% url 'conversation_detail' group_chat.pk %}">Abrir chat del grupo</a>
             {% if is_moderator %}
@@ -16,7 +16,7 @@
         {% if group.created_by != user %}
             <form method="post" action="{% url 'group_leave' group.pk %}" class="inline-action-form">
                 {% csrf_token %}
-                <button class="button secondary danger" type="submit">Salir del grupo</button>
+                <button class="button secondary danger" type="submit">{% if membership.status == 'pending' %}Cancelar solicitud{% else %}Salir del grupo{% endif %}</button>
             </form>
         {% endif %}
     {% else %}
