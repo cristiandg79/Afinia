@@ -2390,7 +2390,7 @@ textarea {
 }
 
 .chat-compose {
-    align-items: stretch;
+    align-items: end;
     background: var(--surface);
     border-top: 1px solid var(--border);
     display: grid;
@@ -2412,7 +2412,7 @@ textarea {
 .chat-compose textarea {
     grid-area: message;
     max-height: 220px;
-    min-height: 96px;
+    min-height: 86px;
     min-width: 0;
     resize: vertical;
     width: 100%;
@@ -2431,15 +2431,19 @@ textarea {
 }
 
 .chat-compose__actions {
-    align-content: end;
-    display: grid;
+    align-items: end;
+    display: flex;
     gap: 8px;
     grid-area: actions;
-    justify-items: stretch;
+    justify-content: flex-end;
 }
 
 .chat-compose__actions .button {
     min-width: 104px;
+}
+
+.chat-compose .emoji-picker {
+    position: static;
 }
 
 .emoji-picker {
@@ -2857,16 +2861,25 @@ textarea {
 
     .chat-compose {
         grid-template-areas:
-            "message"
-            "extras"
-            "actions"
-            "errors";
-        grid-template-columns: 1fr;
+            "message actions"
+            "extras extras"
+            "errors errors";
+        grid-template-columns: minmax(0, 1fr) auto;
         padding: 12px;
     }
 
     .chat-compose__actions {
-        justify-items: end;
+        justify-content: flex-end;
+    }
+
+    .chat-compose__actions .button {
+        min-width: 82px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .chat-compose textarea {
+        min-height: 76px;
     }
 
     .emoji-picker {
