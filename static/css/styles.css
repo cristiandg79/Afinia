@@ -860,6 +860,10 @@ h1 {
     gap: 10px;
 }
 
+.publication-comments[hidden] {
+    display: none;
+}
+
 .publication-comment {
     display: grid;
     gap: 10px;

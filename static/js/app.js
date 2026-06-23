@@ -188,6 +188,22 @@ document.querySelectorAll('[data-share-url]').forEach((button) => {
     });
 });
 
+document.querySelectorAll('[data-comments-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+        const comments = document.getElementById(button.dataset.commentsToggle);
+        if (!comments) {
+            return;
+        }
+        const shouldOpen = comments.hidden;
+        comments.hidden = !shouldOpen;
+        button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+        button.classList.toggle('is-active', shouldOpen);
+        if (shouldOpen) {
+            comments.querySelector('input, textarea')?.focus();
+        }
+    });
+});
+
 document.querySelectorAll('[data-birth-widget]').forEach((root) => {
     const birthDateInput = root.querySelector('[data-birth-date]');
     const birthSummary = root.querySelector('[data-birth-summary]');

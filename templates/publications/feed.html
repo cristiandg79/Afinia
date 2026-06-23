@@ -102,12 +102,12 @@
                             <span class="sr-only">{% if publication.pk in liked_publication_ids %}Quitar me gusta{% else %}Me gusta{% endif %}</span>
                         </button>
                     </form>
-                    <a class="publication-action-button" href="#comentario-{{ publication.pk }}" aria-label="Comentar" title="Comentar">
+                    <button class="publication-action-button" type="button" data-comments-toggle="comentarios-{{ publication.pk }}" aria-expanded="false" aria-label="Comentar" title="Comentar">
                         <svg aria-hidden="true" viewBox="0 0 24 24">
                             <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9H13a8.5 8.5 0 0 1 8 8v.5Z"></path>
                         </svg>
                         <span class="sr-only">Comentar</span>
-                    </a>
+                    </button>
                     <button class="publication-action-button" type="button" data-share-url="{{ request.scheme }}://{{ request.get_host }}{% url 'publication_feed' %}#publicacion-{{ publication.pk }}" aria-label="Compartir" title="Compartir">
                         <svg aria-hidden="true" viewBox="0 0 24 24">
                             <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path>
@@ -118,7 +118,7 @@
                     </button>
                 </div>
 
-                <div class="publication-comments">
+                <div class="publication-comments" id="comentarios-{{ publication.pk }}" hidden>
                     {% for comment in publication.comments.all %}
                         <article class="publication-comment">
                             <span class="chat-avatar small">
