@@ -571,6 +571,14 @@ def plan_join(request, pk):
         messages.info(request, 'Ya moderas este plan.')
         return redirect('plan_detail', pk=plan.pk)
     attendance, created = PlanAttendance.objects.get_or_create(plan=plan, user=request.user)
+    if plan.group_id and is_group_member(plan.group, request.user):
+        if attendance.status != PlanAttendance.Status.APPROVED:
+            attendance.status = PlanAttendance.Status.APPROVED
+            attendance.save(update_fields=['status'])
+        sync_plan_conversation(plan)
+        notify_panel_users([request.user, *plan_moderator_users(plan)])
+        messages.success(request, 'Te has apuntado al plan.')
+        return redirect('plan_detail', pk=plan.pk)
     if created or attendance.status == PlanAttendance.Status.REQUESTED:
         notify_panel_users([request.user, *plan_moderator_users(plan)])
     messages.success(request, 'Solicitud para el plan registrada.')
