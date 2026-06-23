@@ -513,6 +513,7 @@ def group_plan_create(request, pk):
             sync_plan_conversation(plan)
             group_chat = sync_group_conversation(group)
 
+            from messaging.cleanup import trim_conversation_messages
             from messaging.models import Message
 
             plan_url = reverse('plan_detail', kwargs={'pk': plan.pk})
@@ -521,6 +522,7 @@ def group_plan_create(request, pk):
                 sender=request.user,
                 body=f'Nuevo plan de grupo: {plan.title}\n{request.build_absolute_uri(plan_url)}',
             )
+            trim_conversation_messages(group_chat)
             group_chat.save()
 
             panel_users = [member for member in group_member_users(group) if member.id != request.user.id]

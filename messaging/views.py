@@ -9,6 +9,7 @@ from accounts.models import Connection
 from community.models import Group, GroupMembership
 
 from .chat_rooms import is_chat_conversation, is_chat_group
+from .cleanup import trim_conversation_messages
 from .forms import MessageForm
 from .models import MESSAGE_MAX_LENGTH, Conversation, Message
 from .notifications import (
@@ -262,6 +263,7 @@ def conversation_detail(request, pk):
             message.conversation = conversation
             message.sender = request.user
             message.save()
+            trim_conversation_messages(conversation)
             conversation.save()
             notify_conversation_participants(conversation, exclude_user=request.user)
             return redirect('conversation_detail', pk=conversation.pk)

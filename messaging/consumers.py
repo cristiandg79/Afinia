@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from accounts.models import Connection
 from .chat_rooms import is_chat_conversation, is_chat_group
+from .cleanup import trim_conversation_messages
 from .models import MESSAGE_MAX_LENGTH, Conversation, Message
 from .notifications import mark_conversation_read, notification_counts, notify_conversation_participants
 from .presence import join_chat, leave_chat
@@ -189,6 +190,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         conversation.updated_at = timezone.now()
         conversation.save(update_fields=['updated_at'])
+        trim_conversation_messages(conversation)
         try:
             profile = self.user.profile
         except ObjectDoesNotExist:

@@ -5,6 +5,7 @@ from community.models import Group, Plan
 
 
 MESSAGE_MAX_LENGTH = 500
+MESSAGE_KEEP_LIMIT = 500
 
 
 class Conversation(models.Model):
