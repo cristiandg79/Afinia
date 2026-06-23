@@ -362,6 +362,18 @@ def clean_dating_filters(data, profile):
 @login_required
 def dating_search(request):
     acted_user_ids = set(DatingAction.objects.filter(user=request.user).values_list('target_id', flat=True))
+    requested_connection_user_ids = set(
+        Connection.objects
+        .filter(
+            requester=request.user,
+            status__in=[
+                Connection.Status.PENDING,
+                Connection.Status.ACCEPTED,
+                Connection.Status.BLOCKED,
+            ],
+        )
+        .values_list('receiver_id', flat=True)
+    )
     if 'clear' in request.GET:
         request.user.profile.dating_preferences = {}
         request.user.profile.save(update_fields=['dating_preferences'])
@@ -398,7 +410,10 @@ def dating_search(request):
         origin_city = filters['city'] or request.user.profile.city
         profiles = filter_by_radius(profiles, origin_country, origin_city, filters['radius'])
 
-    dating_profiles = [profile for profile in profiles if 'dating' in profile.goals] if should_show_profiles else []
+    dating_profiles = [
+        profile for profile in profiles
+        if 'dating' in profile.goals and profile.user_id not in requested_connection_user_ids
+    ] if should_show_profiles else []
     min_age = int(filters['min_age']) if filters['min_age'].isdigit() else None
     max_age = int(filters['max_age']) if filters['max_age'].isdigit() else None
     if min_age is not None or max_age is not None:
