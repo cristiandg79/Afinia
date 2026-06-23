@@ -392,17 +392,25 @@ h1 {
     z-index: 5;
 }
 
-.moderation-tabs a {
+.moderation-tabs button {
+    background: transparent;
+    border: 0;
     border-radius: 8px;
     color: var(--primary-dark);
+    cursor: pointer;
     font-size: 0.95rem;
     font-weight: 800;
     padding: 8px 10px;
-    text-decoration: none;
 }
 
-.moderation-tabs a:hover {
+.moderation-tabs button:hover,
+.moderation-tabs button.is-active {
     background: #edf7f2;
+}
+
+.moderation-tabs button.is-active {
+    color: #1e6f53;
+    box-shadow: inset 0 0 0 2px #b6d7c8;
 }
 
 .moderation-section {
@@ -410,6 +418,10 @@ h1 {
     border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
+}
+
+.moderation-section[hidden] {
+    display: none;
 }
 
 .moderation-section > header {

@@ -22,6 +22,37 @@ document.querySelectorAll('[data-menu-toggle]').forEach((button) => {
     });
 });
 
+document.querySelectorAll('[data-moderation-tabs]').forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll('[data-moderation-tab]'));
+    const panels = Array.from(root.querySelectorAll('[data-moderation-panel]'));
+    if (!tabs.length || !panels.length) {
+        return;
+    }
+
+    function showPanel(panelId, updateHash = true) {
+        const targetPanel = panels.find((panel) => panel.id === panelId) || panels[0];
+        panels.forEach((panel) => {
+            panel.hidden = panel !== targetPanel;
+        });
+        tabs.forEach((tab) => {
+            const isActive = tab.dataset.moderationTab === targetPanel.id;
+            tab.classList.toggle('is-active', isActive);
+            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+        if (updateHash && window.location.hash !== `#${targetPanel.id}`) {
+            history.replaceState(null, '', `#${targetPanel.id}`);
+        }
+    }
+
+    tabs.forEach((tab) => {
+        tab.setAttribute('role', 'tab');
+        tab.addEventListener('click', () => showPanel(tab.dataset.moderationTab));
+    });
+    panels.forEach((panel) => panel.setAttribute('role', 'tabpanel'));
+
+    showPanel(window.location.hash.replace('#', '') || tabs[0].dataset.moderationTab, false);
+});
+
 document.querySelectorAll('[data-onboarding]').forEach((root) => {
     const steps = Array.from(root.querySelectorAll('.wizard-step'));
     const previousButton = root.querySelector('[data-prev]');

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Moderación - Afinia{% endblock %}
 {% block content %}
-<section class="moderation-page">
+<section class="moderation-page" data-moderation-tabs>
     <div class="section-title">
         <div>
             <p class="eyebrow">Administrador</p>
@@ -11,16 +11,16 @@
     </div>
 
     <nav class="moderation-tabs" aria-label="Secciones de moderación">
-        <a href="#usuarios">Usuarios</a>
-        <a href="#muro">Muro</a>
-        <a href="#grupos">Grupos</a>
-        <a href="#planes">Planes</a>
-        <a href="#mensajes">Mensajes</a>
-        <a href="#fotos">Fotos</a>
-        <a href="#emails">Emails</a>
+        <button type="button" data-moderation-tab="usuarios" aria-controls="usuarios">Usuarios</button>
+        <button type="button" data-moderation-tab="muro" aria-controls="muro">Muro</button>
+        <button type="button" data-moderation-tab="grupos" aria-controls="grupos">Grupos</button>
+        <button type="button" data-moderation-tab="planes" aria-controls="planes">Planes</button>
+        <button type="button" data-moderation-tab="mensajes" aria-controls="mensajes">Mensajes</button>
+        <button type="button" data-moderation-tab="fotos" aria-controls="fotos">Fotos</button>
+        <button type="button" data-moderation-tab="emails" aria-controls="emails">Emails</button>
     </nav>
 
-    <section class="moderation-section" id="usuarios">
+    <section class="moderation-section" id="usuarios" data-moderation-panel>
         <header>
             <h2>Usuarios</h2>
             <span>Orden alfabético</span>
@@ -45,7 +45,7 @@
         </div>
     </section>
 
-    <section class="moderation-section" id="muro">
+    <section class="moderation-section" id="muro" data-moderation-panel>
         <header>
             <h2>Muro</h2>
             <span>Publicaciones recientes</span>
@@ -68,7 +68,7 @@
         </div>
     </section>
 
-    <section class="moderation-section" id="grupos">
+    <section class="moderation-section" id="grupos" data-moderation-panel>
         <header>
             <h2>Grupos</h2>
             <span>Orden alfabético</span>
@@ -91,7 +91,7 @@
         </div>
     </section>
 
-    <section class="moderation-section" id="planes">
+    <section class="moderation-section" id="planes" data-moderation-panel>
         <header>
             <h2>Planes</h2>
             <span>Orden alfabético</span>
@@ -114,7 +114,7 @@
         </div>
     </section>
 
-    <section class="moderation-section" id="mensajes">
+    <section class="moderation-section" id="mensajes" data-moderation-panel>
         <header>
             <h2>Mensajes</h2>
             <span>Últimos mensajes</span>
@@ -137,7 +137,7 @@
         </div>
     </section>
 
-    <section class="moderation-section" id="fotos">
+    <section class="moderation-section" id="fotos" data-moderation-panel>
         <header>
             <h2>Fotos</h2>
             <span>Muro y perfiles</span>
@@ -174,7 +174,7 @@
         </div>
     </section>
 
-    <section class="moderation-section" id="emails">
+    <section class="moderation-section" id="emails" data-moderation-panel>
         <header>
             <h2>Emails bloqueados</h2>
             <span>No pueden registrarse de nuevo</span>
