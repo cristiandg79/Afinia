@@ -373,6 +373,52 @@ h1 {
     gap: 12px;
 }
 
+.moderation-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.moderation-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+}
+
+.moderation-box h2 {
+    margin: 0;
+}
+
+.moderation-list {
+    display: grid;
+    gap: 10px;
+}
+
+.moderation-item {
+    align-items: center;
+    border-top: 1px solid var(--border);
+    display: grid;
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-top: 10px;
+}
+
+.moderation-item p {
+    color: var(--muted);
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.moderation-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
 .soft-panel,
 .form-card,
 .card,

@@ -63,6 +63,13 @@
                                         <span class="message-ticks" title="Recibido" aria-label="Recibido">&#10003;&#10003;</span>
                                     {% endif %}
                                 {% endif %}
+                                {% if is_site_admin %}
+                                    <form method="post" action="{% url 'moderation_delete_message' message.pk %}" onsubmit="return confirm('¿Eliminar este mensaje?');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button class="link-button danger-link" type="submit">Eliminar</button>
+                                    </form>
+                                {% endif %}
                             </span>
                         </div>
                     </article>

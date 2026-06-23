@@ -5,6 +5,13 @@
     <p class="eyebrow">{{ group.location_label }}{% if group.topic %} · {{ group.topic }}{% endif %}</p>
     <h1>{{ group.name }}</h1>
     <p>{{ group.description }}</p>
+    {% if is_site_admin %}
+        <form class="moderation-actions" method="post" action="{% url 'moderation_delete_group' group.pk %}" onsubmit="return confirm('¿Eliminar este grupo y sus planes de grupo?');">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'group_list' %}">
+            <button class="button small danger" type="submit">Eliminar grupo</button>
+        </form>
+    {% endif %}
     {% if membership %}
         <p class="notice">Tu estado en este grupo: {% if membership.status == 'moderator' %}Moderador{% elif membership.status == 'approved' %}Miembro{% elif membership.status == 'pending' %}Pendiente{% else %}{{ membership.get_status_display }}{% endif %}</p>
         {% if group_chat %}

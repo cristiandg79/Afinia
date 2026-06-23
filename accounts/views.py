@@ -8,17 +8,20 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 
 from community.models import Group, GroupMembership, Plan, PlanAttendance
 from messaging.chat_rooms import is_chat_group
-from messaging.models import PanelNotification
+from messaging.models import Message, PanelNotification
 from messaging.notifications import community_chat_unread_items, private_message_unread_items
+from publications.models import Publication, PublicationComment, PublicationPhoto
 
 from .choices import HEALTH_CONTEXT_CHOICES
 from .forms import ProfileForm, SignUpForm
 from .geolocation import RADIUS_CHOICES, city_coords, clean_radius, distance_km, filter_by_radius, filter_by_user_radius
 from .locations import LOCATION_COUNTRY_CHOICES
-from .models import Connection, DatingAction, Profile, ProfilePhoto
+from .models import BlockedEmail, Connection, DatingAction, Profile, ProfilePhoto
+from .permissions import is_site_admin, site_admin_required
 
 
 PROFILE_FORM_STEPS = {
@@ -66,6 +69,7 @@ def suggested_profiles_for(profile, limit=8):
 
     candidates = (
         Profile.objects
+        .filter(user__is_active=True)
         .exclude(user_id__in=excluded_user_ids)
         .select_related('user')
         .order_by('-updated_at')[:300]
@@ -265,7 +269,10 @@ def profile_delete(request):
     if request.method == 'POST':
         user = request.user
         logout(request)
-        user.delete()
+        if user.email:
+            BlockedEmail.objects.get_or_create(email=user.email.lower(), defaults={'user': user, 'reason': 'Baja solicitada por el usuario'})
+        user.is_active = False
+        user.save(update_fields=['is_active'])
         messages.success(request, 'Tu perfil se ha eliminado.')
         return redirect('home')
     return render(request, 'accounts/profile_delete.html')
@@ -273,7 +280,7 @@ def profile_delete(request):
 
 @login_required
 def profile_detail(request, username):
-    profile = get_object_or_404(Profile, user__username=username)
+    profile = get_object_or_404(Profile, user__username=username, user__is_active=True)
     connection = Connection.objects.filter(
         Q(requester=request.user, receiver=profile.user) | Q(requester=profile.user, receiver=request.user)
     ).first()
@@ -282,7 +289,7 @@ def profile_detail(request, username):
 
 @login_required
 def discover(request):
-    profiles = Profile.objects.exclude(user=request.user)
+    profiles = Profile.objects.filter(user__is_active=True).exclude(user=request.user)
     pending_connections = (
         Connection.objects
         .filter(receiver=request.user, status=Connection.Status.PENDING)
@@ -457,6 +464,7 @@ def dating_search(request):
     should_show_profiles = has_submitted_filters or has_saved_filters
     profiles = (
         Profile.objects
+        .filter(user__is_active=True)
         .exclude(user=request.user)
         .select_related('user')
         .prefetch_related('extra_photos')
@@ -523,7 +531,7 @@ def get_or_create_private_conversation(user_a, user_b):
 
 @login_required
 def contact_conversation(request, pk):
-    target = get_object_or_404(User, pk=pk)
+    target = get_object_or_404(User, pk=pk, is_active=True)
     if target == request.user:
         messages.info(request, 'No puedes abrir un chat contigo mismo.')
         return redirect('contacts')
@@ -706,5 +714,150 @@ def unblock_contact(request, pk):
     Connection.objects.filter(requester=request.user, receiver=target, status=Connection.Status.BLOCKED).delete()
     messages.success(request, 'Usuario desbloqueado.')
     return redirect('contacts')
+
+
+@login_required
+@site_admin_required
+def moderation_panel(request):
+    users = User.objects.select_related('profile').order_by('-date_joined')[:40]
+    return render(request, 'accounts/moderation_panel.html', {
+        'users': users,
+        'publications': Publication.objects.select_related('author__profile').prefetch_related('photos').order_by('-created_at')[:40],
+        'publication_photos': PublicationPhoto.objects.select_related('publication__author').order_by('-created_at')[:40],
+        'profile_photos': ProfilePhoto.objects.select_related('profile__user').order_by('-created_at')[:40],
+        'groups': Group.objects.exclude(Q(name='Chat general') | Q(name__startswith='Chat: ')).select_related('created_by').order_by('-created_at')[:40],
+        'plans': Plan.objects.select_related('created_by', 'group').order_by('-created_at')[:40],
+        'messages_list': Message.objects.select_related('sender', 'conversation__group', 'conversation__plan').order_by('-created_at')[:80],
+        'blocked_emails': BlockedEmail.objects.select_related('user', 'blocked_by')[:40],
+    })
+
+
+def redirect_after_moderation(request, fallback='moderation_panel'):
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse(fallback)
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        return redirect(fallback)
+    return redirect(next_url)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_delete_publication(request, pk):
+    publication = get_object_or_404(Publication, pk=pk)
+    for photo in publication.photos.all():
+        photo.image.delete(save=False)
+    publication.delete()
+    messages.success(request, 'Publicacion eliminada.')
+    return redirect_after_moderation(request)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_delete_publication_photo(request, pk):
+    photo = get_object_or_404(PublicationPhoto, pk=pk)
+    photo.image.delete(save=False)
+    photo.delete()
+    messages.success(request, 'Foto del muro eliminada.')
+    return redirect_after_moderation(request)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_delete_publication_comment(request, pk):
+    comment = get_object_or_404(PublicationComment, pk=pk)
+    comment.delete()
+    messages.success(request, 'Comentario eliminado.')
+    return redirect_after_moderation(request)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_delete_group(request, pk):
+    group = get_object_or_404(Group, pk=pk)
+    if is_chat_group(group):
+        messages.error(request, 'No se puede eliminar una sala de chat base.')
+        return redirect_after_moderation(request)
+    for plan in group.plans.all():
+        plan.delete()
+    group.delete()
+    messages.success(request, 'Grupo eliminado.')
+    return redirect_after_moderation(request)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_delete_plan(request, pk):
+    plan = get_object_or_404(Plan, pk=pk)
+    plan.delete()
+    messages.success(request, 'Plan eliminado.')
+    return redirect_after_moderation(request)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_delete_message(request, pk):
+    message = get_object_or_404(Message, pk=pk)
+    conversation = message.conversation
+    if message.image:
+        message.image.delete(save=False)
+    message.delete()
+    conversation.save()
+    messages.success(request, 'Mensaje eliminado.')
+    return redirect_after_moderation(request)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_delete_profile_photo(request, pk):
+    profile = get_object_or_404(Profile, pk=pk)
+    if profile.photo:
+        profile.photo.delete(save=False)
+        profile.photo = None
+        profile.save(update_fields=['photo'])
+        messages.success(request, 'Foto principal eliminada.')
+    return redirect_after_moderation(request)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_delete_extra_photo(request, pk):
+    photo = get_object_or_404(ProfilePhoto, pk=pk)
+    photo.image.delete(save=False)
+    photo.delete()
+    messages.success(request, 'Foto de perfil eliminada.')
+    return redirect_after_moderation(request)
+
+
+@login_required
+@site_admin_required
+@require_POST
+def moderation_block_user(request, pk):
+    target = get_object_or_404(User, pk=pk)
+    if target == request.user:
+        messages.error(request, 'No puedes bloquear tu propio usuario administrador.')
+        return redirect_after_moderation(request)
+    if is_site_admin(target):
+        messages.error(request, 'No puedes bloquear otro usuario administrador.')
+        return redirect_after_moderation(request)
+    if target.email:
+        BlockedEmail.objects.update_or_create(
+            email=target.email.lower(),
+            defaults={
+                'user': target,
+                'blocked_by': request.user,
+                'reason': 'Usuario eliminado o bloqueado por moderacion',
+            },
+        )
+    target.is_active = False
+    target.save(update_fields=['is_active'])
+    messages.success(request, 'Usuario desactivado y email bloqueado.')
+    return redirect_after_moderation(request)
 
 # Create your views here.

@@ -12,6 +12,13 @@
     {% if plan.accessibility_info %}
         <p><strong>Accesibilidad y comodidad:</strong> {{ plan.accessibility_info }}</p>
     {% endif %}
+    {% if is_site_admin %}
+        <form class="moderation-actions" method="post" action="{% url 'moderation_delete_plan' plan.pk %}" onsubmit="return confirm('¿Eliminar este plan?');">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'plan_list' %}">
+            <button class="button small danger" type="submit">Eliminar plan</button>
+        </form>
+    {% endif %}
     {% if is_moderator %}
         <p class="notice">Eres moderador de este plan.</p>
         {% if plan_chat %}

@@ -29,6 +29,14 @@
                 <a class="button" href="{% url 'profile_edit' %}">Modificar perfil</a>
                 <a class="danger-link" href="{% url 'profile_delete' %}">Eliminar perfil</a>
             </div>
+        {% elif is_site_admin %}
+            <div class="profile-actions">
+                <form method="post" action="{% url 'moderation_block_user' profile.user.pk %}" onsubmit="return confirm('¿Desactivar a {{ profile.user.username|escapejs }} y bloquear su email?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{% url 'moderation_panel' %}">
+                    <button class="button danger" type="submit">Bloquear usuario</button>
+                </form>
+            </div>
         {% endif %}
     </div>
 
@@ -38,9 +46,25 @@
             <div class="gallery-grid">
                 {% if profile.photo %}
                     <img class="gallery-main" src="{{ profile.photo.url }}" alt="" onerror="this.remove();">
+                    {% if is_site_admin %}
+                        <form class="moderation-actions" method="post" action="{% url 'moderation_delete_profile_photo' profile.pk %}" onsubmit="return confirm('¿Eliminar la foto principal de este perfil?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button class="button small danger" type="submit">Eliminar foto principal</button>
+                        </form>
+                    {% endif %}
                 {% endif %}
                 {% for photo in profile.extra_photos.all %}
-                    <img src="{{ photo.image.url }}" alt="" onerror="this.remove();">
+                    <span>
+                        <img src="{{ photo.image.url }}" alt="" onerror="this.remove();">
+                        {% if is_site_admin %}
+                            <form class="moderation-actions" method="post" action="{% url 'moderation_delete_extra_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del perfil?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button class="button small danger" type="submit">Eliminar foto</button>
+                            </form>
+                        {% endif %}
+                    </span>
                 {% endfor %}
             </div>
         </section>

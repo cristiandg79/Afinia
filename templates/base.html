@@ -7,7 +7,7 @@
     <title>{% block title %}Afinia{% endblock %}</title>
     <link rel="icon" type="image/png" href="{% static 'img/favicon-afiniac.png' %}?v=20260618-1">
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}?v=20260618-1">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20260618-40">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20260618-41">
     <script src="{% static 'js/app.js' %}?v=20260618-21" defer></script>
 </head>
 <body {% if user.is_authenticated %}data-notifications{% endif %}>
@@ -42,6 +42,9 @@
                         <span class="notification-badge {% if not notification_counts.messages %}is-hidden{% endif %}" data-badge="messages">{{ notification_counts.messages }}</span>
                     </a>
                     <a href="{% url 'contacts' %}">Contactos</a>
+                    {% if is_site_admin %}
+                        <a href="{% url 'moderation_panel' %}">Moderación</a>
+                    {% endif %}
                     <details class="user-menu">
                         <summary>
                             {% if user.profile.photo %}
@@ -53,7 +56,7 @@
                                     {{ user.username|first|upper }}
                             </span>
                             {% endif %}
-                            <span>{{ user.username }}</span>
+                            <span>{{ user.username }}{% if is_site_admin %} · Administrador{% endif %}</span>
                         </summary>
                         <div class="user-menu__panel">
                             <a href="{% url 'my_profile' %}">Ver mi perfil</a>

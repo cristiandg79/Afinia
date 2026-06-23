@@ -54,9 +54,18 @@
                 {% if publication.photos.all or publication.link_url %}
                     <div class="publication-media">
                         {% for photo in publication.photos.all %}
-                            <a class="publication-thumb" href="{{ photo.image.url }}" target="_blank" rel="noopener">
-                                <img src="{{ photo.image.url }}" alt="Foto publicada por {{ publication.author.username }}">
-                            </a>
+                            <span>
+                                <a class="publication-thumb" href="{{ photo.image.url }}" target="_blank" rel="noopener">
+                                    <img src="{{ photo.image.url }}" alt="Foto publicada por {{ publication.author.username }}">
+                                </a>
+                                {% if is_site_admin %}
+                                    <form class="moderation-actions" method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button class="button small danger" type="submit">Eliminar foto</button>
+                                    </form>
+                                {% endif %}
+                            </span>
                         {% endfor %}
                         {% if publication.link_url %}
                             <a class="publication-link-preview {% if publication.link_image_url %}has-image{% endif %}" href="{{ publication.link_url }}" target="_blank" rel="noopener">
@@ -118,6 +127,16 @@
                     </button>
                 </div>
 
+                {% if is_site_admin %}
+                    <div class="moderation-actions">
+                        <form method="post" action="{% url 'moderation_delete_publication' publication.pk %}" onsubmit="return confirm('¿Eliminar esta publicación del muro?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button class="button small danger" type="submit">Eliminar publicación</button>
+                        </form>
+                    </div>
+                {% endif %}
+
                 <div class="publication-comments" id="comentarios-{{ publication.pk }}" hidden>
                     {% for comment in publication.comments.all %}
                         <article class="publication-comment">
@@ -131,6 +150,13 @@
                             <div>
                                 <strong>{{ comment.author.username }}</strong>
                                 <p>{{ comment.body|linebreaksbr }}</p>
+                                {% if is_site_admin %}
+                                    <form class="moderation-actions" method="post" action="{% url 'moderation_delete_publication_comment' comment.pk %}" onsubmit="return confirm('¿Eliminar este comentario?');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button class="button small danger" type="submit">Eliminar comentario</button>
+                                    </form>
+                                {% endif %}
                             </div>
                         </article>
                     {% endfor %}

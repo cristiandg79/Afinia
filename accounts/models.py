@@ -201,4 +201,18 @@ class Connection(models.Model):
     def __str__(self):
         return f'{self.requester} -> {self.receiver} ({self.status})'
 
+
+class BlockedEmail(models.Model):
+    email = models.EmailField(unique=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='blocked_email_records')
+    blocked_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='email_blocks_created')
+    reason = models.CharField(max_length=240, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.email
+
 # Create your models here.

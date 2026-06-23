@@ -28,6 +28,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-dev-only-change-me')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+AFINIA_ADMIN_USERNAMES = config('AFINIA_ADMIN_USERNAMES', default='cristiandg79,elme79', cast=Csv())
 
 
 # Application definition
@@ -76,6 +77,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'messaging.context_processors.notifications',
+                'accounts.context_processors.moderation',
             ],
         },
     },

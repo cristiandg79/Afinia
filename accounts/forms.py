@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from .choices import HEALTH_CONTEXT_CHOICES
 from .locations import LOCATION_COUNTRY_CHOICES
-from .models import Profile
+from .models import BlockedEmail, Profile
 
 
 GOAL_CHOICES = [
@@ -64,6 +64,8 @@ class SignUpForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data['email'].strip()
+        if BlockedEmail.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError('No se puede crear una cuenta con este email.')
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError('Ya existe una cuenta con este email.')
         return email
