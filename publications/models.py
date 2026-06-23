@@ -32,3 +32,30 @@ class PublicationPhoto(models.Model):
 
     def __str__(self):
         return f'Foto de publicacion {self.publication_id}'
+
+
+class PublicationLike(models.Model):
+    publication = models.ForeignKey(Publication, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='publication_likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['publication', 'user'], name='unique_publication_like')
+        ]
+
+    def __str__(self):
+        return f'{self.user} like {self.publication_id}'
+
+
+class PublicationComment(models.Model):
+    publication = models.ForeignKey(Publication, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='publication_comments')
+    body = models.TextField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f'{self.author} comento {self.publication_id}'

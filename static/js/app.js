@@ -129,6 +129,26 @@ document.querySelectorAll('[data-people-grid]').forEach((grid) => {
     refreshButton();
 });
 
+document.querySelectorAll('[data-share-url]').forEach((button) => {
+    button.addEventListener('click', async () => {
+        const url = button.dataset.shareUrl || window.location.href;
+        const originalText = button.textContent;
+        try {
+            if (navigator.share) {
+                await navigator.share({ url, title: document.title });
+            } else if (navigator.clipboard) {
+                await navigator.clipboard.writeText(url);
+                button.textContent = 'Copiado';
+                window.setTimeout(() => {
+                    button.textContent = originalText;
+                }, 1600);
+            }
+        } catch (_) {
+            button.textContent = originalText;
+        }
+    });
+});
+
 document.querySelectorAll('[data-birth-widget]').forEach((root) => {
     const birthDateInput = root.querySelector('[data-birth-date]');
     const birthSummary = root.querySelector('[data-birth-summary]');

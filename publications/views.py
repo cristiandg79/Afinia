@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 from html.parser import HTMLParser
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
 from .forms import PublicationForm
-from .models import Publication, PublicationPhoto
+from .models import Publication, PublicationComment, PublicationLike, PublicationPhoto
 
 
 class LinkPreviewParser(HTMLParser):
@@ -81,9 +82,41 @@ def publication_feed(request):
     publications = (
         Publication.objects
         .select_related('author__profile')
-        .prefetch_related('photos')
+        .prefetch_related('photos', 'comments__author__profile', 'likes')
+    )
+    liked_publication_ids = set(
+        PublicationLike.objects
+        .filter(user=request.user, publication__in=publications)
+        .values_list('publication_id', flat=True)
     )
     return render(request, 'publications/feed.html', {
         'form': form,
         'publications': publications,
+        'liked_publication_ids': liked_publication_ids,
     })
+
+
+@login_required
+@require_POST
+def publication_like(request, pk):
+    publication = get_object_or_404(Publication, pk=pk)
+    like, created = PublicationLike.objects.get_or_create(publication=publication, user=request.user)
+    if not created:
+        like.delete()
+    return redirect('publication_feed')
+
+
+@login_required
+@require_POST
+def publication_comment(request, pk):
+    publication = get_object_or_404(Publication, pk=pk)
+    body = (request.POST.get('body') or '').strip()
+    if not body:
+        messages.info(request, 'Escribe un comentario antes de publicarlo.')
+        return redirect('publication_feed')
+    PublicationComment.objects.create(
+        publication=publication,
+        author=request.user,
+        body=body[:500],
+    )
+    return redirect('publication_feed')

@@ -36,7 +36,7 @@
 
     <div class="publication-feed">
         {% for publication in publications %}
-            <article class="publication-card">
+            <article class="publication-card" id="publicacion-{{ publication.pk }}">
                 <header class="publication-author">
                     <span class="chat-avatar">
                         {% if publication.author.profile.photo %}
@@ -86,6 +86,48 @@
                 {% endif %}
 
                 <p class="publication-message">{{ publication.message|linebreaksbr }}</p>
+
+                <div class="publication-stats">
+                    <span>{{ publication.likes.count }} Me gusta</span>
+                    <span>{{ publication.comments.count }} comentarios</span>
+                </div>
+
+                <div class="publication-actions">
+                    <form method="post" action="{% url 'publication_like' publication.pk %}">
+                        {% csrf_token %}
+                        <button class="publication-action-button {% if publication.pk in liked_publication_ids %}is-active{% endif %}" type="submit">
+                            {% if publication.pk in liked_publication_ids %}Te gusta{% else %}Me gusta{% endif %}
+                        </button>
+                    </form>
+                    <a class="publication-action-button" href="#comentario-{{ publication.pk }}">Comentar</a>
+                    <button class="publication-action-button" type="button" data-share-url="{{ request.scheme }}://{{ request.get_host }}{% url 'publication_feed' %}#publicacion-{{ publication.pk }}">
+                        Compartir
+                    </button>
+                </div>
+
+                <div class="publication-comments">
+                    {% for comment in publication.comments.all %}
+                        <article class="publication-comment">
+                            <span class="chat-avatar small">
+                                {% if comment.author.profile.photo %}
+                                    <img src="{{ comment.author.profile.photo.url }}" alt="">
+                                {% else %}
+                                    <span>{{ comment.author.username|first|upper }}</span>
+                                {% endif %}
+                            </span>
+                            <div>
+                                <strong>{{ comment.author.username }}</strong>
+                                <p>{{ comment.body|linebreaksbr }}</p>
+                            </div>
+                        </article>
+                    {% endfor %}
+                    <form class="publication-comment-form" method="post" action="{% url 'publication_comment' publication.pk %}">
+                        {% csrf_token %}
+                        <label class="sr-only" for="comentario-{{ publication.pk }}">Comentario</label>
+                        <input id="comentario-{{ publication.pk }}" name="body" maxlength="500" placeholder="Escribe un comentario">
+                        <button class="button small" type="submit">Publicar</button>
+                    </form>
+                </div>
             </article>
         {% empty %}
             <div class="empty-state soft-panel">
