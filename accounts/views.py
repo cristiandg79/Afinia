@@ -343,6 +343,7 @@ def clean_dating_filters(data, profile):
         'max_age': data.get('max_age', '').strip(),
         'sex': data.get('sex', '').strip(),
         'orientation': data.get('orientation', '').strip(),
+        'situation': data.get('situation', '').strip(),
     }
     valid_countries = {value for value, _ in LOCATION_COUNTRY_CHOICES}
     if filters['country'] not in valid_countries:
@@ -352,6 +353,9 @@ def clean_dating_filters(data, profile):
     valid_orientations = {value for value, _ in Profile.Orientation.choices}
     if filters['orientation'] not in valid_orientations:
         filters['orientation'] = ''
+    valid_situations = {value for value, _ in HEALTH_CONTEXT_CHOICES}
+    if filters['situation'] not in valid_situations:
+        filters['situation'] = ''
     if not filters['sex']:
         filters['sex'] = inferred_dating_sex(profile)
     return filters
@@ -428,6 +432,8 @@ def dating_search(request):
         origin_country = filters['country'] or request.user.profile.country
         origin_city = filters['city'] or request.user.profile.city
         profiles = filter_by_radius(profiles, origin_country, origin_city, filters['radius'])
+    if should_show_profiles and filters['situation']:
+        profiles = [profile for profile in profiles if filters['situation'] in profile.health_context]
 
     dating_profiles = [
         profile for profile in profiles
@@ -464,6 +470,7 @@ def dating_search(request):
             (Profile.Sex.MAN, 'Hombres'),
         ],
         'orientation_choices': [('', 'Cualquier orientación'), *Profile.Orientation.choices],
+        'situation_choices': HEALTH_CONTEXT_CHOICES,
     })
 
 
