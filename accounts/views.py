@@ -565,19 +565,28 @@ def dating_action(request, pk, action):
 @login_required
 def request_connection(request, pk):
     receiver = get_object_or_404(User, pk=pk)
+    next_url = request.GET.get('next') or receiver.profile.get_absolute_url()
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        next_url = receiver.profile.get_absolute_url()
     if receiver == request.user:
         messages.info(request, 'Ese eres tú.')
         return redirect('dashboard')
     if users_are_blocked(request.user, receiver):
         messages.info(request, 'No puedes solicitar conectar con un usuario bloqueado.')
-        return redirect(receiver.profile.get_absolute_url())
+        return redirect(next_url)
     connection, created = Connection.objects.get_or_create(requester=request.user, receiver=receiver)
+    if next_url.startswith(reverse('dating_search')):
+        DatingAction.objects.update_or_create(
+            user=request.user,
+            target=receiver,
+            defaults={'action': DatingAction.Action.LIKE},
+        )
     if created:
         from messaging.notifications import notify_user
 
         notify_user(receiver)
     messages.success(request, 'Solicitud enviada.')
-    return redirect(receiver.profile.get_absolute_url())
+    return redirect(next_url)
 
 
 @login_required

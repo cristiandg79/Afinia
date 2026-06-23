@@ -113,7 +113,7 @@
         {% if connection %}
             <p class="muted">Estado de conexión: {{ connection.get_status_display }}</p>
         {% else %}
-            <a class="button" href="{% url 'request_connection' profile.user.pk %}">Solicitar conectar</a>
+            <a class="button" href="{% url 'request_connection' profile.user.pk %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Solicitar conectar</a>
         {% endif %}
     {% endif %}
 </article>

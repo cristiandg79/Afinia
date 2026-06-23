@@ -106,7 +106,7 @@
                 <div class="dating-actions">
                     <a class="button secondary" href="{% url 'dating_action' profile.user.pk 'pass' %}{% if querystring %}?{{ querystring }}{% endif %}">Pasar</a>
                     <a class="button" href="{% url 'dating_action' profile.user.pk 'like' %}{% if querystring %}?{{ querystring }}{% endif %}">Solicitar conectar</a>
-                    <a class="button secondary full" href="{{ profile.get_absolute_url }}">Ver perfil</a>
+                    <a class="button secondary full" href="{{ profile.get_absolute_url }}?next={{ request.get_full_path|urlencode }}">Ver perfil</a>
                 </div>
             </div>
         </article>
