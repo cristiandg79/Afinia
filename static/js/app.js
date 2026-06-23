@@ -337,6 +337,19 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
         }
     }
 
+    function sortParticipantsByName() {
+        if (!participantsList) {
+            return;
+        }
+        Array.from(participantsList.querySelectorAll('[data-participant-id]'))
+            .sort((left, right) => {
+                const leftName = left.querySelector('strong')?.textContent || '';
+                const rightName = right.querySelector('strong')?.textContent || '';
+                return leftName.localeCompare(rightName, 'es', { sensitivity: 'base' });
+            })
+            .forEach((row) => participantsList.append(row));
+    }
+
     function addOrUpdateParticipant(participant) {
         if (!isParticipantChat || !participantsList || !participant?.id) {
             return;
@@ -382,6 +395,7 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
         text.append(name, details);
 
         row.replaceChildren(avatar, text);
+        sortParticipantsByName();
     }
 
     function removeParticipant(participantId) {
