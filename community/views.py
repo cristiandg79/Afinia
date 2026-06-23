@@ -34,6 +34,40 @@ def create_panel_notification(user, title, body, url=''):
     )
 
 
+def create_group_publication(request, group):
+    if group.privacy != Group.Privacy.OPEN:
+        return
+
+    from publications.models import Publication
+
+    Publication.objects.create(
+        author=group.created_by,
+        group=group,
+        link_url=request.build_absolute_uri(group.get_absolute_url()),
+        message=(
+            f'{group.created_by.username} ha creado un nuevo grupo publico: {group.name}.\n'
+            f'{group.description}'
+        ),
+    )
+
+
+def create_plan_publication(request, plan):
+    if plan.group_id:
+        return
+
+    from publications.models import Publication
+
+    Publication.objects.create(
+        author=plan.created_by,
+        plan=plan,
+        link_url=request.build_absolute_uri(reverse('plan_detail', kwargs={'pk': plan.pk})),
+        message=(
+            f'{plan.created_by.username} ha creado un nuevo plan publico: {plan.title}.\n'
+            f'{plan.description}'
+        ),
+    )
+
+
 def sync_group_conversation(group):
     from messaging.models import Conversation
 
@@ -217,6 +251,7 @@ def group_create(request):
             group.created_by = request.user
             group.save()
             GroupMembership.objects.create(group=group, user=request.user, status=GroupMembership.Status.MODERATOR)
+            create_group_publication(request, group)
             messages.success(request, 'Grupo creado.')
             return redirect(group.get_absolute_url())
     else:
@@ -447,6 +482,7 @@ def plan_create(request):
                 defaults={'status': PlanAttendance.Status.APPROVED},
             )
             sync_plan_conversation(plan)
+            create_plan_publication(request, plan)
             messages.success(request, 'Plan creado.')
             return redirect('plan_detail', pk=plan.pk)
     else:
