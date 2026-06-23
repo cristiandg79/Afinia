@@ -16,7 +16,7 @@ from accounts.models import Profile, ProfilePhoto
 
 
 class Command(BaseCommand):
-    help = 'Crea perfiles demo con datos de citas y una foto principal generada.'
+    help = 'Crea perfiles demo con datos de citas, foto principal y fotos secundarias coherentes.'
 
     first_names = [
         'Lucia', 'Clara', 'Marta', 'Nerea', 'Laura', 'Paula', 'Sara', 'Elena',
@@ -119,7 +119,7 @@ class Command(BaseCommand):
                     'onboarding_completed': True,
                 },
             )
-            self.replace_photo(profile, first_name, last_name, sex, index)
+            self.replace_photos(profile, first_name, last_name, sex, index)
 
         self.stdout.write(self.style.SUCCESS(
             f'Perfiles demo recreados: {count}. Usuarios nuevos: {created}.'
@@ -172,27 +172,62 @@ class Command(BaseCommand):
         age = random.randint(22, 58)
         return date(today.year - age, random.randint(1, 12), random.randint(1, 28))
 
-    def replace_photo(self, profile, first_name, last_name, sex, index):
+    def replace_photos(self, profile, first_name, last_name, sex, index):
         if profile.photo:
             profile.photo.delete(save=False)
         for photo in list(profile.extra_photos.all()):
             photo.image.delete(save=False)
             photo.delete()
 
-        ai_portrait = self.ai_portrait_for(index)
+        ai_portrait = self.ai_portrait_for(index, sex)
         if ai_portrait:
-            profile.photo = f'profiles/demo_ai/{ai_portrait.name}'
+            profile.photo = str(ai_portrait.relative_to(Path(settings.MEDIA_ROOT))).replace('\\', '/')
+            for number in range(1, 4):
+                variant_path = self.create_photo_variant(profile.user.username, ai_portrait, number)
+                ProfilePhoto.objects.create(
+                    profile=profile,
+                    image=str(variant_path.relative_to(Path(settings.MEDIA_ROOT))).replace('\\', '/'),
+                )
         else:
             main_path = self.create_portrait(profile.user.username, first_name, last_name, sex, index, 'main')
             profile.photo = f'profiles/demo/{main_path.name}'
+            for number in range(1, 4):
+                extra_path = self.create_portrait(
+                    profile.user.username,
+                    first_name,
+                    last_name,
+                    sex,
+                    index + number * 17,
+                    f'extra_{number}',
+                )
+                ProfilePhoto.objects.create(profile=profile, image=f'profiles/demo/{extra_path.name}')
         profile.save(update_fields=['photo'])
 
-    def ai_portrait_for(self, index):
-        ai_dir = Path(settings.MEDIA_ROOT) / 'profiles' / 'demo_ai'
-        portraits = sorted(ai_dir.glob('ai_portrait_*.png'))
+    def ai_portrait_for(self, index, sex):
+        folder = 'women' if sex == Profile.Sex.WOMAN else 'men'
+        ai_dir = Path(settings.MEDIA_ROOT) / 'profiles' / 'demo_ai' / folder
+        portraits = sorted(ai_dir.glob('*_portrait_*.png'))
         if not portraits:
             return None
         return portraits[index % len(portraits)]
+
+    def create_photo_variant(self, username, source_path, number):
+        image = Image.open(source_path).convert('RGB')
+        crops = [
+            (24, 24, 876, 876),
+            (0, 42, 858, 900),
+            (42, 0, 900, 858),
+        ]
+        crop = image.crop(crops[number - 1]).resize((900, 900), Image.Resampling.LANCZOS)
+        if number == 2:
+            crop = crop.filter(ImageFilter.GaussianBlur(0.25))
+        if number == 3:
+            crop = crop.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+        out_dir = Path(settings.MEDIA_ROOT) / 'profiles' / 'demo_ai' / 'variants'
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / f'{username}_extra_{number}.png'
+        crop.save(out_path, quality=94)
+        return out_path
 
     def create_portrait(self, username, first_name, last_name, sex, seed, kind):
         rng = random.Random(seed)
