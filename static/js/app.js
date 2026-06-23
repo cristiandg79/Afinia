@@ -411,6 +411,7 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
             if (details) {
                 details.textContent = details.textContent.replace('Online', 'Offline');
             }
+            sortParticipantsByName();
             return;
         }
         row.remove();
@@ -579,6 +580,7 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
     if (messages) {
         messages.scrollTop = messages.scrollHeight;
     }
+    sortParticipantsByName();
 
     connect();
 });
