@@ -1286,6 +1286,12 @@ textarea {
     width: 100%;
 }
 
+.profile-photo-empty {
+    color: var(--muted);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
 .profile-main-meta {
     color: var(--muted);
     font-weight: 700;

@@ -8,7 +8,7 @@
                 {% if profile.photo %}
                     <img src="{{ profile.photo.url }}" alt="Foto de {{ profile.user.username }}">
                 {% else %}
-                    <span>{{ profile.user.username|first|upper }}</span>
+                    <span class="profile-photo-empty">Sin foto</span>
                 {% endif %}
             </span>
             <div>
