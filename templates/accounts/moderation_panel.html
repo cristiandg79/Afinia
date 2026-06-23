@@ -1,167 +1,196 @@
 {% extends 'base.html' %}
 {% block title %}Moderación - Afinia{% endblock %}
 {% block content %}
-<section>
+<section class="moderation-page">
     <div class="section-title">
         <div>
             <p class="eyebrow">Administrador</p>
             <h1>Moderación</h1>
-            <p class="muted">Acciones visibles solo para administradores.</p>
+            <p class="muted">{{ active_user_count }} usuarios activos · {{ blocked_email_count }} emails bloqueados</p>
         </div>
     </div>
 
-    <div class="moderation-grid">
-        <section class="moderation-box">
+    <nav class="moderation-tabs" aria-label="Secciones de moderación">
+        <a href="#usuarios">Usuarios</a>
+        <a href="#muro">Muro</a>
+        <a href="#grupos">Grupos</a>
+        <a href="#planes">Planes</a>
+        <a href="#mensajes">Mensajes</a>
+        <a href="#fotos">Fotos</a>
+        <a href="#emails">Emails</a>
+    </nav>
+
+    <section class="moderation-section" id="usuarios">
+        <header>
             <h2>Usuarios</h2>
-            <div class="moderation-list">
-                {% for item in users %}
-                    <article class="moderation-item">
-                        <div>
-                            <strong>{{ item.username }}</strong>
-                            <p>{{ item.email|default:'Sin email' }} · {% if item.is_active %}Activo{% else %}Desactivado{% endif %}</p>
-                        </div>
-                        {% if item.is_active and item != user and not item.is_staff and not item.is_superuser %}
-                            <form method="post" action="{% url 'moderation_block_user' item.pk %}" onsubmit="return confirm('¿Seguro que quieres desactivar a {{ item.username|escapejs }} y bloquear su email?');">
-                                {% csrf_token %}
-                                <button class="button small danger" type="submit">Bloquear</button>
-                            </form>
-                        {% endif %}
-                    </article>
-                {% empty %}
-                    <p class="muted">No hay usuarios.</p>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section class="moderation-box">
-            <h2>Publicaciones del muro</h2>
-            <div class="moderation-list">
-                {% for publication in publications %}
-                    <article class="moderation-item">
-                        <div>
-                            <strong>{{ publication.author.username }}</strong>
-                            <p>{{ publication.message|truncatechars:120 }}</p>
-                        </div>
-                        <form method="post" action="{% url 'moderation_delete_publication' publication.pk %}" onsubmit="return confirm('¿Eliminar esta publicación del muro?');">
+            <span>Orden alfabético</span>
+        </header>
+        <div class="moderation-table">
+            {% for item in users %}
+                <article class="moderation-row">
+                    <div>
+                        <strong>{{ item.username }}</strong>
+                        <p>{{ item.email|default:'Sin email' }} · {% if item.is_active %}Activo{% else %}Desactivado{% endif %}{% if item.is_staff or item.is_superuser %} · Administrador{% endif %}</p>
+                    </div>
+                    {% if item.is_active and item != user and not item.is_staff and not item.is_superuser %}
+                        <form method="post" action="{% url 'moderation_block_user' item.pk %}" onsubmit="return confirm('¿Seguro que quieres desactivar a {{ item.username|escapejs }} y bloquear su email?');">
                             {% csrf_token %}
-                            <button class="button small danger" type="submit">Eliminar</button>
+                            <button class="button small danger" type="submit">Bloquear</button>
                         </form>
-                    </article>
-                {% empty %}
-                    <p class="muted">No hay publicaciones.</p>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section class="moderation-box">
-            <h2>Grupos</h2>
-            <div class="moderation-list">
-                {% for group in groups %}
-                    <article class="moderation-item">
-                        <div>
-                            <strong>{{ group.name }}</strong>
-                            <p>{{ group.created_by.username }} · {{ group.location_label }}</p>
-                        </div>
-                        <form method="post" action="{% url 'moderation_delete_group' group.pk %}" onsubmit="return confirm('¿Eliminar este grupo y sus planes de grupo?');">
-                            {% csrf_token %}
-                            <button class="button small danger" type="submit">Eliminar</button>
-                        </form>
-                    </article>
-                {% empty %}
-                    <p class="muted">No hay grupos.</p>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section class="moderation-box">
-            <h2>Planes</h2>
-            <div class="moderation-list">
-                {% for plan in plans %}
-                    <article class="moderation-item">
-                        <div>
-                            <strong>{{ plan.title }}</strong>
-                            <p>{{ plan.created_by.username }} · {{ plan.starts_at|date:'d/m/Y H:i' }}</p>
-                        </div>
-                        <form method="post" action="{% url 'moderation_delete_plan' plan.pk %}" onsubmit="return confirm('¿Eliminar este plan?');">
-                            {% csrf_token %}
-                            <button class="button small danger" type="submit">Eliminar</button>
-                        </form>
-                    </article>
-                {% empty %}
-                    <p class="muted">No hay planes.</p>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section class="moderation-box">
-            <h2>Mensajes de chats</h2>
-            <div class="moderation-list">
-                {% for message in messages_list %}
-                    <article class="moderation-item">
-                        <div>
-                            <strong>{{ message.sender.username }}</strong>
-                            <p>{{ message.body|default:'Imagen'|truncatechars:120 }}</p>
-                        </div>
-                        <form method="post" action="{% url 'moderation_delete_message' message.pk %}" onsubmit="return confirm('¿Eliminar este mensaje?');">
-                            {% csrf_token %}
-                            <button class="button small danger" type="submit">Eliminar</button>
-                        </form>
-                    </article>
-                {% empty %}
-                    <p class="muted">No hay mensajes.</p>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section class="moderation-box">
-            <h2>Fotos</h2>
-            <div class="moderation-list">
-                {% for photo in publication_photos %}
-                    <article class="moderation-item">
-                        <div>
-                            <strong>Muro</strong>
-                            <p>{{ photo.publication.author.username }}</p>
-                        </div>
-                        <form method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
-                            {% csrf_token %}
-                            <button class="button small danger" type="submit">Eliminar</button>
-                        </form>
-                    </article>
-                {% endfor %}
-                {% for photo in profile_photos %}
-                    <article class="moderation-item">
-                        <div>
-                            <strong>Perfil</strong>
-                            <p>{{ photo.profile.user.username }}</p>
-                        </div>
-                        <form method="post" action="{% url 'moderation_delete_extra_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del perfil?');">
-                            {% csrf_token %}
-                            <button class="button small danger" type="submit">Eliminar</button>
-                        </form>
-                    </article>
-                {% empty %}
-                    {% if not publication_photos %}
-                        <p class="muted">No hay fotos.</p>
                     {% endif %}
-                {% endfor %}
-            </div>
-        </section>
+                </article>
+            {% empty %}
+                <p class="muted">No hay usuarios.</p>
+            {% endfor %}
+        </div>
+    </section>
 
-        <section class="moderation-box">
+    <section class="moderation-section" id="muro">
+        <header>
+            <h2>Muro</h2>
+            <span>Publicaciones recientes</span>
+        </header>
+        <div class="moderation-table">
+            {% for publication in publications %}
+                <article class="moderation-row">
+                    <div>
+                        <strong>{{ publication.author.username }}</strong>
+                        <p>{{ publication.message|truncatechars:140 }}</p>
+                    </div>
+                    <form method="post" action="{% url 'moderation_delete_publication' publication.pk %}" onsubmit="return confirm('¿Eliminar esta publicación del muro?');">
+                        {% csrf_token %}
+                        <button class="button small danger" type="submit">Eliminar</button>
+                    </form>
+                </article>
+            {% empty %}
+                <p class="muted">No hay publicaciones.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="moderation-section" id="grupos">
+        <header>
+            <h2>Grupos</h2>
+            <span>Orden alfabético</span>
+        </header>
+        <div class="moderation-table">
+            {% for group in groups %}
+                <article class="moderation-row">
+                    <div>
+                        <strong>{{ group.name }}</strong>
+                        <p>{{ group.created_by.username }} · {{ group.location_label }}</p>
+                    </div>
+                    <form method="post" action="{% url 'moderation_delete_group' group.pk %}" onsubmit="return confirm('¿Eliminar este grupo y sus planes de grupo?');">
+                        {% csrf_token %}
+                        <button class="button small danger" type="submit">Eliminar</button>
+                    </form>
+                </article>
+            {% empty %}
+                <p class="muted">No hay grupos.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="moderation-section" id="planes">
+        <header>
+            <h2>Planes</h2>
+            <span>Orden alfabético</span>
+        </header>
+        <div class="moderation-table">
+            {% for plan in plans %}
+                <article class="moderation-row">
+                    <div>
+                        <strong>{{ plan.title }}</strong>
+                        <p>{{ plan.created_by.username }} · {{ plan.starts_at|date:'d/m/Y H:i' }}</p>
+                    </div>
+                    <form method="post" action="{% url 'moderation_delete_plan' plan.pk %}" onsubmit="return confirm('¿Eliminar este plan?');">
+                        {% csrf_token %}
+                        <button class="button small danger" type="submit">Eliminar</button>
+                    </form>
+                </article>
+            {% empty %}
+                <p class="muted">No hay planes.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="moderation-section" id="mensajes">
+        <header>
+            <h2>Mensajes</h2>
+            <span>Últimos mensajes</span>
+        </header>
+        <div class="moderation-table">
+            {% for message in messages_list %}
+                <article class="moderation-row">
+                    <div>
+                        <strong>{{ message.sender.username }}</strong>
+                        <p>{{ message.body|default:'Imagen'|truncatechars:140 }}</p>
+                    </div>
+                    <form method="post" action="{% url 'moderation_delete_message' message.pk %}" onsubmit="return confirm('¿Eliminar este mensaje?');">
+                        {% csrf_token %}
+                        <button class="button small danger" type="submit">Eliminar</button>
+                    </form>
+                </article>
+            {% empty %}
+                <p class="muted">No hay mensajes.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="moderation-section" id="fotos">
+        <header>
+            <h2>Fotos</h2>
+            <span>Muro y perfiles</span>
+        </header>
+        <div class="moderation-table">
+            {% for photo in publication_photos %}
+                <article class="moderation-row">
+                    <div>
+                        <strong>Muro</strong>
+                        <p>{{ photo.publication.author.username }}</p>
+                    </div>
+                    <form method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
+                        {% csrf_token %}
+                        <button class="button small danger" type="submit">Eliminar</button>
+                    </form>
+                </article>
+            {% endfor %}
+            {% for photo in profile_photos %}
+                <article class="moderation-row">
+                    <div>
+                        <strong>Perfil</strong>
+                        <p>{{ photo.profile.user.username }}</p>
+                    </div>
+                    <form method="post" action="{% url 'moderation_delete_extra_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del perfil?');">
+                        {% csrf_token %}
+                        <button class="button small danger" type="submit">Eliminar</button>
+                    </form>
+                </article>
+            {% empty %}
+                {% if not publication_photos %}
+                    <p class="muted">No hay fotos.</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="moderation-section" id="emails">
+        <header>
             <h2>Emails bloqueados</h2>
-            <div class="moderation-list">
-                {% for record in blocked_emails %}
-                    <article class="moderation-item">
-                        <div>
-                            <strong>{{ record.email }}</strong>
-                            <p>{{ record.reason|default:'Sin motivo' }}</p>
-                        </div>
-                    </article>
-                {% empty %}
-                    <p class="muted">No hay emails bloqueados.</p>
-                {% endfor %}
-            </div>
-        </section>
-    </div>
+            <span>No pueden registrarse de nuevo</span>
+        </header>
+        <div class="moderation-table">
+            {% for record in blocked_emails %}
+                <article class="moderation-row">
+                    <div>
+                        <strong>{{ record.email }}</strong>
+                        <p>{{ record.reason|default:'Sin motivo' }}</p>
+                    </div>
+                </article>
+            {% empty %}
+                <p class="muted">No hay emails bloqueados.</p>
+            {% endfor %}
+        </div>
+    </section>
 </section>
 {% endblock %}

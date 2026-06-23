@@ -719,16 +719,25 @@ def unblock_contact(request, pk):
 @login_required
 @site_admin_required
 def moderation_panel(request):
-    users = User.objects.select_related('profile').order_by('-date_joined')[:40]
+    users = User.objects.select_related('profile').order_by('username')[:80]
+    publications = Publication.objects.select_related('author__profile').prefetch_related('photos').order_by('-created_at')[:40]
+    publication_photos = PublicationPhoto.objects.select_related('publication__author').order_by('-created_at')[:40]
+    profile_photos = ProfilePhoto.objects.select_related('profile__user').order_by('profile__user__username')[:40]
+    groups = Group.objects.exclude(Q(name='Chat general') | Q(name__startswith='Chat: ')).select_related('created_by').order_by('name')[:40]
+    plans = Plan.objects.select_related('created_by', 'group').order_by('title')[:40]
+    messages_list = Message.objects.select_related('sender', 'conversation__group', 'conversation__plan').order_by('-created_at')[:80]
+    blocked_emails = BlockedEmail.objects.select_related('user', 'blocked_by')[:40]
     return render(request, 'accounts/moderation_panel.html', {
         'users': users,
-        'publications': Publication.objects.select_related('author__profile').prefetch_related('photos').order_by('-created_at')[:40],
-        'publication_photos': PublicationPhoto.objects.select_related('publication__author').order_by('-created_at')[:40],
-        'profile_photos': ProfilePhoto.objects.select_related('profile__user').order_by('-created_at')[:40],
-        'groups': Group.objects.exclude(Q(name='Chat general') | Q(name__startswith='Chat: ')).select_related('created_by').order_by('-created_at')[:40],
-        'plans': Plan.objects.select_related('created_by', 'group').order_by('-created_at')[:40],
-        'messages_list': Message.objects.select_related('sender', 'conversation__group', 'conversation__plan').order_by('-created_at')[:80],
-        'blocked_emails': BlockedEmail.objects.select_related('user', 'blocked_by')[:40],
+        'publications': publications,
+        'publication_photos': publication_photos,
+        'profile_photos': profile_photos,
+        'groups': groups,
+        'plans': plans,
+        'messages_list': messages_list,
+        'blocked_emails': blocked_emails,
+        'active_user_count': User.objects.filter(is_active=True).count(),
+        'blocked_email_count': BlockedEmail.objects.count(),
     })
 
 

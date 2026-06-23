@@ -373,40 +373,85 @@ h1 {
     gap: 12px;
 }
 
-.moderation-grid {
+.moderation-page {
     display: grid;
     gap: 18px;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
-.moderation-box {
+.moderation-tabs {
+    align-items: center;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
-    display: grid;
-    gap: 14px;
-    padding: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
 }
 
-.moderation-box h2 {
+.moderation-tabs a {
+    border-radius: 8px;
+    color: var(--primary-dark);
+    font-size: 0.95rem;
+    font-weight: 800;
+    padding: 8px 10px;
+    text-decoration: none;
+}
+
+.moderation-tabs a:hover {
+    background: #edf7f2;
+}
+
+.moderation-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.moderation-section > header {
+    align-items: baseline;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    padding: 14px 16px;
+}
+
+.moderation-section h2 {
     margin: 0;
 }
 
-.moderation-list {
-    display: grid;
-    gap: 10px;
+.moderation-section > header span {
+    color: var(--muted);
+    font-size: 0.92rem;
+    font-weight: 700;
 }
 
-.moderation-item {
+.moderation-table {
+    display: grid;
+}
+
+.moderation-row {
     align-items: center;
-    border-top: 1px solid var(--border);
     display: grid;
-    gap: 10px;
+    gap: 12px;
     grid-template-columns: minmax(0, 1fr) auto;
-    padding-top: 10px;
+    padding: 12px 16px;
 }
 
-.moderation-item p {
+.moderation-row + .moderation-row {
+    border-top: 1px solid var(--border);
+}
+
+.moderation-row:hover {
+    background: #f8faf8;
+}
+
+.moderation-row p {
     color: var(--muted);
     margin: 0;
     overflow-wrap: anywhere;
