@@ -1529,6 +1529,7 @@ textarea {
     gap: 12px;
     margin: 24px 0;
     max-height: 58vh;
+    min-width: 0;
     overflow-y: auto;
     padding-right: 4px;
 }
@@ -2042,6 +2043,7 @@ textarea {
     display: grid;
     grid-template-rows: 1fr auto;
     min-height: 560px;
+    min-width: 0;
 }
 
 .chat-participants {
@@ -2102,7 +2104,8 @@ textarea {
 
 .message {
     display: flex;
-    max-width: 760px;
+    max-width: min(760px, 100%);
+    min-width: 0;
 }
 
 .message.mine {
@@ -2115,9 +2118,10 @@ textarea {
     align-items: flex-start;
     display: grid;
     gap: 10px;
-    grid-template-columns: auto minmax(0, auto);
+    grid-template-columns: auto minmax(0, 1fr);
     justify-content: flex-start;
     margin-left: 0;
+    width: min(760px, 100%);
 }
 
 .message-author-avatar {
@@ -2152,8 +2156,12 @@ textarea {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
-    max-width: min(680px, 82vw);
+    box-sizing: border-box;
+    max-width: min(680px, 100%);
+    min-width: 0;
+    overflow-wrap: anywhere;
     padding: 10px 12px;
+    word-break: break-word;
 }
 
 .message.mine .message-bubble {
@@ -2170,10 +2178,16 @@ textarea {
     color: var(--primary-dark);
     display: block;
     margin-bottom: 4px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .message-bubble p {
+    line-height: 1.45;
     margin-bottom: 4px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .message-bubble p,
@@ -2186,9 +2200,11 @@ textarea {
 .message-meta {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     gap: 6px;
     justify-content: flex-end;
     margin-top: 4px;
+    min-width: 0;
 }
 
 .message span {
@@ -2211,7 +2227,7 @@ textarea {
     display: block;
     margin-top: 6px;
     max-height: 280px;
-    max-width: min(360px, 70vw);
+    max-width: min(360px, 100%);
     object-fit: cover;
     width: 100%;
 }
@@ -2309,7 +2325,9 @@ textarea {
 .chat-compose textarea {
     max-height: 140px;
     min-height: 52px;
+    min-width: 0;
     resize: vertical;
+    width: 100%;
 }
 
 .emoji-picker {

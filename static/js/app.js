@@ -284,6 +284,15 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
         status.classList.toggle('is-connected', connected);
     }
 
+    function limitTextareaToMaxLength() {
+        if (!textarea?.maxLength || textarea.maxLength < 0) {
+            return;
+        }
+        if (textarea.value.length > textarea.maxLength) {
+            textarea.value = textarea.value.slice(0, textarea.maxLength);
+        }
+    }
+
     function addOrUpdateParticipant(participant) {
         if (!isParticipantChat || !participantsList || !participant?.id) {
             return;
@@ -456,6 +465,10 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
                 removeParticipant(payload.participant_id);
                 return;
             }
+            if (payload.type === 'error') {
+                setStatus(payload.message || 'No se pudo enviar el mensaje.');
+                return;
+            }
             appendMessage(payload);
         });
 
@@ -481,11 +494,18 @@ document.querySelectorAll('[data-chat]').forEach((chat) => {
         if (!body) {
             return;
         }
+        if (textarea.maxLength > -1 && body.length > textarea.maxLength) {
+            setStatus(`El mensaje no puede superar ${textarea.maxLength} caracteres.`);
+            limitTextareaToMaxLength();
+            return;
+        }
 
         socket.send(JSON.stringify({ body }));
         textarea.value = '';
         textarea.focus();
     });
+
+    textarea?.addEventListener('input', limitTextareaToMaxLength);
 
     connect();
 });

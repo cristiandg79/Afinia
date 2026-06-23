@@ -10,7 +10,7 @@ from community.models import Group, GroupMembership
 
 from .chat_rooms import is_chat_conversation, is_chat_group
 from .forms import MessageForm
-from .models import Conversation, Message
+from .models import MESSAGE_MAX_LENGTH, Conversation, Message
 from .notifications import (
     mark_conversation_read,
     notify_conversation_participants,
@@ -313,7 +313,7 @@ def message_edit(request, pk):
     if request.method == 'POST':
         body = (request.POST.get('body') or '').strip()
         if body:
-            message.body = body[:2000]
+            message.body = body[:MESSAGE_MAX_LENGTH]
             message.edited_at = timezone.now()
             message.save(update_fields=['body', 'edited_at'])
             message.conversation.save()

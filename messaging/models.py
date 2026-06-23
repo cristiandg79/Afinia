@@ -4,6 +4,9 @@ from django.db import models
 from community.models import Group, Plan
 
 
+MESSAGE_MAX_LENGTH = 500
+
+
 class Conversation(models.Model):
     participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='conversations')
     group = models.OneToOneField(Group, on_delete=models.CASCADE, null=True, blank=True, related_name='conversation')
@@ -39,7 +42,7 @@ class ConversationReadState(models.Model):
 class Message(models.Model):
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
-    body = models.TextField(max_length=2000, blank=True)
+    body = models.TextField(max_length=MESSAGE_MAX_LENGTH, blank=True)
     image = models.ImageField(upload_to='messages/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(null=True, blank=True)

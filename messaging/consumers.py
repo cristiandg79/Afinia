@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from accounts.models import Connection
 from .chat_rooms import is_chat_conversation, is_chat_group
-from .models import Conversation, Message
+from .models import MESSAGE_MAX_LENGTH, Conversation, Message
 from .notifications import mark_conversation_read, notification_counts, notify_conversation_participants
 from .presence import join_chat, leave_chat
 
@@ -67,8 +67,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         body = (payload.get('body') or '').strip()
         if not body:
             return
+        if len(body) > MESSAGE_MAX_LENGTH:
+            await self.send(text_data=json.dumps({
+                'type': 'error',
+                'message': f'El mensaje no puede superar {MESSAGE_MAX_LENGTH} caracteres.',
+            }))
+            return
 
-        message = await self.create_message(body[:2000])
+        message = await self.create_message(body)
         await self.channel_layer.group_send(
             self.room_group_name,
             {
