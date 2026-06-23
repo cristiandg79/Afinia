@@ -361,6 +361,11 @@ def clean_dating_filters(data, profile):
     return filters
 
 
+def profile_wants_dating(profile):
+    goals = profile.goals or []
+    return isinstance(goals, (list, tuple, set)) and Profile.Goal.DATING in goals
+
+
 @login_required
 def dating_search(request):
     acted_user_ids = set(DatingAction.objects.filter(user=request.user).values_list('target_id', flat=True))
@@ -437,7 +442,7 @@ def dating_search(request):
 
     dating_profiles = [
         profile for profile in profiles
-        if 'dating' in profile.goals and profile.user_id not in hidden_dating_user_ids
+        if profile_wants_dating(profile) and profile.user_id not in hidden_dating_user_ids
     ] if should_show_profiles else []
     min_age = int(filters['min_age']) if filters['min_age'].isdigit() else None
     max_age = int(filters['max_age']) if filters['max_age'].isdigit() else None
@@ -529,6 +534,9 @@ def dating_action(request, pk, action):
     if querystring:
         redirect_url = f'{redirect_url}?{querystring}'
     if target == request.user or action not in [DatingAction.Action.LIKE, DatingAction.Action.PASS]:
+        return redirect(redirect_url)
+    if not profile_wants_dating(target.profile):
+        messages.info(request, 'Este perfil no busca citas.')
         return redirect(redirect_url)
     if users_are_blocked(request.user, target):
         messages.info(request, 'No puedes interactuar con un usuario bloqueado.')
