@@ -72,6 +72,18 @@ select:focus {
     text-decoration: none;
 }
 
+.brand--image {
+    align-items: center;
+    display: inline-flex;
+}
+
+.brand--image img {
+    display: block;
+    height: 54px;
+    object-fit: contain;
+    width: auto;
+}
+
 .nav-links {
     align-items: center;
     display: flex;

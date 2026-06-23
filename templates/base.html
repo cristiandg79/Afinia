@@ -5,14 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Afinia{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20260618-13">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20260618-14">
     <script src="{% static 'js/app.js' %}?v=20260618-9" defer></script>
 </head>
 <body {% if user.is_authenticated %}data-notifications{% endif %}>
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
     <header class="site-header">
         <nav class="nav" aria-label="Principal">
-            <a class="brand" href="{% url 'home' %}">Afinia</a>
+            <a class="brand brand--image" href="{% url 'home' %}">
+                <img src="{% static 'img/logo-afiniac-corazon.png' %}" alt="Afiniac">
+            </a>
             <div class="nav-links">
                 {% if user.is_authenticated %}
                     <a class="nav-link-with-badge" href="{% url 'dashboard' %}">
