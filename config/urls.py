@@ -25,6 +25,7 @@ urlpatterns = [
     path('cuenta/entrar/', auth_views.LoginView.as_view(), name='login'),
     path('cuenta/salir/', auth_views.LogoutView.as_view(), name='logout'),
     path('', include('accounts.urls')),
+    path('publicaciones/', include('publications.urls')),
     path('comunidad/', include('community.urls')),
     path('mensajes/', include('messaging.urls')),
 ]

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Publicaciones - Afinia{% endblock %}
+{% block content %}
+<section class="publications-page">
+    <div class="section-title publications-title">
+        <div>
+            <p class="eyebrow">Publicaciones</p>
+            <h1>Comparte con la comunidad</h1>
+            <p class="muted">Publica un mensaje con fotos o un enlace visible para el resto de personas de Afinia.</p>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="publication-composer form-card">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="button" type="submit">Publicar</button>
+    </form>
+
+    <div class="publication-feed">
+        {% for publication in publications %}
+            <article class="publication-card">
+                <header class="publication-author">
+                    <span class="chat-avatar">
+                        {% if publication.author.profile.photo %}
+                            <img src="{{ publication.author.profile.photo.url }}" alt="">
+                        {% else %}
+                            <span>{{ publication.author.username|first|upper }}</span>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h2>{{ publication.author.username }}</h2>
+                        <p class="muted">{{ publication.created_at|date:'d/m/Y H:i' }}</p>
+                    </div>
+                </header>
+
+                {% if publication.photos.all or publication.link_url %}
+                    <div class="publication-media">
+                        {% for photo in publication.photos.all %}
+                            <a class="publication-thumb" href="{{ photo.image.url }}" target="_blank" rel="noopener">
+                                <img src="{{ photo.image.url }}" alt="Foto publicada por {{ publication.author.username }}">
+                            </a>
+                        {% endfor %}
+                        {% if publication.link_url %}
+                            <a class="publication-link-preview" href="{{ publication.link_url }}" target="_blank" rel="noopener">
+                                <span>URL</span>
+                                <strong>{{ publication.link_url }}</strong>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <p class="publication-message">{{ publication.message|linebreaksbr }}</p>
+            </article>
+        {% empty %}
+            <div class="empty-state soft-panel">
+                <h2>Aun no hay publicaciones</h2>
+                <p class="muted">Cuando alguien publique, aparecera aqui.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

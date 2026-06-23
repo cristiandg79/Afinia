@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'community',
     'messaging',
+    'publications',
 ]
 
 MIDDLEWARE = [
