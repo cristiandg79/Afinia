@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% block title %}{{ profile.user.username }} - Afinia{% endblock %}
 {% block content %}
 <article class="profile profile-readable">
@@ -21,7 +21,7 @@
                 {% if profile.age %}{{ profile.age }} años{% else %}Edad no indicada{% endif %}
                 {% if profile.sex %} - {{ profile.get_sex_display }}{% endif %}
             </p>
-            <p>{{ profile.bio|default:'Esta persona aún está completando su perfil.' }}</p>
+            <p>{{ profile.bio|default:'Esta persona aún estÃ¡ completando su perfil.' }}</p>
             </div>
         </div>
         {% if profile.user == user %}
@@ -45,16 +45,18 @@
             <h2>Fotos</h2>
             <div class="gallery-grid">
                 {% if profile.photo %}
-                    <img class="gallery-main" src="{{ profile.photo.url }}" alt="" onerror="this.remove();">
-                    {% if is_site_admin %}
-                        <form class="moderation-actions" method="post" action="{% url 'moderation_delete_profile_photo' profile.pk %}" onsubmit="return confirm('¿Eliminar la foto principal de este perfil?');">
-                            {% csrf_token %}
-                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                            <button class="button small danger" type="submit">Eliminar foto principal</button>
-                        </form>
-                    {% endif %}
+                    <span class="gallery-photo-card">
+                        <img class="gallery-main" src="{{ profile.photo.url }}" alt="" onerror="this.remove();">
+                        {% if is_site_admin %}
+                            <form class="moderation-actions" method="post" action="{% url 'moderation_delete_profile_photo' profile.pk %}" onsubmit="return confirm('¿Eliminar la foto principal de este perfil?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button class="button small danger" type="submit">Eliminar foto principal</button>
+                            </form>
+                        {% endif %}
+                    </span>
                 {% endif %}
-                {% for photo in profile.extra_photos.all %}
+{% for photo in profile.extra_photos.all %}
                     <span>
                         <img src="{{ photo.image.url }}" alt="" onerror="this.remove();">
                         {% if is_site_admin %}
@@ -143,3 +145,8 @@
     {% endif %}
 </article>
 {% endblock %}
+
+
+
+
+

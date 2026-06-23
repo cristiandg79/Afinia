@@ -3318,3 +3318,150 @@ textarea {
         font-size: 1.9rem;
     }
 }
+
+/* Perfil: ordenar botones de moderación en la galería */
+.profile-gallery .gallery-grid {
+    align-items: stretch;
+}
+
+.profile-gallery .gallery-grid > span,
+.profile-gallery .gallery-grid > form {
+    background: #f8faf8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+}
+
+.profile-gallery .gallery-grid > img.gallery-main {
+    background: #f8faf8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.profile-gallery .gallery-grid img {
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    height: auto;
+    object-fit: cover;
+    width: 100%;
+}
+
+.profile-gallery .moderation-actions {
+    align-self: end;
+    margin: 0;
+}
+
+.profile-gallery .moderation-actions .button {
+    min-height: 40px;
+    width: 100%;
+}
+
+
+.gallery-photo-card {
+    background: #f8faf8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+}
+
+.gallery-photo-card img {
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.gallery-photo-card .button {
+    width: 100%;
+}
+
+
+.profile-gallery .moderation-actions .button.danger {
+    min-height: 40px;
+    padding: 8px 12px;
+    width: 100%;
+}
+
+
+.profile-gallery .moderation-actions .button.danger {
+    min-height: 40px;
+    padding: 8px 12px;
+    width: 100%;
+}
+
+
+.profile-gallery .gallery-photo-card,
+.profile-gallery .gallery-grid > span {
+    min-width: 0;
+    width: 100%;
+}
+
+
+
+
+
+.profile-gallery .moderation-actions {
+    width: 100%;
+}
+
+.profile-gallery .moderation-actions .button {
+    box-sizing: border-box;
+    justify-content: center;
+    min-width: 0;
+    width: 100%;
+}
+
+
+.profile-gallery .gallery-photo-card .button,
+.profile-gallery .gallery-grid > span .button {
+    font-size: 0.85rem;
+    line-height: 1.1;
+    padding-left: 8px;
+    padding-right: 8px;
+    white-space: nowrap;
+}
+
+
+.profile-gallery .moderation-actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.profile-gallery .moderation-actions .button {
+    font-size: 0.85rem;
+    justify-content: center;
+    min-width: 170px;
+    width: 170px;
+    white-space: nowrap;
+}
+
+
+/* Perfil: mismo ancho para todas las tarjetas de fotos */
+.profile-gallery .gallery-grid {
+    align-items: stretch;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 190px));
+}
+
+.profile-gallery .gallery-photo-card,
+.profile-gallery .gallery-grid > span {
+    box-sizing: border-box;
+    width: 190px;
+}
+
+.profile-gallery .moderation-actions,
+.profile-gallery .moderation-actions .button {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.profile-gallery .moderation-actions .button {
+    min-width: 0;
+    white-space: nowrap;
+}
+
