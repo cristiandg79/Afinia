@@ -53,9 +53,20 @@
         <div class="moderation-table">
             {% for publication in publications %}
                 <article class="moderation-row">
-                    <div>
-                        <strong>{{ publication.author.username }}</strong>
-                        <p>{{ publication.message|truncatechars:140 }}</p>
+                    <div class="moderation-row__content{% if publication.photos.all or publication.link_image_url %} has-thumb{% endif %}">
+                        {% if publication.photos.all %}
+                            <div class="moderation-thumb-strip" aria-label="Imágenes de la publicación">
+                                {% for photo in publication.photos.all|slice:":3" %}
+                                    <img class="moderation-thumb" src="{{ photo.image.url }}" alt="">
+                                {% endfor %}
+                            </div>
+                        {% elif publication.link_image_url %}
+                            <img class="moderation-thumb" src="{{ publication.link_image_url }}" alt="">
+                        {% endif %}
+                        <div>
+                            <strong>{{ publication.author.username }}</strong>
+                            <p>{{ publication.message|truncatechars:140 }}</p>
+                        </div>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_publication' publication.pk %}" onsubmit="return confirm('¿Eliminar esta publicación del muro?');">
                         {% csrf_token %}
@@ -122,9 +133,14 @@
         <div class="moderation-table">
             {% for message in messages_list %}
                 <article class="moderation-row">
-                    <div>
-                        <strong>{{ message.sender.username }}</strong>
-                        <p>{{ message.body|default:'Imagen'|truncatechars:140 }}</p>
+                    <div class="moderation-row__content{% if message.image %} has-thumb{% endif %}">
+                        {% if message.image %}
+                            <img class="moderation-thumb" src="{{ message.image.url }}" alt="">
+                        {% endif %}
+                        <div>
+                            <strong>{{ message.sender.username }}</strong>
+                            <p>{{ message.body|default:'Imagen'|truncatechars:140 }}</p>
+                        </div>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_message' message.pk %}" onsubmit="return confirm('¿Eliminar este mensaje?');">
                         {% csrf_token %}
