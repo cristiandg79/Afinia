@@ -29,7 +29,7 @@
             {% for item in users %}
                 <article class="moderation-row">
                     <div>
-                        <strong>{{ item.username }}</strong>
+                        <strong><a class="moderation-user-link" href="{% url 'profile_detail' item.username %}">{{ item.username }}</a></strong>
                         <p>{{ item.email|default:'Sin email' }} · {% if item.is_active %}Activo{% else %}Desactivado{% endif %}{% if item.is_staff or item.is_superuser %} · Administrador{% endif %}</p>
                     </div>
                     {% if item.is_active and item != user and not item.is_staff and not item.is_superuser %}
@@ -64,7 +64,7 @@
                             <img class="moderation-thumb" src="{{ publication.link_image_url }}" alt="">
                         {% endif %}
                         <div>
-                            <strong>{{ publication.author.username }}</strong>
+                            <strong><a class="moderation-user-link" href="{% url 'profile_detail' publication.author.username %}">{{ publication.author.username }}</a></strong>
                             <p>{{ publication.message|truncatechars:140 }}</p>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                 <article class="moderation-row">
                     <div>
                         <strong>{{ group.name }}</strong>
-                        <p>{{ group.created_by.username }} · {{ group.location_label }}</p>
+                        <p><a class="moderation-user-link" href="{% url 'profile_detail' group.created_by.username %}">{{ group.created_by.username }}</a> · {{ group.location_label }}</p>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_group' group.pk %}" onsubmit="return confirm('¿Eliminar este grupo y sus planes de grupo?');">
                         {% csrf_token %}
@@ -112,7 +112,7 @@
                 <article class="moderation-row">
                     <div>
                         <strong>{{ plan.title }}</strong>
-                        <p>{{ plan.created_by.username }} · {{ plan.starts_at|date:'d/m/Y H:i' }}</p>
+                        <p><a class="moderation-user-link" href="{% url 'profile_detail' plan.created_by.username %}">{{ plan.created_by.username }}</a> · {{ plan.starts_at|date:'d/m/Y H:i' }}</p>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_plan' plan.pk %}" onsubmit="return confirm('¿Eliminar este plan?');">
                         {% csrf_token %}
@@ -138,7 +138,7 @@
                             <img class="moderation-thumb" src="{{ message.image.url }}" alt="">
                         {% endif %}
                         <div>
-                            <strong>{{ message.sender.username }}</strong>
+                            <strong><a class="moderation-user-link" href="{% url 'profile_detail' message.sender.username %}">{{ message.sender.username }}</a></strong>
                             <p>{{ message.body|default:'Imagen'|truncatechars:140 }}</p>
                         </div>
                     </div>
@@ -165,7 +165,7 @@
                         <img class="moderation-thumb" src="{{ photo.image.url }}" alt="">
                         <div>
                             <strong>Muro</strong>
-                            <p>{{ photo.publication.author.username }}</p>
+                            <p><a class="moderation-user-link" href="{% url 'profile_detail' photo.publication.author.username %}">{{ photo.publication.author.username }}</a></p>
                         </div>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
@@ -180,7 +180,7 @@
                         <img class="moderation-thumb" src="{{ photo.image.url }}" alt="">
                         <div>
                             <strong>Perfil</strong>
-                            <p>{{ photo.profile.user.username }}</p>
+                            <p><a class="moderation-user-link" href="{% url 'profile_detail' photo.profile.user.username %}">{{ photo.profile.user.username }}</a></p>
                         </div>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_extra_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del perfil?');">
@@ -206,7 +206,12 @@
                 <article class="moderation-row">
                     <div>
                         <strong>{{ record.email }}</strong>
-                        <p>{{ record.reason|default:'Sin motivo' }}</p>
+                        <p>
+                            {% if record.user %}
+                                <a class="moderation-user-link" href="{% url 'profile_detail' record.user.username %}">{{ record.user.username }}</a> ·
+                            {% endif %}
+                            {{ record.reason|default:'Sin motivo' }}
+                        </p>
                     </div>
                 </article>
             {% empty %}

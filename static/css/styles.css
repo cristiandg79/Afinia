@@ -3541,3 +3541,16 @@ textarea {
         width: 48px;
     }
 }
+
+.moderation-user-link {
+    color: var(--primary-dark);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.moderation-user-link:hover,
+.moderation-user-link:focus-visible {
+    color: #1e6f53;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
