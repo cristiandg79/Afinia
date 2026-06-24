@@ -161,9 +161,12 @@
         <div class="moderation-table">
             {% for photo in publication_photos %}
                 <article class="moderation-row">
-                    <div>
-                        <strong>Muro</strong>
-                        <p>{{ photo.publication.author.username }}</p>
+                    <div class="moderation-row__content has-thumb">
+                        <img class="moderation-thumb" src="{{ photo.image.url }}" alt="">
+                        <div>
+                            <strong>Muro</strong>
+                            <p>{{ photo.publication.author.username }}</p>
+                        </div>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
                         {% csrf_token %}
@@ -173,9 +176,12 @@
             {% endfor %}
             {% for photo in profile_photos %}
                 <article class="moderation-row">
-                    <div>
-                        <strong>Perfil</strong>
-                        <p>{{ photo.profile.user.username }}</p>
+                    <div class="moderation-row__content has-thumb">
+                        <img class="moderation-thumb" src="{{ photo.image.url }}" alt="">
+                        <div>
+                            <strong>Perfil</strong>
+                            <p>{{ photo.profile.user.username }}</p>
+                        </div>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_extra_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del perfil?');">
                         {% csrf_token %}
