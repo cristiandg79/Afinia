@@ -1,4 +1,5 @@
-﻿from urllib.parse import urlencode
+﻿from datetime import timedelta
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -8,6 +9,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
@@ -724,30 +726,97 @@ def unblock_contact(request, pk):
 @login_required
 @site_admin_required
 def moderation_panel(request):
-    users = User.objects.select_related('profile').order_by(Lower('username'))[:80]
-    publications = Publication.objects.select_related('author__profile').prefetch_related('photos').order_by('-created_at')[:40]
-    publication_photos = PublicationPhoto.objects.select_related('publication__author').order_by('-created_at')[:40]
-    profile_photos = ProfilePhoto.objects.select_related('profile__user').order_by('profile__user__username')[:40]
-    groups = Group.objects.exclude(Q(name='Chat general') | Q(name__startswith='Chat: ')).select_related('created_by').order_by('name')[:40]
-    plans = Plan.objects.select_related('created_by', 'group').order_by('title')[:40]
-    messages_list = (
+    def read_limit(param, default=40, step=40, max_limit=400):
+        try:
+            value = int(request.GET.get(param, default))
+        except (TypeError, ValueError):
+            value = default
+        return max(step, min(value, max_limit))
+
+    def more_url(param, current_limit, panel, step=40):
+        query = request.GET.copy()
+        query[param] = str(current_limit + step)
+        return f'?{query.urlencode()}#{panel}'
+
+    recent_cutoff = timezone.now() - timedelta(days=7)
+    users_limit = read_limit('usuarios_limite', default=80)
+    publications_limit = read_limit('muro_limite')
+    groups_limit = read_limit('grupos_limite')
+    plans_limit = read_limit('planes_limite')
+    messages_limit = read_limit('chats_limite', default=80)
+    photos_limit = read_limit('fotos_limite')
+    emails_limit = read_limit('emails_limite')
+
+    users_qs = User.objects.select_related('profile').order_by(Lower('username'))
+    publications_qs = (
+        Publication.objects
+        .filter(created_at__gte=recent_cutoff)
+        .select_related('author__profile')
+        .prefetch_related('photos')
+        .order_by('-created_at')
+    )
+    publication_photos_qs = (
+        PublicationPhoto.objects
+        .filter(created_at__gte=recent_cutoff)
+        .select_related('publication__author')
+        .order_by('-created_at')
+    )
+    profile_photos_qs = (
+        ProfilePhoto.objects
+        .filter(created_at__gte=recent_cutoff)
+        .select_related('profile__user')
+        .order_by('-created_at')
+    )
+    profile_main_photos_qs = (
+        Profile.objects
+        .filter(updated_at__gte=recent_cutoff, photo__isnull=False)
+        .exclude(photo='')
+        .select_related('user')
+        .order_by('-updated_at')
+    )
+    groups_qs = Group.objects.exclude(Q(name='Chat general') | Q(name__startswith='Chat: ')).select_related('created_by').order_by('name')
+    plans_qs = Plan.objects.select_related('created_by', 'group').order_by('title')
+    messages_qs = (
         Message.objects
+        .filter(created_at__gte=recent_cutoff)
         .filter(Q(conversation__group__isnull=False) | Q(conversation__plan__isnull=False))
         .select_related('sender', 'conversation__group', 'conversation__plan')
-        .order_by('-created_at')[:80]
+        .order_by('-created_at')
     )
-    blocked_emails = BlockedEmail.objects.select_related('user', 'blocked_by')[:40]
+    blocked_emails_qs = BlockedEmail.objects.select_related('user', 'blocked_by')
+
+    users_count = users_qs.count()
+    publications_count = publications_qs.count()
+    groups_count = groups_qs.count()
+    plans_count = plans_qs.count()
+    messages_count = messages_qs.count()
+    publication_photos_count = publication_photos_qs.count()
+    profile_photos_count = profile_photos_qs.count()
+    profile_main_photos_count = profile_main_photos_qs.count()
+    blocked_emails_count = blocked_emails_qs.count()
+
     return render(request, 'accounts/moderation_panel.html', {
-        'users': users,
-        'publications': publications,
-        'publication_photos': publication_photos,
-        'profile_photos': profile_photos,
-        'groups': groups,
-        'plans': plans,
-        'messages_list': messages_list,
-        'blocked_emails': blocked_emails,
+        'users': users_qs[:users_limit],
+        'publications': publications_qs[:publications_limit],
+        'publication_photos': publication_photos_qs[:photos_limit],
+        'profile_main_photos': profile_main_photos_qs[:photos_limit],
+        'profile_photos': profile_photos_qs[:photos_limit],
+        'groups': groups_qs[:groups_limit],
+        'plans': plans_qs[:plans_limit],
+        'messages_list': messages_qs[:messages_limit],
+        'blocked_emails': blocked_emails_qs[:emails_limit],
         'active_user_count': User.objects.filter(is_active=True).count(),
         'blocked_email_count': BlockedEmail.objects.count(),
+        'moderation_more_links': {
+            'usuarios': more_url('usuarios_limite', users_limit, 'usuarios') if users_count > users_limit else '',
+            'muro': more_url('muro_limite', publications_limit, 'muro') if publications_count > publications_limit else '',
+            'grupos': more_url('grupos_limite', groups_limit, 'grupos') if groups_count > groups_limit else '',
+            'planes': more_url('planes_limite', plans_limit, 'planes') if plans_count > plans_limit else '',
+            'mensajes': more_url('chats_limite', messages_limit, 'mensajes') if messages_count > messages_limit else '',
+            'fotos': more_url('fotos_limite', photos_limit, 'fotos') if publication_photos_count > photos_limit or profile_main_photos_count > photos_limit or profile_photos_count > photos_limit else '',
+            'emails': more_url('emails_limite', emails_limit, 'emails') if blocked_emails_count > emails_limit else '',
+        },
+        'has_moderation_photos': bool(publication_photos_count or profile_main_photos_count or profile_photos_count),
     })
 
 

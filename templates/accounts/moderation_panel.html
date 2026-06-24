@@ -43,12 +43,17 @@
                 <p class="muted">No hay usuarios.</p>
             {% endfor %}
         </div>
+        {% if moderation_more_links.usuarios %}
+            <div class="moderation-load-more">
+                <a class="button secondary" href="{{ moderation_more_links.usuarios }}">Ver más</a>
+            </div>
+        {% endif %}
     </section>
 
     <section class="moderation-section" id="muro" data-moderation-panel>
         <header>
             <h2>Muro</h2>
-            <span>Publicaciones recientes</span>
+            <span>Publicaciones de los últimos 7 días</span>
         </header>
         <div class="moderation-table">
             {% for publication in publications %}
@@ -77,6 +82,11 @@
                 <p class="muted">No hay publicaciones.</p>
             {% endfor %}
         </div>
+        {% if moderation_more_links.muro %}
+            <div class="moderation-load-more">
+                <a class="button secondary" href="{{ moderation_more_links.muro }}">Ver más</a>
+            </div>
+        {% endif %}
     </section>
 
     <section class="moderation-section" id="grupos" data-moderation-panel>
@@ -100,6 +110,11 @@
                 <p class="muted">No hay grupos.</p>
             {% endfor %}
         </div>
+        {% if moderation_more_links.grupos %}
+            <div class="moderation-load-more">
+                <a class="button secondary" href="{{ moderation_more_links.grupos }}">Ver más</a>
+            </div>
+        {% endif %}
     </section>
 
     <section class="moderation-section" id="planes" data-moderation-panel>
@@ -123,12 +138,17 @@
                 <p class="muted">No hay planes.</p>
             {% endfor %}
         </div>
+        {% if moderation_more_links.planes %}
+            <div class="moderation-load-more">
+                <a class="button secondary" href="{{ moderation_more_links.planes }}">Ver más</a>
+            </div>
+        {% endif %}
     </section>
 
     <section class="moderation-section" id="mensajes" data-moderation-panel>
         <header>
             <h2>Chats</h2>
-            <span>Chats públicos, grupos y planes</span>
+            <span>Chats públicos, grupos y planes de los últimos 7 días</span>
         </header>
         <div class="moderation-table">
             {% for message in messages_list %}
@@ -151,12 +171,17 @@
                 <p class="muted">No hay mensajes.</p>
             {% endfor %}
         </div>
+        {% if moderation_more_links.mensajes %}
+            <div class="moderation-load-more">
+                <a class="button secondary" href="{{ moderation_more_links.mensajes }}">Ver más</a>
+            </div>
+        {% endif %}
     </section>
 
     <section class="moderation-section" id="fotos" data-moderation-panel>
         <header>
             <h2>Fotos</h2>
-            <span>Muro y perfiles</span>
+            <span>Muro y perfiles de los últimos 7 días</span>
         </header>
         <div class="moderation-table">
             {% for photo in publication_photos %}
@@ -169,6 +194,21 @@
                         </div>
                     </div>
                     <form method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
+                        {% csrf_token %}
+                        <button class="button small danger" type="submit">Eliminar</button>
+                    </form>
+                </article>
+            {% endfor %}
+            {% for profile in profile_main_photos %}
+                <article class="moderation-row">
+                    <div class="moderation-row__content has-thumb">
+                        <img class="moderation-thumb" src="{{ profile.photo.url }}" alt="">
+                        <div>
+                            <strong>Perfil principal</strong>
+                            <p><a class="moderation-user-link" href="{% url 'profile_detail' profile.user.username %}">{{ profile.user.username }}</a></p>
+                        </div>
+                    </div>
+                    <form method="post" action="{% url 'moderation_delete_profile_photo' profile.pk %}" onsubmit="return confirm('¿Eliminar la foto principal de este perfil?');">
                         {% csrf_token %}
                         <button class="button small danger" type="submit">Eliminar</button>
                     </form>
@@ -189,11 +229,16 @@
                     </form>
                 </article>
             {% empty %}
-                {% if not publication_photos %}
+                {% if not has_moderation_photos %}
                     <p class="muted">No hay fotos.</p>
                 {% endif %}
             {% endfor %}
         </div>
+        {% if moderation_more_links.fotos %}
+            <div class="moderation-load-more">
+                <a class="button secondary" href="{{ moderation_more_links.fotos }}">Ver más</a>
+            </div>
+        {% endif %}
     </section>
 
     <section class="moderation-section" id="emails" data-moderation-panel>
@@ -218,6 +263,11 @@
                 <p class="muted">No hay emails bloqueados.</p>
             {% endfor %}
         </div>
+        {% if moderation_more_links.emails %}
+            <div class="moderation-load-more">
+                <a class="button secondary" href="{{ moderation_more_links.emails }}">Ver más</a>
+            </div>
+        {% endif %}
     </section>
 </section>
 {% endblock %}

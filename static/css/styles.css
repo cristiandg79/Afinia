@@ -3554,3 +3554,14 @@ textarea {
     text-decoration: underline;
     text-underline-offset: 3px;
 }
+
+.moderation-load-more {
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    padding: 14px 16px 16px;
+}
+
+.moderation-load-more .button {
+    min-width: 150px;
+}
