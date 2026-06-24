@@ -41,7 +41,7 @@ def fetch_link_preview(url):
     if not url:
         return {}
     try:
-        request = Request(url, headers={'User-Agent': 'Afinia link preview'})
+        request = Request(url, headers={'User-Agent': 'Afiniac link preview'})
         with urlopen(request, timeout=4) as response:
             content_type = response.headers.get('content-type', '')
             if 'text/html' not in content_type:

@@ -89,7 +89,7 @@ class Command(BaseCommand):
             ('Sevilla café sin prisas', 'Sevilla', 'Café', 'Grupo para conversaciones tranquilas y nuevas amistades.'),
             ('Bilbao lectura compartida', 'Bilbao', 'Lectura', 'Libros, cómics, poesía y recomendaciones con calma.'),
             ('Málaga ocio inclusivo', 'Málaga', 'Ocio', 'Planes variados pensando en accesibilidad y ritmo social.'),
-            ('Gaming online Afinia', '', 'Videojuegos', 'Partidas online y comunidad tranquila.'),
+            ('Gaming online Afiniac (Afinia Community)', '', 'Videojuegos', 'Partidas online y comunidad tranquila.'),
             ('Arte y museos accesibles', 'Madrid', 'Arte', 'Museos, exposiciones y planes culturales con información previa.'),
             ('Apoyo entre iguales', '', 'Apoyo social', 'Espacio social para hablar de vivencias sin convertirlo en terapia.'),
             ('Amistades 30+', '', 'Amistad', 'Personas adultas buscando ampliar círculo social.'),

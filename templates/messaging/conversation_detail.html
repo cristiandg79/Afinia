@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}{{ chat_header.title }} - Afinia{% endblock %}
+{% block title %}{{ chat_header.title }} - Afiniac (Afinia Community){% endblock %}
 {% block content %}
 <section class="chat-layout {% if is_public_chat or is_community_chat %}chat-layout--public{% endif %}" data-chat data-conversation-id="{{ conversation.pk }}" data-current-user-id="{{ user.pk }}" data-public-chat="{% if is_public_chat %}true{% else %}false{% endif %}" data-participant-chat="{% if is_public_chat or is_community_chat %}true{% else %}false{% endif %}">
     <header class="chat-header">
