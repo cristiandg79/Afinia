@@ -43,9 +43,14 @@
                 <p class="muted">No hay usuarios.</p>
             {% endfor %}
         </div>
-        {% if moderation_more_links.usuarios %}
+        {% if moderation_previous_links.usuarios or moderation_more_links.usuarios %}
             <div class="moderation-load-more">
-                <a class="button secondary" href="{{ moderation_more_links.usuarios }}">Ver más</a>
+                {% if moderation_previous_links.usuarios %}
+                    <a class="button secondary" href="{{ moderation_previous_links.usuarios }}">Anterior</a>
+                {% endif %}
+                {% if moderation_more_links.usuarios %}
+                    <a class="button secondary" href="{{ moderation_more_links.usuarios }}">Ver más</a>
+                {% endif %}
             </div>
         {% endif %}
     </section>
@@ -82,9 +87,14 @@
                 <p class="muted">No hay publicaciones.</p>
             {% endfor %}
         </div>
-        {% if moderation_more_links.muro %}
+        {% if moderation_previous_links.muro or moderation_more_links.muro %}
             <div class="moderation-load-more">
-                <a class="button secondary" href="{{ moderation_more_links.muro }}">Ver más</a>
+                {% if moderation_previous_links.muro %}
+                    <a class="button secondary" href="{{ moderation_previous_links.muro }}">Anterior</a>
+                {% endif %}
+                {% if moderation_more_links.muro %}
+                    <a class="button secondary" href="{{ moderation_more_links.muro }}">Ver más</a>
+                {% endif %}
             </div>
         {% endif %}
     </section>
@@ -110,9 +120,14 @@
                 <p class="muted">No hay grupos.</p>
             {% endfor %}
         </div>
-        {% if moderation_more_links.grupos %}
+        {% if moderation_previous_links.grupos or moderation_more_links.grupos %}
             <div class="moderation-load-more">
-                <a class="button secondary" href="{{ moderation_more_links.grupos }}">Ver más</a>
+                {% if moderation_previous_links.grupos %}
+                    <a class="button secondary" href="{{ moderation_previous_links.grupos }}">Anterior</a>
+                {% endif %}
+                {% if moderation_more_links.grupos %}
+                    <a class="button secondary" href="{{ moderation_more_links.grupos }}">Ver más</a>
+                {% endif %}
             </div>
         {% endif %}
     </section>
@@ -138,9 +153,14 @@
                 <p class="muted">No hay planes.</p>
             {% endfor %}
         </div>
-        {% if moderation_more_links.planes %}
+        {% if moderation_previous_links.planes or moderation_more_links.planes %}
             <div class="moderation-load-more">
-                <a class="button secondary" href="{{ moderation_more_links.planes }}">Ver más</a>
+                {% if moderation_previous_links.planes %}
+                    <a class="button secondary" href="{{ moderation_previous_links.planes }}">Anterior</a>
+                {% endif %}
+                {% if moderation_more_links.planes %}
+                    <a class="button secondary" href="{{ moderation_more_links.planes }}">Ver más</a>
+                {% endif %}
             </div>
         {% endif %}
     </section>
@@ -171,9 +191,14 @@
                 <p class="muted">No hay mensajes.</p>
             {% endfor %}
         </div>
-        {% if moderation_more_links.mensajes %}
+        {% if moderation_previous_links.mensajes or moderation_more_links.mensajes %}
             <div class="moderation-load-more">
-                <a class="button secondary" href="{{ moderation_more_links.mensajes }}">Ver más</a>
+                {% if moderation_previous_links.mensajes %}
+                    <a class="button secondary" href="{{ moderation_previous_links.mensajes }}">Anterior</a>
+                {% endif %}
+                {% if moderation_more_links.mensajes %}
+                    <a class="button secondary" href="{{ moderation_more_links.mensajes }}">Ver más</a>
+                {% endif %}
             </div>
         {% endif %}
     </section>
@@ -184,46 +209,16 @@
             <span>Muro y perfiles de los últimos 7 días</span>
         </header>
         <div class="moderation-table">
-            {% for photo in publication_photos %}
+            {% for photo in moderation_photos %}
                 <article class="moderation-row">
                     <div class="moderation-row__content has-thumb">
-                        <img class="moderation-thumb" src="{{ photo.image.url }}" alt="">
+                        <img class="moderation-thumb" src="{{ photo.image_url }}" alt="">
                         <div>
-                            <strong>Muro</strong>
-                            <p><a class="moderation-user-link" href="{% url 'profile_detail' photo.publication.author.username %}">{{ photo.publication.author.username }}</a></p>
+                            <strong>{{ photo.label }}</strong>
+                            <p><a class="moderation-user-link" href="{% url 'profile_detail' photo.username %}">{{ photo.username }}</a></p>
                         </div>
                     </div>
-                    <form method="post" action="{% url 'moderation_delete_publication_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del muro?');">
-                        {% csrf_token %}
-                        <button class="button small danger" type="submit">Eliminar</button>
-                    </form>
-                </article>
-            {% endfor %}
-            {% for profile in profile_main_photos %}
-                <article class="moderation-row">
-                    <div class="moderation-row__content has-thumb">
-                        <img class="moderation-thumb" src="{{ profile.photo.url }}" alt="">
-                        <div>
-                            <strong>Perfil principal</strong>
-                            <p><a class="moderation-user-link" href="{% url 'profile_detail' profile.user.username %}">{{ profile.user.username }}</a></p>
-                        </div>
-                    </div>
-                    <form method="post" action="{% url 'moderation_delete_profile_photo' profile.pk %}" onsubmit="return confirm('¿Eliminar la foto principal de este perfil?');">
-                        {% csrf_token %}
-                        <button class="button small danger" type="submit">Eliminar</button>
-                    </form>
-                </article>
-            {% endfor %}
-            {% for photo in profile_photos %}
-                <article class="moderation-row">
-                    <div class="moderation-row__content has-thumb">
-                        <img class="moderation-thumb" src="{{ photo.image.url }}" alt="">
-                        <div>
-                            <strong>Perfil</strong>
-                            <p><a class="moderation-user-link" href="{% url 'profile_detail' photo.profile.user.username %}">{{ photo.profile.user.username }}</a></p>
-                        </div>
-                    </div>
-                    <form method="post" action="{% url 'moderation_delete_extra_photo' photo.pk %}" onsubmit="return confirm('¿Eliminar esta foto del perfil?');">
+                    <form method="post" action="{{ photo.delete_url }}" onsubmit="return confirm('{{ photo.confirm_text|escapejs }}');">
                         {% csrf_token %}
                         <button class="button small danger" type="submit">Eliminar</button>
                     </form>
@@ -234,9 +229,14 @@
                 {% endif %}
             {% endfor %}
         </div>
-        {% if moderation_more_links.fotos %}
+        {% if moderation_previous_links.fotos or moderation_more_links.fotos %}
             <div class="moderation-load-more">
-                <a class="button secondary" href="{{ moderation_more_links.fotos }}">Ver más</a>
+                {% if moderation_previous_links.fotos %}
+                    <a class="button secondary" href="{{ moderation_previous_links.fotos }}">Anterior</a>
+                {% endif %}
+                {% if moderation_more_links.fotos %}
+                    <a class="button secondary" href="{{ moderation_more_links.fotos }}">Ver más</a>
+                {% endif %}
             </div>
         {% endif %}
     </section>
@@ -263,9 +263,14 @@
                 <p class="muted">No hay emails bloqueados.</p>
             {% endfor %}
         </div>
-        {% if moderation_more_links.emails %}
+        {% if moderation_previous_links.emails or moderation_more_links.emails %}
             <div class="moderation-load-more">
-                <a class="button secondary" href="{{ moderation_more_links.emails }}">Ver más</a>
+                {% if moderation_previous_links.emails %}
+                    <a class="button secondary" href="{{ moderation_previous_links.emails }}">Anterior</a>
+                {% endif %}
+                {% if moderation_more_links.emails %}
+                    <a class="button secondary" href="{{ moderation_more_links.emails }}">Ver más</a>
+                {% endif %}
             </div>
         {% endif %}
     </section>

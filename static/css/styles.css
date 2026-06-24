@@ -3565,3 +3565,7 @@ textarea {
 .moderation-load-more .button {
     min-width: 150px;
 }
+
+.moderation-load-more {
+    gap: 10px;
+}

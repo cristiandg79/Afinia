@@ -726,26 +726,30 @@ def unblock_contact(request, pk):
 @login_required
 @site_admin_required
 def moderation_panel(request):
-    def read_limit(param, default=40, step=40, max_limit=400):
+    def read_offset(param, max_offset=2000):
         try:
-            value = int(request.GET.get(param, default))
+            value = int(request.GET.get(param, 0))
         except (TypeError, ValueError):
-            value = default
-        return max(step, min(value, max_limit))
+            value = 0
+        return max(0, min(value, max_offset))
 
-    def more_url(param, current_limit, panel, step=40):
+    def page_url(param, offset, panel):
         query = request.GET.copy()
-        query[param] = str(current_limit + step)
+        if offset:
+            query[param] = str(offset)
+        else:
+            query.pop(param, None)
         return f'?{query.urlencode()}#{panel}'
 
     recent_cutoff = timezone.now() - timedelta(days=7)
-    users_limit = read_limit('usuarios_limite', default=80)
-    publications_limit = read_limit('muro_limite')
-    groups_limit = read_limit('grupos_limite')
-    plans_limit = read_limit('planes_limite')
-    messages_limit = read_limit('chats_limite', default=80)
-    photos_limit = read_limit('fotos_limite')
-    emails_limit = read_limit('emails_limite')
+    page_size = 40
+    users_offset = read_offset('usuarios_offset')
+    publications_offset = read_offset('muro_offset')
+    groups_offset = read_offset('grupos_offset')
+    plans_offset = read_offset('planes_offset')
+    messages_offset = read_offset('chats_offset')
+    photos_offset = read_offset('fotos_offset')
+    emails_offset = read_offset('emails_offset')
 
     users_qs = User.objects.select_related('profile').order_by(Lower('username'))
     publications_qs = (
@@ -785,38 +789,73 @@ def moderation_panel(request):
     )
     blocked_emails_qs = BlockedEmail.objects.select_related('user', 'blocked_by')
 
+    moderation_photos = []
+    for photo in publication_photos_qs:
+        moderation_photos.append({
+            'created_at': photo.created_at,
+            'image_url': photo.image.url,
+            'label': 'Muro',
+            'username': photo.publication.author.username,
+            'delete_url': reverse('moderation_delete_publication_photo', args=[photo.pk]),
+            'confirm_text': '¿Eliminar esta foto del muro?',
+        })
+    for profile in profile_main_photos_qs:
+        moderation_photos.append({
+            'created_at': profile.updated_at,
+            'image_url': profile.photo.url,
+            'label': 'Perfil principal',
+            'username': profile.user.username,
+            'delete_url': reverse('moderation_delete_profile_photo', args=[profile.pk]),
+            'confirm_text': '¿Eliminar la foto principal de este perfil?',
+        })
+    for photo in profile_photos_qs:
+        moderation_photos.append({
+            'created_at': photo.created_at,
+            'image_url': photo.image.url,
+            'label': 'Perfil',
+            'username': photo.profile.user.username,
+            'delete_url': reverse('moderation_delete_extra_photo', args=[photo.pk]),
+            'confirm_text': '¿Eliminar esta foto del perfil?',
+        })
+    moderation_photos.sort(key=lambda item: item['created_at'], reverse=True)
+
     users_count = users_qs.count()
     publications_count = publications_qs.count()
     groups_count = groups_qs.count()
     plans_count = plans_qs.count()
     messages_count = messages_qs.count()
-    publication_photos_count = publication_photos_qs.count()
-    profile_photos_count = profile_photos_qs.count()
-    profile_main_photos_count = profile_main_photos_qs.count()
+    moderation_photos_count = len(moderation_photos)
     blocked_emails_count = blocked_emails_qs.count()
 
     return render(request, 'accounts/moderation_panel.html', {
-        'users': users_qs[:users_limit],
-        'publications': publications_qs[:publications_limit],
-        'publication_photos': publication_photos_qs[:photos_limit],
-        'profile_main_photos': profile_main_photos_qs[:photos_limit],
-        'profile_photos': profile_photos_qs[:photos_limit],
-        'groups': groups_qs[:groups_limit],
-        'plans': plans_qs[:plans_limit],
-        'messages_list': messages_qs[:messages_limit],
-        'blocked_emails': blocked_emails_qs[:emails_limit],
+        'users': users_qs[users_offset:users_offset + page_size],
+        'publications': publications_qs[publications_offset:publications_offset + page_size],
+        'moderation_photos': moderation_photos[photos_offset:photos_offset + page_size],
+        'groups': groups_qs[groups_offset:groups_offset + page_size],
+        'plans': plans_qs[plans_offset:plans_offset + page_size],
+        'messages_list': messages_qs[messages_offset:messages_offset + page_size],
+        'blocked_emails': blocked_emails_qs[emails_offset:emails_offset + page_size],
         'active_user_count': User.objects.filter(is_active=True).count(),
         'blocked_email_count': BlockedEmail.objects.count(),
         'moderation_more_links': {
-            'usuarios': more_url('usuarios_limite', users_limit, 'usuarios') if users_count > users_limit else '',
-            'muro': more_url('muro_limite', publications_limit, 'muro') if publications_count > publications_limit else '',
-            'grupos': more_url('grupos_limite', groups_limit, 'grupos') if groups_count > groups_limit else '',
-            'planes': more_url('planes_limite', plans_limit, 'planes') if plans_count > plans_limit else '',
-            'mensajes': more_url('chats_limite', messages_limit, 'mensajes') if messages_count > messages_limit else '',
-            'fotos': more_url('fotos_limite', photos_limit, 'fotos') if publication_photos_count > photos_limit or profile_main_photos_count > photos_limit or profile_photos_count > photos_limit else '',
-            'emails': more_url('emails_limite', emails_limit, 'emails') if blocked_emails_count > emails_limit else '',
+            'usuarios': page_url('usuarios_offset', users_offset + page_size, 'usuarios') if users_count > users_offset + page_size else '',
+            'muro': page_url('muro_offset', publications_offset + page_size, 'muro') if publications_count > publications_offset + page_size else '',
+            'grupos': page_url('grupos_offset', groups_offset + page_size, 'grupos') if groups_count > groups_offset + page_size else '',
+            'planes': page_url('planes_offset', plans_offset + page_size, 'planes') if plans_count > plans_offset + page_size else '',
+            'mensajes': page_url('chats_offset', messages_offset + page_size, 'mensajes') if messages_count > messages_offset + page_size else '',
+            'fotos': page_url('fotos_offset', photos_offset + page_size, 'fotos') if moderation_photos_count > photos_offset + page_size else '',
+            'emails': page_url('emails_offset', emails_offset + page_size, 'emails') if blocked_emails_count > emails_offset + page_size else '',
         },
-        'has_moderation_photos': bool(publication_photos_count or profile_main_photos_count or profile_photos_count),
+        'moderation_previous_links': {
+            'usuarios': page_url('usuarios_offset', max(users_offset - page_size, 0), 'usuarios') if users_offset else '',
+            'muro': page_url('muro_offset', max(publications_offset - page_size, 0), 'muro') if publications_offset else '',
+            'grupos': page_url('grupos_offset', max(groups_offset - page_size, 0), 'grupos') if groups_offset else '',
+            'planes': page_url('planes_offset', max(plans_offset - page_size, 0), 'planes') if plans_offset else '',
+            'mensajes': page_url('chats_offset', max(messages_offset - page_size, 0), 'mensajes') if messages_offset else '',
+            'fotos': page_url('fotos_offset', max(photos_offset - page_size, 0), 'fotos') if photos_offset else '',
+            'emails': page_url('emails_offset', max(emails_offset - page_size, 0), 'emails') if emails_offset else '',
+        },
+        'has_moderation_photos': bool(moderation_photos_count),
     })
 
 
