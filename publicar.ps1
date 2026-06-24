@@ -58,7 +58,7 @@ if ([string]::IsNullOrWhiteSpace($Mensaje)) {
 }
 
 Write-Host "Preparando cambios..." -ForegroundColor Cyan
-git add -A
+git add -A -- ':/' ':!media/' ':!media/**'
 
 Write-Host "Creando version: $Mensaje" -ForegroundColor Cyan
 git commit -m $Mensaje
