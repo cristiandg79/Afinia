@@ -29,6 +29,34 @@ document.querySelectorAll('[data-moderation-tabs]').forEach((root) => {
         return;
     }
 
+    const offsetParamsByPanel = {
+        usuarios: ['usuarios_offset', 'usuarios_limite'],
+        muro: ['muro_offset', 'muro_limite'],
+        grupos: ['grupos_offset', 'grupos_limite'],
+        planes: ['planes_offset', 'planes_limite'],
+        mensajes: ['chats_offset', 'chats_limite'],
+        fotos: ['fotos_offset', 'fotos_limite'],
+        emails: ['emails_offset', 'emails_limite'],
+    };
+    const initialParams = new URLSearchParams(window.location.search);
+    const panelsLoadedFromLaterPage = new Set();
+    Object.entries(offsetParamsByPanel).forEach(([panelId, params]) => {
+        if (params.some((param) => Number(initialParams.get(param) || 0) > 0)) {
+            panelsLoadedFromLaterPage.add(panelId);
+        }
+    });
+
+    function resetPanelPage(panelId) {
+        if (!panelsLoadedFromLaterPage.has(panelId)) {
+            return false;
+        }
+        const url = new URL(window.location.href);
+        (offsetParamsByPanel[panelId] || []).forEach((param) => url.searchParams.delete(param));
+        url.hash = panelId;
+        window.location.href = `${url.pathname}${url.search}${url.hash}`;
+        return true;
+    }
+
     function showPanel(panelId, updateHash = true) {
         const targetPanel = panels.find((panel) => panel.id === panelId) || panels[0];
         panels.forEach((panel) => {
@@ -46,7 +74,12 @@ document.querySelectorAll('[data-moderation-tabs]').forEach((root) => {
 
     tabs.forEach((tab) => {
         tab.setAttribute('role', 'tab');
-        tab.addEventListener('click', () => showPanel(tab.dataset.moderationTab));
+        tab.addEventListener('click', () => {
+            const panelId = tab.dataset.moderationTab;
+            if (!resetPanelPage(panelId)) {
+                showPanel(panelId);
+            }
+        });
     });
     panels.forEach((panel) => panel.setAttribute('role', 'tabpanel'));
 
