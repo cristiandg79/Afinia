@@ -6,9 +6,9 @@
     <h1>{% if group %}Crear plan de grupo{% else %}Crear plan{% endif %}</h1>
     <p class="muted">
         {% if group %}
-            Este plan sera privado para {{ group.name }}. Se avisara en el Panel y en el chat del grupo.
+            Este plan será privado para {{ group.name }}. Se avisará en el Panel y en el chat del grupo.
         {% else %}
-            Incluye informacion de accesibilidad y el tipo de ambiente para que la gente pueda decidir con tranquilidad.
+            Incluye información de accesibilidad y el tipo de ambiente para que la gente pueda decidir con tranquilidad.
         {% endif %}
     </p>
     <form method="post" class="form-card">

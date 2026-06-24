@@ -36,19 +36,19 @@ class Command(BaseCommand):
         ('Bilbao', 'Bizkaia'), ('Alicante', 'Alicante'), ('Vigo', 'Pontevedra'),
         ('Granada', 'Granada'), ('Murcia', 'Murcia'), ('Valladolid', 'Valladolid'),
         ('Badalona', 'Barcelona'), ('Hospitalet de Llobregat', 'Barcelona'),
-        ('Cornella de Llobregat', 'Barcelona'), ('Sabadell', 'Barcelona'),
+        ('Cornellà de Llobregat', 'Barcelona'), ('Sabadell', 'Barcelona'),
     ]
     interests = ['cafe', 'cinema', 'gaming', 'reading', 'music', 'walks', 'art', 'sports', 'support', 'pets']
     social_preferences = ['chat_first', 'small_groups', 'quiet_places', 'clear_plans', 'slow_pace']
     bios = [
         'Me gusta conocer gente con calma, hablar primero y hacer planes sencillos.',
-        'Busco una conexion honesta, sin prisas y con buena conversacion.',
-        'Me encantan los paseos tranquilos, el cine y los cafes largos.',
-        'Estoy aqui para conocer personas afines y construir algo bonito poco a poco.',
-        'Valoro la empatia, el humor y los planes accesibles.',
-        'Prefiero empezar por chat y quedar cuando ambas personas estemos comodas.',
-        'Me apetecen planes pequenos, gente cercana y conversaciones naturales.',
-        'Disfruto de la musica, los planes culturales y las tardes tranquilas.',
+        'Busco una conexión honesta, sin prisas y con buena conversación.',
+        'Me encantan los paseos tranquilos, el cine y los cafés largos.',
+        'Estoy aquí para conocer personas afines y construir algo bonito poco a poco.',
+        'Valoro la empatía, el humor y los planes accesibles.',
+        'Prefiero empezar por chat y quedar cuando ambas personas estemos cómodas.',
+        'Me apetecen planes pequeños, gente cercana y conversaciones naturales.',
+        'Disfruto de la música, los planes culturales y las tardes tranquilas.',
     ]
     skin_tones = ['#f1c9a5', '#d9a06f', '#b8794d', '#8f5d3d', '#f5d6bc', '#c9875d']
     hair_colors = ['#2c1d17', '#4b2f21', '#6b3d25', '#a45d2b', '#1f2933', '#7a5c45']

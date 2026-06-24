@@ -25,7 +25,7 @@ def site_admin_required(view_func):
     def wrapper(request, *args, **kwargs):
         if is_site_admin(request.user):
             return view_func(request, *args, **kwargs)
-        messages.error(request, 'No tienes permisos para acceder a moderacion.')
+        messages.error(request, 'No tienes permisos para acceder a moderación.')
         return redirect('dashboard')
 
     return wrapper

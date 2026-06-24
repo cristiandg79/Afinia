@@ -519,7 +519,7 @@ def dating_search(request):
             (Profile.Sex.WOMAN, 'Mujeres'),
             (Profile.Sex.MAN, 'Hombres'),
         ],
-        'orientation_choices': [('', 'Cualquier orientaciÃ³n'), *Profile.Orientation.choices],
+        'orientation_choices': [('', 'Cualquier orientación'), *Profile.Orientation.choices],
         'situation_choices': HEALTH_CONTEXT_CHOICES,
     })
 
@@ -596,7 +596,7 @@ def dating_action(request, pk, action):
             connection.status = Connection.Status.ACCEPTED
             connection.save()
             get_or_create_private_conversation(request.user, target)
-            messages.success(request, 'Hay conexiÃ³n mutua. Ya podÃ©is hablar.')
+            messages.success(request, 'Hay conexión mutua. Ya podéis hablar.')
         else:
             from messaging.notifications import notify_user
 
@@ -615,7 +615,7 @@ def request_connection(request, pk):
     if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
         next_url = receiver.profile.get_absolute_url()
     if receiver == request.user:
-        messages.info(request, 'Ese eres tÃº.')
+        messages.info(request, 'Ese eres tú.')
         return redirect('dashboard')
     if users_are_blocked(request.user, receiver):
         messages.info(request, 'No puedes solicitar conectar con un usuario bloqueado.')
@@ -762,7 +762,7 @@ def moderation_delete_publication(request, pk):
     for photo in publication.photos.all():
         photo.image.delete(save=False)
     publication.delete()
-    messages.success(request, 'Publicacion eliminada.')
+    messages.success(request, 'Publicación eliminada.')
     return redirect_after_moderation(request)
 
 

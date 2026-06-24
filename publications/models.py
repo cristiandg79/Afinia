@@ -31,7 +31,7 @@ class PublicationPhoto(models.Model):
         ordering = ['created_at']
 
     def __str__(self):
-        return f'Foto de publicacion {self.publication_id}'
+        return f'Foto de publicación {self.publication_id}'
 
 
 class PublicationLike(models.Model):

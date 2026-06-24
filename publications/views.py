@@ -74,7 +74,7 @@ def publication_feed(request):
             publication.save()
             for photo in form.cleaned_data.get('photos', []):
                 PublicationPhoto.objects.create(publication=publication, image=photo)
-            messages.success(request, 'Publicacion creada.')
+            messages.success(request, 'Publicación creada.')
             return redirect('publication_feed')
     else:
         form = PublicationForm()

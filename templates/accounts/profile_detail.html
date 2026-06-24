@@ -21,7 +21,7 @@
                 {% if profile.age %}{{ profile.age }} años{% else %}Edad no indicada{% endif %}
                 {% if profile.sex %} - {{ profile.get_sex_display }}{% endif %}
             </p>
-            <p>{{ profile.bio|default:'Esta persona aún estÃ¡ completando su perfil.' }}</p>
+            <p>{{ profile.bio|default:'Esta persona aún está completando su perfil.' }}</p>
             </div>
         </div>
         {% if profile.user == user %}

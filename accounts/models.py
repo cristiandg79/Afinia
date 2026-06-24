@@ -39,7 +39,7 @@ class Profile(models.Model):
     class Smoker(models.TextChoices):
         NO = 'no', 'No'
         SOMETIMES = 'sometimes', 'A veces'
-        YES = 'yes', 'Si'
+        YES = 'yes', 'Sí'
         PREFER_NOT_SAY = 'prefer_not_say', 'Prefiero no decirlo'
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')

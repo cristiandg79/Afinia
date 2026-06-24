@@ -24,10 +24,10 @@ class Command(BaseCommand):
     ]
     bios = [
         'Me gusta conocer gente con calma, hablar primero y hacer planes sencillos.',
-        'Busco conversaciones honestas, planes tranquilos y personas con empatia.',
+        'Busco conversaciones honestas, planes tranquilos y personas con empatía.',
         'Me encantan los paseos, el cine, la música y los cafés largos.',
         'Estoy aquí para conocer personas afines sin prisas y con respeto.',
-        'Valoro la comunicacion clara, el humor y los espacios accesibles.',
+        'Valoro la comunicación clara, el humor y los espacios accesibles.',
         'Prefiero empezar por chat y quedar cuando ambas personas estemos cómodas.',
         'Me apetecen planes pequeños, gente cercana y conversaciones naturales.',
         'Disfruto de los planes culturales, las tardes tranquilas y aprender cosas nuevas.',
