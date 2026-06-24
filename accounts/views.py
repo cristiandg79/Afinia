@@ -59,6 +59,10 @@ def home(request):
     return render(request, 'accounts/home.html')
 
 
+def legal_terms(request):
+    return render(request, 'accounts/legal_terms.html')
+
+
 def suggested_profiles_for(profile, limit=8):
     connection_pairs = (
         Connection.objects

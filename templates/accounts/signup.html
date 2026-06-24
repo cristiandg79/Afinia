@@ -55,7 +55,7 @@
         <div class="terms-check">
             <label for="{{ form.accept_terms.id_for_label }}">
                 {{ form.accept_terms }}
-                <span>Acepto las condiciones de uso y privacidad de <a href="{% url 'home' %}">Afiniac</a>.</span>
+                <span>Acepto las condiciones de uso y privacidad de <a href="{% url 'legal_terms' %}" target="_blank" rel="noopener">Afiniac</a>.</span>
             </label>
             {{ form.accept_terms.errors }}
         </div>
