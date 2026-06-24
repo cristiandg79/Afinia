@@ -1,4 +1,4 @@
-from urllib.parse import urlencode
+﻿from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -519,7 +519,7 @@ def dating_search(request):
             (Profile.Sex.WOMAN, 'Mujeres'),
             (Profile.Sex.MAN, 'Hombres'),
         ],
-        'orientation_choices': [('', 'Cualquier orientación'), *Profile.Orientation.choices],
+        'orientation_choices': [('', 'Cualquier orientaciÃ³n'), *Profile.Orientation.choices],
         'situation_choices': HEALTH_CONTEXT_CHOICES,
     })
 
@@ -596,7 +596,7 @@ def dating_action(request, pk, action):
             connection.status = Connection.Status.ACCEPTED
             connection.save()
             get_or_create_private_conversation(request.user, target)
-            messages.success(request, 'Hay conexión mutua. Ya podéis hablar.')
+            messages.success(request, 'Hay conexiÃ³n mutua. Ya podÃ©is hablar.')
         else:
             from messaging.notifications import notify_user
 
@@ -615,7 +615,7 @@ def request_connection(request, pk):
     if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
         next_url = receiver.profile.get_absolute_url()
     if receiver == request.user:
-        messages.info(request, 'Ese eres tú.')
+        messages.info(request, 'Ese eres tÃº.')
         return redirect('dashboard')
     if users_are_blocked(request.user, receiver):
         messages.info(request, 'No puedes solicitar conectar con un usuario bloqueado.')
@@ -861,18 +861,55 @@ def moderation_block_user(request, pk):
     if is_site_admin(target):
         messages.error(request, 'No puedes bloquear otro usuario administrador.')
         return redirect_after_moderation(request)
-    if target.email:
+
+    blocked_email = target.email.strip().lower() if target.email else ''
+    if blocked_email:
         BlockedEmail.objects.update_or_create(
-            email=target.email.lower(),
+            email=blocked_email,
             defaults={
                 'user': target,
                 'blocked_by': request.user,
-                'reason': 'Usuario eliminado o bloqueado por moderacion',
+                'reason': 'Usuario bloqueado por moderación',
             },
         )
+
+    deleted_publications = 0
+    for publication in target.publications.prefetch_related('photos'):
+        for photo in publication.photos.all():
+            photo.image.delete(save=False)
+        publication.delete()
+        deleted_publications += 1
+
+    deleted_comments, _ = target.publication_comments.all().delete()
+    target.publication_likes.all().delete()
+
+    affected_conversations = set()
+    deleted_messages = 0
+    for message in Message.objects.filter(sender=target).select_related('conversation'):
+        affected_conversations.add(message.conversation_id)
+        if message.image:
+            message.image.delete(save=False)
+        message.delete()
+        deleted_messages += 1
+
+    target.conversation_read_states.all().delete()
+    target.conversations.remove(*list(target.conversations.all()))
+
+    for conversation_id in affected_conversations:
+        try:
+            conversation = Message._meta.get_field('conversation').related_model.objects.get(pk=conversation_id)
+            conversation.save()
+        except Message._meta.get_field('conversation').related_model.DoesNotExist:
+            pass
+
     target.is_active = False
     target.save(update_fields=['is_active'])
-    messages.success(request, 'Usuario desactivado y email bloqueado.')
+
+    messages.success(
+        request,
+        f'Usuario bloqueado. Email conservado y bloqueado. Eliminados {deleted_publications} posts, {deleted_comments} comentarios y {deleted_messages} mensajes.'
+    )
     return redirect_after_moderation(request)
 
 # Create your views here.
+

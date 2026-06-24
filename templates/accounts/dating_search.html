@@ -68,11 +68,6 @@
             <p class="muted">Los filtros son opcionales. Puedes pulsar Filtrar sin rellenar nada para ver perfiles generales, o ajustar ciudad, edad y tipo de perfil.</p>
         </div>
     {% elif profile %}
-        {% if showing_seen_profiles %}
-            <div class="notice dating-repeat-notice">
-                <p>Ya habías visto los perfiles nuevos con estos filtros. Te mostramos coincidencias anteriores para que puedas revisarlas.</p>
-            </div>
-        {% endif %}
         <article class="dating-card dating-card-single">
             <a class="dating-photo dating-photo-single" href="{{ profile.get_absolute_url }}">
                 {% if profile.photo %}
