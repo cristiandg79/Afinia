@@ -58,12 +58,40 @@ if ([string]::IsNullOrWhiteSpace($Mensaje)) {
 }
 
 Write-Host "Preparando cambios..." -ForegroundColor Cyan
-git add -A -- ':/' ':!media/' ':!media/**'
+$archivosParaAgregar = @(
+    git ls-files --modified --deleted --others --exclude-standard |
+    Where-Object {
+        $_ -notmatch '^(media/|media\\)' -and
+        $_ -notlike 'media*.zip' -and
+        $_ -ne 'media_entrega_actual.zip'
+    }
+)
+if ($archivosParaAgregar.Count -gt 0) {
+    git add -- $archivosParaAgregar
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "No se han podido preparar los cambios." -ForegroundColor Red
+        exit $LASTEXITCODE
+    }
+}
+
+$archivosPreparados = git diff --cached --name-only
+if (-not $archivosPreparados) {
+    Write-Host "No hay cambios publicables despues de excluir media." -ForegroundColor Yellow
+    exit 0
+}
 
 Write-Host "Creando version: $Mensaje" -ForegroundColor Cyan
 git commit -m $Mensaje
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "No se ha podido crear la version." -ForegroundColor Red
+    exit $LASTEXITCODE
+}
 
 Write-Host "Subiendo a GitHub en la rama $rama..." -ForegroundColor Cyan
 git push origin $rama
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "GitHub ha rechazado la subida. Revisa el error anterior." -ForegroundColor Red
+    exit $LASTEXITCODE
+}
 
 Write-Host "Publicado correctamente." -ForegroundColor Green

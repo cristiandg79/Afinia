@@ -4,6 +4,7 @@ __pycache__/
 db.sqlite3
 .env
 media/
+media*.zip
 demo_ai_profiles.zip
 staticfiles/
 .pytest_cache/
