@@ -505,8 +505,8 @@ def dating_search(request):
             and (max_age is None or profile.age <= max_age)
         ]
     unseen_profiles = [profile for profile in dating_profiles if profile.user_id not in acted_user_ids]
-    profiles_to_show = unseen_profiles or dating_profiles
-    showing_seen_profiles = bool(dating_profiles and not unseen_profiles)
+    profiles_to_show = unseen_profiles
+    showing_seen_profiles = False
     current_profile = profiles_to_show[0] if profiles_to_show else None
     querystring = request.GET.urlencode()
     if not querystring and has_saved_filters:
