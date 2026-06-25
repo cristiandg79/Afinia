@@ -139,13 +139,20 @@
                 <div class="profile-photo-field"><span>{{ form.extra_photo_4.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_4 }}<label class="file-upload-trigger" for="{{ form.extra_photo_4.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_4.errors }}</div>
             </div>
             {% if form.instance.extra_photos.all %}
-                <div class="current-gallery">
-                    <p class="muted">Fotos adicionales actuales</p>
-                    <div>
+                <div class="current-gallery current-gallery--profile-edit">
+                    <div class="current-gallery__heading">
+                        <h3>Fotos adicionales actuales</h3>
+                        <p class="muted">Marca solo las fotos que quieras quitar al guardar cambios.</p>
+                    </div>
+                    <div class="current-gallery__grid">
                         {% for photo in form.instance.extra_photos.all %}
-                            <label class="gallery-delete-item">
+                            <label class="profile-photo-field current-photo-field">
+                                <span>Foto adicional {{ forloop.counter }}</span>
                                 <img src="{{ photo.image.url }}" alt="Foto adicional de {{ user.username }}">
-                                <span><input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }"> Eliminar</span>
+                                <span class="delete-photo-option">
+                                    <input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }">
+                                    Eliminar al guardar
+                                </span>
                             </label>
                         {% endfor %}
                     </div>
