@@ -150,11 +150,13 @@
                             <img src="{{ slot.photo.image.url }}" alt="Foto adicional de {{ user.username }}" data-current-photo>
                             <img class="photo-preview" data-photo-preview alt="Vista previa de nueva foto adicional" hidden>
                             <input id="{{ slot.input_id }}" type="file" name="{{ slot.input_name }}" accept="image/*">
-                            <label class="file-upload-trigger" for="{{ slot.input_id }}">Cambiar imagen</label>
-                            <span class="delete-photo-option">
+                            <div class="photo-slot-actions">
+                                <label class="file-upload-trigger" for="{{ slot.input_id }}">Cambiar imagen</label>
+                                <label class="delete-photo-option">
                                 <input type="checkbox" name="delete_extra_photos" value="{{ slot.photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }">
-                                Eliminar foto
-                            </span>
+                                Eliminar
+                                </label>
+                            </div>
                         {% else %}
                             <img class="photo-preview" data-photo-preview alt="Vista previa" hidden>
                             {{ slot.field }}

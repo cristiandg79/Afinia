@@ -3814,3 +3814,37 @@ textarea {
 .profile-photo-field.extra-photo-slot:has(input[name="delete_extra_photos"]:checked) img {
     filter: grayscale(0.35) opacity(0.75);
 }
+
+/* Extra photo action buttons */
+.photo-slot-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.photo-slot-actions .file-upload-trigger,
+.photo-slot-actions .delete-photo-option {
+    min-height: var(--button-height);
+    min-width: 140px;
+}
+
+.photo-slot-actions .delete-photo-option {
+    background: #b42318;
+    border-color: #b42318;
+    color: white;
+    cursor: pointer;
+    justify-content: center;
+    margin: 0;
+}
+
+.photo-slot-actions .delete-photo-option:hover {
+    background: #8f1d14;
+    border-color: #8f1d14;
+}
+
+.photo-slot-actions .delete-photo-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
