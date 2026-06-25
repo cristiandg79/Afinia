@@ -3888,6 +3888,7 @@ textarea {
 
 .message .message-bubble {
     max-width: min(680px, 82%);
+    width: fit-content;
 }
 
 .message.mine {
@@ -3918,6 +3919,16 @@ textarea {
     justify-self: end;
 }
 
+.message--public .message-bubble {
+    justify-self: start;
+    max-width: min(680px, 100%);
+    width: fit-content;
+}
+
+.message--public.mine .message-bubble {
+    justify-self: end;
+}
+
 .message--public.mine .message-author-name {
     text-align: right;
 }
@@ -3925,5 +3936,6 @@ textarea {
 @media (max-width: 760px) {
     .message .message-bubble {
         max-width: min(100%, 86vw);
+        width: fit-content;
     }
 }
