@@ -3,11 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from html.parser import HTMLParser
+import re
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
 from .forms import PublicationForm
 from .models import Publication, PublicationComment, PublicationLike, PublicationPhoto
+
+
+URL_PATTERN = re.compile(r'https?://[^\s<>"\']+', re.IGNORECASE)
 
 
 class LinkPreviewParser(HTMLParser):
@@ -62,6 +66,13 @@ def fetch_link_preview(url):
     }
 
 
+def first_url_from_text(text):
+    match = URL_PATTERN.search(text or '')
+    if not match:
+        return ''
+    return match.group(0).rstrip('.,;:!?)')
+
+
 @login_required
 def publication_feed(request):
     if request.method == 'POST':
@@ -69,6 +80,7 @@ def publication_feed(request):
         if form.is_valid():
             publication = form.save(commit=False)
             publication.author = request.user
+            publication.link_url = first_url_from_text(publication.message)
             for field, value in fetch_link_preview(publication.link_url).items():
                 setattr(publication, field, value)
             publication.save()

@@ -3647,3 +3647,41 @@ textarea {
         flex-direction: column;
     }
 }
+
+/* Muro composer compact */
+.publications-page {
+    gap: 14px;
+}
+
+.publications-title h1 {
+    margin-bottom: 4px;
+}
+
+.publications-title p {
+    margin-bottom: 0;
+}
+
+.publication-composer {
+    gap: 10px;
+    grid-template-areas:
+        "message actions"
+        "photos photos";
+    margin-top: -2px;
+}
+
+.publication-composer textarea {
+    min-height: 92px;
+}
+
+@media (max-width: 760px) {
+    .publication-composer {
+        grid-template-areas:
+            "message"
+            "actions"
+            "photos";
+    }
+
+    .publication-composer textarea {
+        min-height: 84px;
+    }
+}

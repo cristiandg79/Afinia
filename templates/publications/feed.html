@@ -6,17 +6,12 @@
         <div>
             <p class="eyebrow">Muro</p>
             <h1>Comparte con la comunidad</h1>
-            <p class="muted">Publica un mensaje con fotos o un enlace visible para el resto de personas de Afiniac (Afinia Community).</p>
+            <p class="muted">Publica un mensaje con fotos. Si pegas un enlace en el texto, se mostrará como vista previa.</p>
         </div>
     </div>
 
     <form method="post" enctype="multipart/form-data" class="publication-composer form-card">
         {% csrf_token %}
-        <div class="publication-composer__url">
-            <label for="{{ form.link_url.id_for_label }}">{{ form.link_url.label }}</label>
-            {{ form.link_url }}
-            {{ form.link_url.errors }}
-        </div>
         <div class="publication-composer__message">
             <label for="{{ form.message.id_for_label }}">{{ form.message.label }}</label>
             {{ form.message }}

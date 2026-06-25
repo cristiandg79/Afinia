@@ -24,17 +24,13 @@ class PublicationForm(forms.ModelForm):
 
     class Meta:
         model = Publication
-        fields = ['link_url', 'message']
+        fields = ['message']
         labels = {
-            'link_url': 'URL',
             'message': 'Mensaje',
         }
         widgets = {
             'message': forms.Textarea(attrs={
-                'rows': 4,
-                'placeholder': 'Comparte algo con la comunidad...',
-            }),
-            'link_url': forms.URLInput(attrs={
-                'placeholder': 'https://...',
+                'rows': 3,
+                'placeholder': 'Comparte algo con la comunidad o pega un enlace...',
             }),
         }
