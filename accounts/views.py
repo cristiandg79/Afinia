@@ -572,6 +572,7 @@ def dating_action(request, pk, action):
     redirect_url = reverse('dating_search')
     if querystring:
         redirect_url = f'{redirect_url}?{querystring}'
+    redirect_url = f'{redirect_url}#perfil-afin'
     if target == request.user or action not in [DatingAction.Action.LIKE, DatingAction.Action.PASS]:
         return redirect(redirect_url)
     if not profile_wants_dating(target.profile):

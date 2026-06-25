@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Afinidades - Afiniac (Afinia Community){% endblock %}
 {% block content %}
-<section class="dating-page">
-    <div class="dating-hero">
+<section class="dating-page{% if should_show_profiles %} dating-page--active{% endif %}">
+    <div class="dating-hero{% if should_show_profiles %} dating-hero--compact{% endif %}">
         <div>
             <p class="eyebrow">Afinidades</p>
             <h1>Una persona cada vez, con calma.</h1>
@@ -10,7 +10,12 @@
         </div>
     </div>
 
-    <form class="filters people-filters community-filters" method="get">
+    <details class="dating-filter-panel" {% if not should_show_profiles %}open{% endif %}>
+        <summary>
+            <span>Filtros de búsqueda</span>
+            <strong>{% if should_show_profiles %}Cambiar filtros{% else %}Abrir filtros{% endif %}</strong>
+        </summary>
+    <form class="filters people-filters community-filters" method="get" action="{% url 'dating_search' %}#perfil-afin">
         <input type="hidden" name="searched" value="1">
         <label>Pa&iacute;s
             <select name="country">
@@ -61,6 +66,7 @@
         <button class="button small" type="submit">Filtrar</button>
         <a class="button small secondary" href="{% url 'dating_search' %}?clear=1">Limpiar</a>
     </form>
+    </details>
 
     {% if not should_show_profiles %}
         <div class="empty-state soft-panel dating-start-state">
@@ -68,7 +74,7 @@
             <p class="muted">Los filtros son opcionales. Puedes pulsar Filtrar sin rellenar nada para ver perfiles generales, o ajustar ciudad, edad y tipo de perfil.</p>
         </div>
     {% elif profile %}
-        <article class="dating-card dating-card-single">
+        <article class="dating-card dating-card-single" id="perfil-afin">
             <a class="dating-photo dating-photo-single" href="{{ profile.get_absolute_url }}">
                 {% if profile.photo %}
                     <img src="{{ profile.photo.url }}" alt="Foto de {{ profile.user.username }}">
@@ -114,7 +120,7 @@
             </div>
         </article>
     {% else %}
-        <div class="empty-state soft-panel">
+        <div class="empty-state soft-panel" id="perfil-afin">
             <h2>No hay perfiles con esos filtros</h2>
             <p class="muted">Prueba a ampliar la edad, quitar ciudad o cambiar el tipo de perfil buscado.</p>
             <a class="button secondary" href="{% url 'dating_search' %}">Limpiar filtros</a>

@@ -3569,3 +3569,81 @@ textarea {
 .moderation-load-more {
     gap: 10px;
 }
+
+/* Afinidades focused flow */
+.dating-page--active {
+    gap: 16px;
+}
+
+.dating-hero--compact {
+    min-height: auto;
+    padding: 20px 24px;
+}
+
+.dating-hero--compact h1 {
+    font-size: 1.75rem;
+    margin-bottom: 4px;
+}
+
+.dating-hero--compact p:not(.eyebrow) {
+    margin-bottom: 0;
+}
+
+.dating-filter-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dating-filter-panel summary {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    list-style: none;
+    padding: 14px 16px;
+}
+
+.dating-filter-panel summary::-webkit-details-marker {
+    display: none;
+}
+
+.dating-filter-panel summary span {
+    color: var(--text);
+    font-weight: 900;
+}
+
+.dating-filter-panel summary strong {
+    color: var(--primary-dark);
+    font-size: 0.92rem;
+}
+
+.dating-filter-panel[open] summary {
+    border-bottom: 1px solid var(--border);
+}
+
+.dating-filter-panel .filters {
+    border: 0;
+    border-radius: 0;
+}
+
+#perfil-afin {
+    scroll-margin-top: 18px;
+}
+
+@media (max-width: 760px) {
+    .dating-hero--compact {
+        padding: 18px;
+    }
+
+    .dating-hero--compact h1 {
+        font-size: 1.45rem;
+    }
+
+    .dating-filter-panel summary {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
