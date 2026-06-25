@@ -3848,3 +3848,34 @@ textarea {
     opacity: 0;
     pointer-events: none;
 }
+
+/* Clickable profile photos */
+.profile-photo-open,
+.gallery-photo-link {
+    border-radius: inherit;
+    display: block;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.profile-photo-open {
+    height: 100%;
+    width: 100%;
+}
+
+.profile-photo-open img,
+.gallery-photo-link img {
+    transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.profile-photo-open:hover img,
+.gallery-photo-link:hover img {
+    filter: brightness(0.96);
+    transform: scale(1.02);
+}
+
+.profile-photo-open:focus-visible,
+.gallery-photo-link:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+}
