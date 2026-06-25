@@ -3879,3 +3879,51 @@ textarea {
     outline: 3px solid var(--focus);
     outline-offset: 3px;
 }
+
+/* WhatsApp-like chat alignment */
+.message {
+    max-width: 100%;
+    width: 100%;
+}
+
+.message .message-bubble {
+    max-width: min(680px, 82%);
+}
+
+.message.mine {
+    justify-content: flex-end;
+    margin-left: 0;
+}
+
+.message.mine .message-bubble {
+    background: #dff3e9;
+    border-color: #b6d7c8;
+}
+
+.message--public.mine {
+    grid-template-columns: minmax(0, 1fr) auto;
+    justify-content: stretch;
+    margin-left: 0;
+    width: 100%;
+}
+
+.message--public.mine .message-author-avatar {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.message--public.mine .message-bubble {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+}
+
+.message--public.mine .message-author-name {
+    text-align: right;
+}
+
+@media (max-width: 760px) {
+    .message .message-bubble {
+        max-width: min(100%, 86vw);
+    }
+}
