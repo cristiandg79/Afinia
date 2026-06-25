@@ -55,6 +55,21 @@ def first_profile_error_step(form):
     return 1
 
 
+def extra_photo_slots(form, profile):
+    photos = list(profile.extra_photos.all()[:4])
+    slots = []
+    for index, field_name in enumerate(['extra_photo_1', 'extra_photo_2', 'extra_photo_3', 'extra_photo_4']):
+        photo = photos[index] if index < len(photos) else None
+        slots.append({
+            'number': index + 1,
+            'field': form[field_name],
+            'photo': photo,
+            'input_name': f'replace_extra_photo_{photo.pk}' if photo else field_name,
+            'input_id': f'replace-extra-photo-{photo.pk}' if photo else form[field_name].id_for_label,
+        })
+    return slots
+
+
 def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
@@ -271,9 +286,11 @@ def profile_edit(request):
     if not is_onboarding:
         return render(request, 'accounts/profile_edit.html', {
             'form': form,
+            'extra_photo_slots': extra_photo_slots(form, profile),
         })
     return render(request, 'accounts/profile_form.html', {
         'form': form,
+        'extra_photo_slots': extra_photo_slots(form, profile),
         'is_onboarding': is_onboarding,
         'initial_step': initial_step,
     })

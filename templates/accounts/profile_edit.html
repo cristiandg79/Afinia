@@ -133,34 +133,27 @@
                     <span class="field-hint">{{ form.photo.help_text }}</span>
                     {{ form.photo.errors }}
                 </div>
-                <div class="profile-photo-field"><span>{{ form.extra_photo_1.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_1 }}<label class="file-upload-trigger" for="{{ form.extra_photo_1.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_1.errors }}</div>
-                <div class="profile-photo-field"><span>{{ form.extra_photo_2.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_2 }}<label class="file-upload-trigger" for="{{ form.extra_photo_2.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_2.errors }}</div>
-                <div class="profile-photo-field"><span>{{ form.extra_photo_3.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_3 }}<label class="file-upload-trigger" for="{{ form.extra_photo_3.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_3.errors }}</div>
-                <div class="profile-photo-field"><span>{{ form.extra_photo_4.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_4 }}<label class="file-upload-trigger" for="{{ form.extra_photo_4.id_for_label }}">Seleccionar imagen</label>{{ form.extra_photo_4.errors }}</div>
+                {% for slot in extra_photo_slots %}
+                    <div class="profile-photo-field extra-photo-slot{% if slot.photo %} has-current-photo{% endif %}">
+                        <span>Foto adicional {{ slot.number }}</span>
+                        {% if slot.photo %}
+                            <img src="{{ slot.photo.image.url }}" alt="Foto adicional de {{ user.username }}" data-current-photo>
+                            <img class="photo-preview" data-photo-preview alt="Vista previa de nueva foto adicional" hidden>
+                            <input id="{{ slot.input_id }}" type="file" name="{{ slot.input_name }}" accept="image/*">
+                            <label class="file-upload-trigger" for="{{ slot.input_id }}">Cambiar imagen</label>
+                            <span class="delete-photo-option">
+                                <input type="checkbox" name="delete_extra_photos" value="{{ slot.photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }">
+                                Eliminar foto
+                            </span>
+                        {% else %}
+                            <img class="photo-preview" data-photo-preview alt="Vista previa" hidden>
+                            {{ slot.field }}
+                            <label class="file-upload-trigger" for="{{ slot.input_id }}">Seleccionar imagen</label>
+                            {{ slot.field.errors }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
-            {% if form.instance.extra_photos.all %}
-                <div class="current-gallery current-gallery--profile-edit">
-                    <div class="current-gallery__heading">
-                        <h3>Fotos adicionales actuales</h3>
-                        <p class="muted">Puedes cambiar una foto concreta o marcarla para eliminarla al guardar.</p>
-                    </div>
-                    <div class="current-gallery__grid">
-                        {% for photo in form.instance.extra_photos.all %}
-                            <div class="profile-photo-field current-photo-field">
-                                <span>Foto adicional {{ forloop.counter }}</span>
-                                <img src="{{ photo.image.url }}" alt="Foto adicional de {{ user.username }}" data-current-photo>
-                                <img class="photo-preview" data-photo-preview alt="Vista previa de nueva foto adicional" hidden>
-                                <input id="replace-extra-photo-{{ photo.pk }}" type="file" name="replace_extra_photo_{{ photo.pk }}" accept="image/*">
-                                <label class="file-upload-trigger" for="replace-extra-photo-{{ photo.pk }}">Cambiar imagen</label>
-                                <span class="delete-photo-option">
-                                    <input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }">
-                                    Eliminar foto
-                                </span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
         </section>
 
         <div class="edit-actions">

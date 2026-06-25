@@ -143,26 +143,28 @@
                     <label class="file-upload-trigger" for="{{ form.photo.id_for_label }}" data-file-trigger>Seleccionar imagen</label>
                     <span class="field-hint">{{ form.photo.help_text }}</span>
                 </div>
-                <div class="profile-photo-field"><span>{{ form.extra_photo_1.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_1 }}<label class="file-upload-trigger" for="{{ form.extra_photo_1.id_for_label }}">Seleccionar imagen</label></div>
-                <div class="profile-photo-field"><span>{{ form.extra_photo_2.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_2 }}<label class="file-upload-trigger" for="{{ form.extra_photo_2.id_for_label }}">Seleccionar imagen</label></div>
-                <div class="profile-photo-field"><span>{{ form.extra_photo_3.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_3 }}<label class="file-upload-trigger" for="{{ form.extra_photo_3.id_for_label }}">Seleccionar imagen</label></div>
-                <div class="profile-photo-field"><span>{{ form.extra_photo_4.label }}</span><img class="photo-preview" data-photo-preview alt="Vista previa" hidden>{{ form.extra_photo_4 }}<label class="file-upload-trigger" for="{{ form.extra_photo_4.id_for_label }}">Seleccionar imagen</label></div>
+                {% for slot in extra_photo_slots %}
+                    <div class="profile-photo-field extra-photo-slot{% if slot.photo %} has-current-photo{% endif %}">
+                        <span>Foto adicional {{ slot.number }}</span>
+                        {% if slot.photo %}
+                            <img src="{{ slot.photo.image.url }}" alt="Foto adicional de {{ user.username }}" data-current-photo>
+                            <img class="photo-preview" data-photo-preview alt="Vista previa de nueva foto adicional" hidden>
+                            <input id="{{ slot.input_id }}" type="file" name="{{ slot.input_name }}" accept="image/*">
+                            <label class="file-upload-trigger" for="{{ slot.input_id }}">Cambiar imagen</label>
+                            <span class="delete-photo-option">
+                                <input type="checkbox" name="delete_extra_photos" value="{{ slot.photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }">
+                                Eliminar foto
+                            </span>
+                        {% else %}
+                            <img class="photo-preview" data-photo-preview alt="Vista previa" hidden>
+                            {{ slot.field }}
+                            <label class="file-upload-trigger" for="{{ slot.input_id }}">Seleccionar imagen</label>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
             {{ form.photo.errors }}
             {{ form.extra_photo_1.errors }} {{ form.extra_photo_2.errors }} {{ form.extra_photo_3.errors }} {{ form.extra_photo_4.errors }}
-            {% if form.instance.extra_photos.all %}
-                <div class="current-gallery">
-                    <p class="muted">Fotos adicionales actuales</p>
-                    <div>
-                        {% for photo in form.instance.extra_photos.all %}
-                            <label class="gallery-delete-item">
-                                <img src="{{ photo.image.url }}" alt="Foto adicional de {{ user.username }}">
-                                <span><input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }"> Eliminar</span>
-                            </label>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
         </div>
 
         <div class="wizard-actions">

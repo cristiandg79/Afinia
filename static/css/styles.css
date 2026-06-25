@@ -3781,3 +3781,36 @@ textarea {
         grid-template-columns: 1fr;
     }
 }
+
+/* Integrated extra photo slots */
+.profile-photo-field.extra-photo-slot {
+    grid-column: auto;
+}
+
+.profile-photo-field.extra-photo-slot img {
+    border-radius: 999px;
+    height: 92px;
+    justify-self: start;
+    object-fit: cover;
+    width: 92px;
+}
+
+.profile-photo-field.extra-photo-slot .photo-preview {
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 0 4px #e9f5ef;
+}
+
+.profile-photo-field.extra-photo-slot .delete-photo-option {
+    justify-content: flex-start;
+    margin-top: 0;
+    width: fit-content;
+}
+
+.profile-photo-field.extra-photo-slot:has(input[name="delete_extra_photos"]:checked) {
+    background: #fff1ed;
+    border-color: #f2b8a6;
+}
+
+.profile-photo-field.extra-photo-slot:has(input[name="delete_extra_photos"]:checked) img {
+    filter: grayscale(0.35) opacity(0.75);
+}
