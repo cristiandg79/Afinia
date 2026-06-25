@@ -265,7 +265,7 @@
                         </span>
                         <div>
                             <h3 title="{{ suggested.user.username }}">{{ suggested.user.username }}</h3>
-                            <p>{{ suggested.location_label }}</p>
+                            <p>{% if suggested.age %}{{ suggested.age }} años - {% endif %}{{ suggested.location_label }}</p>
                         </div>
                     </div>
                     <p class="people-card__bio">{{ suggested.bio|default:'Perfil en construcción.' }}</p>
