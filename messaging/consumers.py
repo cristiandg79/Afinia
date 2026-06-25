@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.utils import timezone
 
+from accounts.date_labels import friendly_datetime
 from accounts.models import Connection
 from .chat_rooms import is_chat_conversation, is_chat_group
 from .cleanup import trim_conversation_messages
@@ -201,7 +202,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'sender_name': self.user.username,
             'sender_avatar_url': profile.photo.url if profile and profile.photo else '',
             'sender_initial': self.user.username[:1].upper(),
-            'created_at': timezone.localtime(message.created_at).strftime('%d/%m/%Y %H:%M'),
+            'created_at': friendly_datetime(message.created_at),
         }
 
     @sync_to_async

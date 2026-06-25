@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load date_labels %}
 {% block title %}Muro - Afiniac (Afinia Community){% endblock %}
 {% block content %}
 <section class="publications-page">
@@ -42,7 +43,7 @@
                     </span>
                     <div>
                         <h2>{{ publication.author.username }}</h2>
-                        <p class="muted">{{ publication.created_at|date:'d/m/Y H:i' }}</p>
+                        <p class="muted">{{ publication.created_at|friendly_date }}</p>
                     </div>
                 </header>
 

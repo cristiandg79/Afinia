@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load date_labels %}
 {% block title %}{{ chat_header.title }} - Afiniac (Afinia Community){% endblock %}
 {% block content %}
 <section class="chat-layout {% if is_public_chat or is_community_chat %}chat-layout--public{% endif %}" data-chat data-conversation-id="{{ conversation.pk }}" data-current-user-id="{{ user.pk }}" data-public-chat="{% if is_public_chat %}true{% else %}false{% endif %}" data-participant-chat="{% if is_public_chat or is_community_chat %}true{% else %}false{% endif %}">
@@ -55,7 +56,7 @@
                                 </a>
                             {% endif %}
                             <span class="message-meta">
-                                <span>{{ message.created_at|date:'d/m/Y H:i' }}{% if message.edited_at %} &middot; editado{% endif %}</span>
+                                <span>{{ message.created_at|friendly_date }}{% if message.edited_at %} &middot; editado{% endif %}</span>
                                 {% if message.sender == user and not is_public_chat %}
                                     {% if message.read_at %}
                                         <span class="message-ticks is-read" title="Le&iacute;do" aria-label="Le&iacute;do">&#10003;&#10003;</span>
