@@ -44,6 +44,7 @@
     {% endif %}
 
     <form class="filters people-filters" method="get">
+        <input type="hidden" name="searched" value="1">
         <label>Usuario <input name="username" value="{{ username|default:'' }}" placeholder="Buscar nick"></label>
         <label>País
             <select name="country">
@@ -70,7 +71,7 @@
             </select>
         </label>
         <button class="button small" type="submit">Filtrar</button>
-        <a class="button small secondary" href="{% url 'discover' %}">Limpiar</a>
+        <a class="button small secondary" href="{% url 'discover' %}?clear=1">Limpiar</a>
     </form>
     <div class="grid people-grid" data-people-grid>
         {% for profile in profiles %}

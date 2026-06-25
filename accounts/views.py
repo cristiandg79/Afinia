@@ -294,6 +294,23 @@ def profile_detail(request, username):
     return render(request, 'accounts/profile_detail.html', {'profile': profile, 'connection': connection})
 
 
+def clean_people_filters(data, profile):
+    filters = {
+        'username': data.get('username', '').strip(),
+        'country': data.get('country', profile.country or '').strip(),
+        'city': data.get('city', profile.city or '').strip(),
+        'radius': clean_radius(data.get('radius', '')),
+        'situation': data.get('situation', '').strip(),
+    }
+    valid_countries = {value for value, _ in LOCATION_COUNTRY_CHOICES}
+    valid_situations = {value for value, _ in HEALTH_CONTEXT_CHOICES}
+    if filters['country'] not in valid_countries:
+        filters['country'] = ''
+    if filters['situation'] not in valid_situations:
+        filters['situation'] = ''
+    return filters
+
+
 @login_required
 def discover(request):
     profiles = Profile.objects.filter(user__is_active=True).exclude(user=request.user)
@@ -303,31 +320,40 @@ def discover(request):
         .select_related('requester__profile')
         .order_by('-created_at')
     )
-    username = request.GET.get('username', '').strip()
-    country = request.GET.get('country', '').strip()
-    city = request.GET.get('city', '').strip()
-    radius = clean_radius(request.GET.get('radius', ''))
-    situation = request.GET.get('situation')
-    valid_situations = {value for value, _ in HEALTH_CONTEXT_CHOICES}
-    if situation not in valid_situations:
-        situation = ''
-    if username:
-        profiles = profiles.filter(user__username__icontains=username)
-    if country:
-        profiles = profiles.filter(country=country)
-    if city:
-        profiles = profiles.filter(city__icontains=city)
-    if situation:
-        profiles = [profile for profile in profiles if situation in profile.health_context]
-    if radius:
-        profiles = filter_by_user_radius(profiles, request.user.profile, radius)
+    if 'clear' in request.GET:
+        request.user.profile.people_preferences = {}
+        request.user.profile.save(update_fields=['people_preferences'])
+        return redirect('discover')
+
+    saved_filters = request.user.profile.people_preferences or {}
+    has_submitted_filters = 'searched' in request.GET
+    has_saved_filters = bool(saved_filters.get('searched'))
+    if has_submitted_filters:
+        filters = clean_people_filters(request.GET, request.user.profile)
+        request.user.profile.people_preferences = {**filters, 'searched': True}
+        request.user.profile.save(update_fields=['people_preferences'])
+    elif has_saved_filters:
+        filters = clean_people_filters(saved_filters, request.user.profile)
+    else:
+        filters = clean_people_filters({}, request.user.profile)
+
+    if filters['username']:
+        profiles = profiles.filter(user__username__icontains=filters['username'])
+    if filters['country']:
+        profiles = profiles.filter(country=filters['country'])
+    if filters['city'] and not filters['radius']:
+        profiles = profiles.filter(city__icontains=filters['city'])
+    if filters['situation']:
+        profiles = [profile for profile in profiles if filters['situation'] in profile.health_context]
+    if filters['radius']:
+        profiles = filter_by_user_radius(profiles, request.user.profile, filters['radius'])
     return render(request, 'accounts/discover.html', {
         'profiles': profiles,
-        'username': username,
-        'country': country,
-        'city': city,
-        'radius': radius,
-        'situation': situation,
+        'username': filters['username'],
+        'country': filters['country'],
+        'city': filters['city'],
+        'radius': filters['radius'],
+        'situation': filters['situation'],
         'situation_choices': HEALTH_CONTEXT_CHOICES,
         'country_choices': LOCATION_COUNTRY_CHOICES,
         'radius_choices': RADIUS_CHOICES,
@@ -386,8 +412,8 @@ def inferred_dating_sex(profile):
 
 def clean_dating_filters(data, profile):
     filters = {
-        'country': data.get('country', '').strip(),
-        'city': data.get('city', '').strip(),
+        'country': data.get('country', profile.country or '').strip(),
+        'city': data.get('city', profile.city or '').strip(),
         'radius': clean_radius(data.get('radius', '')),
         'min_age': data.get('min_age', '').strip(),
         'max_age': data.get('max_age', '').strip(),

@@ -52,6 +52,7 @@ class Profile(models.Model):
     goals = models.JSONField(default=list, blank=True)
     interests = models.JSONField(default=list, blank=True)
     social_preferences = models.JSONField(default=list, blank=True)
+    people_preferences = models.JSONField(default=dict, blank=True)
     dating_preferences = models.JSONField(default=dict, blank=True)
     health_context = models.JSONField(default=list, blank=True)
     sex = models.CharField(max_length=24, choices=Sex.choices, blank=True)
