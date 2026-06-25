@@ -251,6 +251,14 @@ def profile_edit(request):
                 for photo in updated.extra_photos.filter(pk__in=selected_photo_ids):
                     photo.image.delete(save=False)
                     photo.delete()
+            for photo in updated.extra_photos.exclude(pk__in=selected_photo_ids):
+                replacement = request.FILES.get(f'replace_extra_photo_{photo.pk}')
+                if replacement:
+                    old_image_name = photo.image.name
+                    photo.image = replacement
+                    photo.save(update_fields=['image'])
+                    if old_image_name and old_image_name != photo.image.name:
+                        photo.image.storage.delete(old_image_name)
             for field_name in ['extra_photo_1', 'extra_photo_2', 'extra_photo_3', 'extra_photo_4']:
                 image = form.cleaned_data.get(field_name)
                 if image and updated.extra_photos.count() < 4:

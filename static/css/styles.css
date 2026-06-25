@@ -3739,3 +3739,45 @@ textarea {
         grid-template-columns: 1fr;
     }
 }
+
+/* Profile edit current photos - compact like main photo */
+.current-gallery--profile-edit .current-gallery__grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.current-gallery--profile-edit .current-photo-field {
+    grid-column: auto;
+    min-width: 0;
+}
+
+.current-gallery--profile-edit .current-photo-field img {
+    aspect-ratio: 1 / 1;
+    border-radius: 999px;
+    height: 92px;
+    justify-self: start;
+    object-fit: cover;
+    width: 92px;
+}
+
+.current-gallery--profile-edit .current-photo-field .photo-preview {
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 0 4px #e9f5ef;
+}
+
+.current-gallery--profile-edit .file-upload-trigger {
+    min-width: 150px;
+}
+
+.current-gallery--profile-edit .delete-photo-option {
+    justify-content: flex-start;
+    margin-top: 0;
+    width: fit-content;
+}
+
+@media (max-width: 760px) {
+    .current-gallery--profile-edit .current-gallery__grid {
+        grid-template-columns: 1fr;
+    }
+}

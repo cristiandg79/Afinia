@@ -142,18 +142,21 @@
                 <div class="current-gallery current-gallery--profile-edit">
                     <div class="current-gallery__heading">
                         <h3>Fotos adicionales actuales</h3>
-                        <p class="muted">Marca solo las fotos que quieras quitar al guardar cambios.</p>
+                        <p class="muted">Puedes cambiar una foto concreta o marcarla para eliminarla al guardar.</p>
                     </div>
                     <div class="current-gallery__grid">
                         {% for photo in form.instance.extra_photos.all %}
-                            <label class="profile-photo-field current-photo-field">
+                            <div class="profile-photo-field current-photo-field">
                                 <span>Foto adicional {{ forloop.counter }}</span>
-                                <img src="{{ photo.image.url }}" alt="Foto adicional de {{ user.username }}">
+                                <img src="{{ photo.image.url }}" alt="Foto adicional de {{ user.username }}" data-current-photo>
+                                <img class="photo-preview" data-photo-preview alt="Vista previa de nueva foto adicional" hidden>
+                                <input id="replace-extra-photo-{{ photo.pk }}" type="file" name="replace_extra_photo_{{ photo.pk }}" accept="image/*">
+                                <label class="file-upload-trigger" for="replace-extra-photo-{{ photo.pk }}">Cambiar imagen</label>
                                 <span class="delete-photo-option">
                                     <input type="checkbox" name="delete_extra_photos" value="{{ photo.pk }}" onchange="if (this.checked && !confirm('¿Estás seguro de que quieres eliminar esta foto?')) { this.checked = false; }">
-                                    Eliminar al guardar
+                                    Eliminar foto
                                 </span>
-                            </label>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
